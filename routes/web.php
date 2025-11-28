@@ -29,19 +29,7 @@ Route::middleware(['auth'])->group(function () {
 
 
 
-Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->group(function(){
-    Route::resource('users', UserController::class);
-    Route::resource('regions', RegionController::class);
-    Route::resource('langues', LangueController::class);
-    Route::resource('typecontenus', TypeContenuController::class);
-    Route::resource('typemedias', TypeMediaController::class);
-    Route::resource('contenus', ContenuController::class)->middleware('role:admin|moderateur');
-    Route::put('contenus/{contenu}/valider',
-        [ContenuController::class, 'valider'])
-        ->name('contenus.valider');
 
-
-});
 
 
 
@@ -85,4 +73,4 @@ Route::middleware('auth')->group(function () {
 
 require __DIR__.'/auth.php';
 require __DIR__.'/traduction.php';
-require __DIR__.'/auth.php';
+require __DIR__.'/admin.php';
