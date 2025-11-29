@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Commentaires;
+use App\Models\Commentaire;
 use Illuminate\Http\Request;
 
-class CommentairesController extends Controller
+class CommentaireController extends Controller
 {
     /**
      * Display a listing of the resource.

@@ -12,7 +12,7 @@ class UserController extends Controller
 {
      public function __construct()
     {
-        $this->middleware(['auth', 'role:admin']) // ajouter 'can:...' ou 'role:admin' plus tard
+        $this->middleware(['auth', 'role:admin']); // ajouter 'can:...' ou 'role:admin' plus tard
     }
 
     /**

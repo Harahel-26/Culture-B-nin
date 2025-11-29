@@ -25,23 +25,13 @@ Route::middleware(['auth'])->group(function () {
     Route::get('mes-demandes',
         [DemandeContributeurUserController::class, 'mesDemandes'])
         ->name('demande.mes');
+
+    Route::get('/devenir-contributeur', [DemandeContributeurController::class, 'create'])
+        ->name('demande.create');
+
+    Route::post('/devenir-contributeur', [DemandeContributeurController::class, 'store'])
+        ->name('demande.store');
 });
-
-
-
-
-
-
-
-
-// Demande par un lecteur
-Route::get('/devenir-contributeur', [DemandeContributeurController::class, 'create'])
-    ->middleware(['auth'])
-    ->name('demande.create');
-
-Route::post('/devenir-contributeur', [DemandeContributeurController::class, 'store'])
-    ->middleware(['auth'])
-    ->name('demande.store');
 
 // Côté admin
 Route::prefix('admin')->middleware(['auth','role:admin|moderateur'])->group(function () {
