@@ -30,7 +30,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', 'role:admin'])->grou
 
 Route::middleware(['auth', 'role:admin|moderateur'])->group(function () {
 
-    Route::resource('medias', MediaController::class)->except(['edit','update','show']);
+    Route::resource('medias', MediaController::class)->except(['edit','update']);
 
     Route::put('medias/{media}/valider', [MediaController::class, 'valider'])
         ->name('medias.valider');

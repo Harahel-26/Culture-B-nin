@@ -60,6 +60,12 @@ class User extends Authenticatable
         return $this->belongsToMany(Contenu::class, 'favoris')->withTimestamps();
     }
 
+    public function commentaires()
+  {
+        return $this->hasMany(Commentaire::class);
+ }
+
+
     /**
      * Get the attributes that should be cast.
      *

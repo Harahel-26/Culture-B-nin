@@ -69,4 +69,25 @@ class Contenu extends Model
     {
         return $this->hasMany(ContenuTraduction::class);
     }
+    public function commentaires()
+{
+    return $this->hasMany(Commentaire::class);
+}
+
+// Note moyenne ⭐⭐⭐⭐✰
+public function moyenneNotes()
+{
+    return $this->commentaires()
+                ->where('statut', 'validated')
+                ->avg('note');
+}
+
+// Nombre de votes
+public function totalNotes()
+{
+    return $this->commentaires()
+                ->where('statut', 'validated')
+                ->count();
+}
+
 }

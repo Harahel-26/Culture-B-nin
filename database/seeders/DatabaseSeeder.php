@@ -27,6 +27,7 @@ class DatabaseSeeder extends Seeder
         ContenuTraductionSeeder::class,
         DemandeContributeurSeeder::class,
         MediaSeeder::class,
+        CommentaireSeeder::class,
 
     ]);
     }
