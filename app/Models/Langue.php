@@ -14,4 +14,9 @@ class Langue extends Model
         'description',
         'is_active'
     ];
+     public function contenus()
+    {
+        return $this->hasMany(Contenu::class);
+    }
+
 }

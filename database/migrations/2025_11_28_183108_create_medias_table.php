@@ -12,7 +12,7 @@ class CreateMediasTable extends Migration
             $table->id();
 
             $table->foreignId('contenu_id')->constrained('contenus')->onDelete('cascade');
-            $table->foreignId('type_media_id')->constrained('type_medias');
+            $table->foreignId('type_media_id')->constrained('typemedias');
             $table->foreignId('langue_id')->nullable()->constrained('langues');
 
             $table->string('titre')->nullable();
@@ -22,8 +22,8 @@ class CreateMediasTable extends Migration
             $table->string('extension', 10)->nullable();
             $table->integer('taille')->nullable(); // en KB
 
-            $table->foreignId('upload_par')->constrained('users');
-            $table->foreignId('valide_par')->nullable()->constrained('users');
+            $table->foreignId('uploaded_by')->constrained('users');
+            $table->foreignId('validated_by')->nullable()->constrained('users');
 
             $table->enum('status', ['pending', 'validated', 'rejected'])->default('pending');
 

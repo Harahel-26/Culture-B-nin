@@ -6,99 +6,121 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
-
+use Spatie\Permission\Models\Role;
 
 class UserController extends Controller
 {
-     public function __construct()
+    public function __construct()
     {
-        $this->middleware(['auth', 'role:admin']); // ajouter 'can:...' ou 'role:admin' plus tard
+        $this->middleware(['auth', 'role:admin']);
     }
 
     /**
-     * Display a listing of the resource.
+     * LISTE DES UTILISATEURS
      */
     public function index()
     {
-        $users = User::orderBy('created_at','desc')->paginate(15);
-        return view('admin.users.index', compact('users'));
+        $utilisateurs = User::orderBy('created_at', 'desc')
+                            ->with('roles')
+                            ->paginate(10);
+
+        return view('admin.utilisateurs.index', compact('utilisateurs'));
     }
 
     /**
-     * Show the form for creating a new resource.
+     * FORMULAIRE DE CRÉATION
      */
     public function create()
     {
-        return view('admin.users.create');
+        $roles = Role::all();
+        return view('admin.utilisateurs.create', compact('roles'));
     }
 
     /**
-     * Store a newly created resource in storage.
+     * ENREGISTRER UTILISATEUR
      */
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name'=>'required|string|max:255',
-            'email'=>'required|email|unique:users,email',
-            'username'=>'nullable|string|unique:users,username',
-            'password'=>'required|string|min:8|confirmed',
-            'is_active'=>'sometimes|boolean',
-            'is_admin'=>'sometimes|boolean'
+            'prenom'    => 'required|string|max:255',
+            'nom'       => 'required|string|max:255',
+            'email'     => 'required|email|unique:users,email',
+            'password'  => 'required|string|min:8|confirmed',
+            'role'      => 'required|exists:roles,id',
         ]);
 
-        $data['password'] = Hash::make($data['password']);
+        $user = User::create([
+            'prenom'   => $data['prenom'],
+            'nom'      => $data['nom'],
+            'email'    => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
 
-        User::create($data);
+        // Attribution rôle
+        $role = Role::find($data['role']);
+        $user->assignRole($role->name);
 
-        return redirect()->route('admin.users.index')->with('success','Utilisateur créé');
+        return redirect()->route('utilisateurs.index')
+            ->with('success', 'Utilisateur créé avec succès.');
     }
 
     /**
-     * Display the specified resource.
+     * AFFICHER UN UTILISATEUR
      */
-    public function show(User $user)
+    public function show(User $utilisateur)
     {
-        return redirect()->route('admin.users.index')
+        return view('admin.utilisateurs.show', compact('utilisateur'));
     }
 
     /**
-     * Show the form for editing the specified resource.
+     * FORMULAIRE EDIT
      */
-    public function edit(User $user)
+    public function edit(User $utilisateur)
     {
-        return view('admin.users.edit', compact('user'));
+        $roles = Role::all();
+
+        return view('admin.utilisateurs.edit', compact('utilisateur', 'roles'));
     }
 
     /**
-     * Update the specified resource in storage.
+     * METTRE À JOUR
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $utilisateur)
     {
         $data = $request->validate([
-            'name'=>'required|string|max:255',
-            'email'=>"required|email|unique:users,email,{$user->id}",
-            'username'=>"nullable|string|unique:users,username,{$user->id}",
-            'password'=>'nullable|string|min:8|confirmed',
-            'is_active'=>'sometimes|boolean',
-            'is_admin'=>'sometimes|boolean'
+            'prenom'    => 'required|string|max:255',
+            'nom'       => 'required|string|max:255',
+            'email'     => 'required|email|unique:users,email,' . $utilisateur->id,
+            'password'  => 'nullable|string|min:8|confirmed',
+            'role'      => 'required|exists:roles,id',
         ]);
 
-        if(!empty($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        } else {
-            unset($data['password']);
-        }
-        $user->update($data);
+        // Update infos
+        $utilisateur->update([
+            'prenom'  => $data['prenom'],
+            'nom'     => $data['nom'],
+            'email'   => $data['email'],
+            'password'=> $data['password']
+                            ? Hash::make($data['password'])
+                            : $utilisateur->password,
+        ]);
 
-        return redirect()->route('admin.users.index')->with('success','Utilisateur mis à jour');
+        // Update rôle
+        $role = Role::find($data['role']);
+        $utilisateur->syncRoles([$role->name]);
+
+        return redirect()->route('utilisateurs.index')
+            ->with('success', 'Utilisateur mis à jour avec succès.');
     }
 
     /**
-     * Remove the specified resource from storage.
+     * SUPPRESSION
      */
-    public function destroy(User $user)
+    public function destroy(User $utilisateur)
     {
-        $user->delete();
-        return redirect()->route('admin.users.index')->with('success','Utilisateur supprimé');
+        $utilisateur->delete();
+
+        return redirect()->route('utilisateurs.index')
+            ->with('success', 'Utilisateur supprimé avec succès.');
     }
 }

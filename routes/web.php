@@ -13,7 +13,7 @@ use App\Http\Controllers\DemandeContributeurController;
 use App\Http\Controllers\DemandeContributeurUserController;
 
 Route::middleware(['auth'])->group(function () {
-
+// Routes pour les demandes de contributeurs
     Route::get('devenir-contributeur',
         [DemandeContributeurUserController::class, 'form'])
         ->name('demande.form');
@@ -33,17 +33,8 @@ Route::middleware(['auth'])->group(function () {
         ->name('demande.store');
 });
 
-// Côté admin
-Route::prefix('admin')->middleware(['auth','role:admin|moderateur'])->group(function () {
-    Route::get('/demandes-contributeurs', [DemandeContributeurController::class, 'index'])
-        ->name('admin.demandes.index');
 
-    Route::put('/demandes-contributeurs/{demande}/approuver', [DemandeContributeurController::class, 'approuver'])
-        ->name('admin.demandes.approuver');
 
-    Route::put('/demandes-contributeurs/{demande}/rejeter', [DemandeContributeurController::class, 'rejeter'])
-        ->name('admin.demandes.rejeter');
-});
 
 
 

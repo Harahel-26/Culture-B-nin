@@ -14,8 +14,8 @@ class ContenuController extends Controller
 {
     public function __construct()
 {
-    $this->middleware(['auth', 'role:contributeur|admin|moderateur'])
-        ->only(['create','store','edit','update']);
+    $this->middleware(['auth', 'role:contributeur|admin|moderateur']);
+
 }
 
 
@@ -120,5 +120,14 @@ class ContenuController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Contenu validé.');
+    }
+    // Rejet par admin ou modérateur
+    public function rejeter(Contenu $contenu)
+    {
+        $contenu->update([
+            'status' => 'rejected',
+            'validated_by' => auth()->id(),
+        ]);
+        return redirect()->back()->with('success', 'Contenu rejeté.');
     }
 }

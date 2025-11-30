@@ -1,4 +1,4 @@
-@extends('layouts.admin')
+@extends('layouts')
 
 @section('content')
 <div class="card">
@@ -15,7 +15,6 @@
                 <tr>
                     <th>Code</th>
                     <th>Nom</th>
-                    <th>Active</th>
                     <th class="text-end">Actions</th>
                 </tr>
             </thead>
@@ -25,7 +24,6 @@
                 <tr>
                     <td>{{ $langue->code }}</td>
                     <td>{{ $langue->nom }}</td>
-                    <td>{{ $langue->is_active ? 'Oui' : 'Non' }}</td>
 
                     <td class="text-end">
 

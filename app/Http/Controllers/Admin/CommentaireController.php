@@ -8,59 +8,54 @@ use Illuminate\Http\Request;
 
 class CommentaireController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function __construct()
     {
-        //
+        $this->middleware(['auth','role:admin|moderateur']);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    // liste de tous les commentaires (avec filtres possibles)
+    public function index(Request $request)
     {
-        //
+        $query = Commentaire::with(['auteur','contenu']);
+
+        if ($request->filled('statut')) {
+            $query->where('statut', $request->statut);
+        }
+
+        $commentaires = $query->orderBy('created_at','desc')->paginate(20);
+
+        return view('admin.commentaires.index', compact('commentaires'));
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function show(Commentaire $commentaire)
     {
-        //
+        return view('admin.commentaires.show', compact('commentaire'));
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Commentaires $commentaires)
+    // valider
+    public function valider(Commentaire $commentaire)
     {
-        //
+        $commentaire->update([
+            'statut' => 'validated',
+        ]);
+
+        // option : notifier l'auteur ici (plus tard)
+        return back()->with('success', 'Commentaire validé.');
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Commentaires $commentaires)
+    // rejeter
+    public function rejeter(Commentaire $commentaire)
     {
-        //
+        $commentaire->update([
+            'statut' => 'rejected',
+        ]);
+
+        return back()->with('success', 'Commentaire rejeté.');
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Commentaires $commentaires)
+    public function destroy(Commentaire $commentaire)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Commentaires $commentaires)
-    {
-        //
+        $commentaire->delete();
+        return back()->with('success', 'Commentaire supprimé.');
     }
 }

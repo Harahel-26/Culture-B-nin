@@ -58,59 +58,21 @@ class MediaController extends Controller
                          ->with('success', 'Média ajouté.');
     }
 
-    public function edit(Media $media)
-{
-    return view('admin.medias.edit', [
-        'media' => $media,
-        'contenus' => Contenu::all(),
-        'types' => TypeMedia::all(),
-        'langues' => Langue::all()
-    ]);
-}
-
-public function update(Request $request, Media $media)
-{
-    $request->validate([
-        'contenu_id' => 'required',
-        'type_media_id' => 'required',
-        'fichier' => 'nullable|file|max:20000',
-    ]);
-
-    // Mise à jour simple
-    $media->update([
-        'contenu_id' => $request->contenu_id,
-        'type_media_id' => $request->type_media_id,
-        'langue_id' => $request->langue_id,
-        'titre' => $request->titre,
-        'description' => $request->description,
-    ]);
-
-    // Si un nouveau fichier est uploadé
-    if ($request->hasFile('fichier')) {
-        Storage::disk('public')->delete($media->fichier);
-
-        $file = $request->file('fichier');
-        $path = $file->store('medias', 'public');
-
-        $media->update([
-            'fichier' => $path,
-            'extension' => $file->extension(),
-            'taille' => $file->getSize() / 1024
-        ]);
-    }
-
-    return redirect()->route('medias.index')
-                     ->with('success', 'Média mis à jour.');
-}
-
-
     public function destroy(Media $media)
-    {
-        Storage::disk('public')->delete($media->fichier);
-        $media->delete();
-
-        return back()->with('success', 'Média supprimé');
+{
+    // Seul l'uploader ou un admin/modérateur peut supprimer
+    if ($media->upload_par !== auth()->id() &&
+        !auth()->user()->hasRole(['admin', 'moderateur'])) {
+        abort(403, 'Action non autorisée');
     }
+
+    if (Storage::disk('public')->exists($media->fichier)) {
+        Storage::disk('public')->delete($media->fichier);
+    }
+    $media->delete();
+
+    return back()->with('success', 'Média supprimé');
+}
 
     public function valider(Media $media)
     {

@@ -1,4 +1,4 @@
-@extends('layouts.app') {{-- ou layouts.front selon ton front --}}
+@extends('layouts')
 
 @section('content')
 

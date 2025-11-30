@@ -40,6 +40,8 @@ return new class extends Migration
         $table->enum('statut', ['pending', 'validated', 'rejected'])
               ->default('pending');
 
+        $table->index(['statut', 'created_at']);
+
         $table->timestamps();
     });
 }
