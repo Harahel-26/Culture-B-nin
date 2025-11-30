@@ -7,7 +7,7 @@
         <h3 class="card-title">Types de médias</h3>
 
         <a href="{{ route('admin.typemedias.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i>
+            <i class="bi bi-plus-circle me-1"></i>
         </a>
     </div>
 
@@ -28,17 +28,17 @@
                     <td class="text-end">
 
                         <a href="{{ route('admin.typemedias.show', $m) }}" class="btn btn-sm btn-info">
-                            <i class="fas fa-eye"></i>
+                            <i class="bi bi-eye"></i>
                         </a>
 
                         <a href="{{ route('admin.typemedias.edit', $m) }}" class="btn btn-sm btn-warning">
-                            <i class="fas fa-edit"></i>
+                            <i class="bi bi-pencil-square"></i>
                         </a>
 
                         <form action="{{ route('admin.typemedias.destroy', $m) }}" method="POST" class="d-inline">
                             @csrf @method('DELETE')
                             <button class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ?')">
-                                <i class="fas fa-trash"></i>
+                                <i class="bi bi-trash"></i>
                             </button>
                         </form>
 

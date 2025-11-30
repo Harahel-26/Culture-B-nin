@@ -46,14 +46,14 @@
                         {{-- Show --}}
                         <a href="{{ route('traductions.show', $t) }}"
                            class="btn btn-sm btn-info">
-                           <i class="fas fa-eye"></i>
+                           <i class="bi bi-eye"></i>
                         </a>
 
                         {{-- Edit → seulement pour le traducteur --}}
                         @if($t->traduit_par == auth()->id())
                             <a href="{{ route('traductions.edit', $t) }}"
                                class="btn btn-sm btn-warning">
-                               <i class="fas fa-edit"></i>
+                               <i class="bi bi-pencil-square"></i>
                             </a>
                         @endif
 
@@ -63,7 +63,7 @@
                                   method="POST" class="d-inline">
                                 @csrf @method('PUT')
                                 <button class="btn btn-sm btn-success">
-                                    <i class="fas fa-check"></i>
+                                    <i class="bi bi-check"></i>
                                 </button>
                             </form>
                         @endif

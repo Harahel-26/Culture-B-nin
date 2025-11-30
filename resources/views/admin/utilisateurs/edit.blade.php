@@ -23,21 +23,12 @@
 
             <div class="row">
 
-                <!-- Prénom -->
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Prénom</label>
-                    <input type="text" name="prenom" class="form-control"
-                        value="{{ old('prenom', $utilisateur->prenom) }}" required>
-                    @error('prenom') <small class="text-danger">{{ $message }}</small> @enderror
-                </div>
-
-                <!-- Nom -->
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Nom</label>
-                    <input type="text" name="nom" class="form-control"
-                        value="{{ old('nom', $utilisateur->nom) }}" required>
-                    @error('nom') <small class="text-danger">{{ $message }}</small> @enderror
-                </div>
+                <!-- Nom complet -->
+<div class="col-12 mb-3">
+    <label class="form-label">Nom complet</label>
+    <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
+    @error('name') <small class="text-danger">{{ $message }}</small> @enderror
+</div>
 
                 <!-- Email -->
                 <div class="col-md-6 mb-3">

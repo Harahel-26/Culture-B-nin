@@ -7,8 +7,8 @@
     <div class="card-header d-flex justify-content-between">
         <h3 class="card-title">Liste des contenus</h3>
 
-        <a href="{{ route('admin.contenus.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i>
+        <a href="{{ route('admin.contenus.create') }}" class="btn btn-primary" title="Ajouter">
+            <i class="bi bi-plus-circle me-1"></i>
         </a>
     </div>
 
@@ -63,13 +63,13 @@
                     <td class="text-end">
 
                         {{-- Show --}}
-                        <a href="{{ route('admin.contenus.show', $contenu) }}" class="btn btn-sm btn-info">
-                            <i class="fas fa-eye"></i>
+                        <a href="{{ route('admin.contenus.show', $contenu) }}" class="btn btn-sm btn-info" title="voir">
+                            <i class="bi bi-eye"></i>
                         </a>
 
                         {{-- Edit --}}
-                        <a href="{{ route('admin.contenus.edit', $contenu) }}" class="btn btn-sm btn-warning">
-                            <i class="fas fa-edit"></i>
+                        <a href="{{ route('admin.contenus.edit', $contenu) }}" class="btn btn-sm btn-warning" title="modifier">
+                            <i class="bi bi-pencil-square"></i>
                         </a>
 
                         {{-- Valider (si pas encore validé) --}}
@@ -78,7 +78,7 @@
                               method="POST" class="d-inline">
                             @csrf @method('PUT')
                             <button class="btn btn-sm btn-success">
-                                <i class="fas fa-check"></i>
+                                <i class="bi bi-check"></i>
                             </button>
                         </form>
                         @endif
@@ -87,8 +87,8 @@
                         <form action="{{ route('admin.contenus.destroy', $contenu) }}"
                               method="POST" class="d-inline">
                             @csrf @method('DELETE')
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ?')">
-                                <i class="fas fa-trash"></i>
+                            <button class="btn btn-sm btn-danger" title="supprimer" onclick="return confirm('Supprimer ?')">
+                                <i class="bi bi-trash"></i>
                             </button>
                         </form>
 

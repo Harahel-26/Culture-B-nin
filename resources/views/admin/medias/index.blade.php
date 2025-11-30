@@ -56,7 +56,7 @@
                         <form method="POST" action="{{ route('medias.valider', $m) }}" class="d-inline">
                             @csrf @method('PUT')
                             <button class="btn btn-sm btn-success">
-                                <i class="fas fa-check"></i>
+                                <i class="bi bi-check"></i>
                             </button>
                         </form>
                         @endif
@@ -75,7 +75,7 @@
                         <form method="POST" action="{{ route('medias.destroy', $m) }}" class="d-inline">
                             @csrf @method('DELETE')
                             <button class="btn btn-sm btn-dark">
-                                <i class="fas fa-trash"></i>
+                                <i class="bi bi-trash"></i>
                             </button>
                         </form>
 

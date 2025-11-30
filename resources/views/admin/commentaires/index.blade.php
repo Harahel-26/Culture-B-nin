@@ -46,7 +46,7 @@
             @if($c->statut != 'validated')
             <form action="{{ route('admin.commentaires.valider', $c) }}" method="POST" class="d-inline">
               @csrf @method('PUT')
-              <button class="btn btn-sm btn-success"><i class="fas fa-check"></i></button>
+              <button class="btn btn-sm btn-success"><i class="bi bi-check"></i></button>
             </form>
             @endif
             @if($c->statut != 'rejected')
@@ -57,7 +57,7 @@
             @endif
             <form action="{{ route('admin.commentaires.destroy', $c) }}" method="POST" class="d-inline">
               @csrf @method('DELETE')
-              <button class="btn btn-sm btn-dark"><i class="fas fa-trash"></i></button>
+              <button class="btn btn-sm btn-dark"><i class="bi bi-trash"></i></button>
             </form>
           </td>
         </tr>

@@ -18,7 +18,7 @@
                 <img src="{{ URL::asset('adminlte/img/user2-160x160.jpg') }}"
                      class="rounded-circle mb-3" width="120">
 
-                <h4>{{ $utilisateur->prenom }} {{ $utilisateur->nom }}</h4>
+                <h4>{{ $utilisateur->name }}</h4>
 
                 <p class="text-muted">{{ $utilisateur->email }}</p>
 

@@ -5,8 +5,8 @@
 
     <div class="card-header d-flex justify-content-between">
         <h3 class="card-title">Liste des régions</h3>
-        <a href="{{ route('admin.regions.create') }}" class="btn btn-primary">
-            <i class="fas fa-plus"></i>
+        <a href="{{ route('admin.regions.create') }}" class="btn btn-primary" title="Ajouter">
+            <i class="bi bi-plus-circle ma-1"></i>
         </a>
     </div>
 
@@ -32,18 +32,18 @@
 
                     <td class="text-end">
 
-                        <a href="{{ route('admin.regions.show', $region) }}" class="btn btn-sm btn-info">
-                            <i class="fas fa-eye"></i>
+                        <a href="{{ route('admin.regions.show', $region) }}" class="btn btn-sm btn-info" title="voir">
+                            <i class="bi bi-eye"></i>
                         </a>
 
-                        <a href="{{ route('admin.regions.edit', $region) }}" class="btn btn-sm btn-warning">
-                            <i class="fas fa-edit"></i>
+                        <a href="{{ route('admin.regions.edit', $region) }}" class="btn btn-sm btn-warning" title="mofifier">
+                            <i class="bi bi-pencil-square"></i>
                         </a>
 
                         <form action="{{ route('admin.regions.destroy', $region) }}" method="POST" class="d-inline">
                             @csrf @method('DELETE')
-                            <button class="btn btn-sm btn-danger" onclick="return confirm('Supprimer ?')">
-                                <i class="fas fa-trash"></i>
+                            <button class="btn btn-sm btn-danger" title="supprimer" onclick="return confirm('Supprimer ?')">
+                                <i class="bi bi-trash"></i>
                             </button>
                         </form>
 

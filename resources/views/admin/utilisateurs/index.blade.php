@@ -13,8 +13,8 @@
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
         <h4 class="card-title mb-0">Liste des utilisateurs</h4>
 
-        <a href="{{ route('utilisateurs.create') }}" class="btn btn-primary">
-            <i class="bi bi-plus-circle me-1"></i> Ajouter
+        <a href="{{ route('utilisateurs.create') }}" class="btn btn-primary" title="Ajouter">
+            <i class="bi bi-plus-circle me-1"></i>
         </a>
     </div>
 
@@ -23,8 +23,8 @@
         <table class="table table-hover align-middle">
             <thead>
                 <tr>
-                    <th>#</th>
-                    <th>Nom & Prénom</th>
+                    <th>N</th>
+                    <th>Nom  Prénom</th>
                     <th>Email</th>
                     <th>Rôle</th>
                     <th>Statut</th>
@@ -39,7 +39,7 @@
                     <td>{{ $u->id }}</td>
 
                     <td>
-                        <strong>{{ $u->prenom }} {{ $u->nom }}</strong>
+                        <strong>{{ $u->name }} </strong>
                     </td>
 
                     <td>{{ $u->email }}</td>
@@ -68,13 +68,13 @@
 
                         {{-- Show --}}
                         <a href="{{ route('utilisateurs.show', $u) }}"
-                           class="btn btn-sm btn-info">
+                           class="btn btn-sm btn-info" title="voir">
                             <i class="bi bi-eye"></i>
                         </a>
 
                         {{-- Edit --}}
                         <a href="{{ route('utilisateurs.edit', $u) }}"
-                           class="btn btn-sm btn-warning">
+                           class="btn btn-sm btn-warning" title="modifier">
                             <i class="bi bi-pencil-square"></i>
                         </a>
 
@@ -84,7 +84,7 @@
                               onsubmit="return confirm('Supprimer cet utilisateur ?')">
                             @csrf
                             @method('DELETE')
-                            <button class="btn btn-sm btn-danger">
+                            <button class="btn btn-sm btn-danger" title="supprimer">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
