@@ -9,34 +9,32 @@
 
 @section('content')
 
-{{-- 🌄 SECTION 1 : DIAPORAMA --}}
-<div id="heroCarousel" class="carousel slide mb-5 shadow" data-bs-ride="carousel">
-    <div class="carousel-inner">
-
+{{-- SECTION 1 : DIAPORAMA --}}
+<div id="heroCarousel" class="carousel slide mb-5 shadow rounded" data-bs-ride="carousel">
+    <div class="carousel-inner rounded">
         <div class="carousel-item active">
             <img src="{{ asset('images/slides/benin1.jpg') }}" class="d-block w-100" style="height:480px; object-fit:cover;">
-            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
-                <h3>Patrimoine Culturel</h3>
+            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-4">
+                <h3><i class="bi bi-gem me-2"></i>Patrimoine Culturel</h3>
                 <p>Un héritage vivant transmis de génération en génération.</p>
             </div>
         </div>
 
         <div class="carousel-item">
             <img src="{{ asset('images/slides/benin2.jpg') }}" class="d-block w-100" style="height:480px; object-fit:cover;">
-            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
-                <h3>Art & Artisanat</h3>
+            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-4">
+                <h3><i class="bi bi-brush me-2"></i>Art & Artisanat</h3>
                 <p>Le savoir-faire béninois, reconnu mondialement.</p>
             </div>
         </div>
 
         <div class="carousel-item">
             <img src="{{ asset('images/slides/benin3.jpg') }}" class="d-block w-100" style="height:480px; object-fit:cover;">
-            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-3">
-                <h3>Langues & Traditions</h3>
+            <div class="carousel-caption d-none d-md-block bg-dark bg-opacity-50 rounded p-4">
+                <h3><i class="bi bi-translate me-2"></i>Langues & Traditions</h3>
                 <p>Une diversité linguistique et culturelle exceptionnelle.</p>
             </div>
         </div>
-
     </div>
 
     <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev">
@@ -47,126 +45,185 @@
     </button>
 </div>
 
-
-
-{{-- 🌍 SECTION 2 : TEXTES + IMAGE DÉGRADÉ --}}
-<div class="row align-items-center mb-5">
-    <div class="col-md-6">
-        <h2 class="fw-bold">À la découverte du Bénin</h2>
-        <p class="text-muted">
-            Terre de traditions, d’histoire et de créativité,
-            le Bénin est l’un des berceaux de la culture africaine.
-            Explorez ses langues, ses récits, ses rythmes, ses arts, ses peuples et son génie créatif.
-        </p>
-
-        <a href="{{ route('front.contenus.index') }}" class="btn btn-success px-4">
-            Explorer les contenus →
-        </a>
-    </div>
-
-    <div class="col-md-6">
-        <div class="position-relative rounded shadow"
-             style="height:280px; background:url('{{ asset('images/culture-degrade.jpg') }}') center/cover;">
-            <div style="position:absolute;top:0;left:0;width:100%;height:100%;
-                        background:linear-gradient(45deg, rgba(0,0,0,0.6), rgba(0,0,0,0.15));
-                        border-radius:8px;">
-            </div>
-        </div>
-    </div>
-</div>
-
-
-
-{{-- 🎵 SECTION 3 : DERNIERS MEDIAS (VIDEOS) --}}
-<h3 class="fw-bold mb-3">🎬 Dernières Vidéos</h3>
-
-<div class="row mb-5">
-    @foreach($latestVideos ?? [] as $video)
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm position-relative">
-                <video class="w-100 rounded-top" height="180" controls preload="metadata">
-                    <source src="{{ asset('storage/' . $video->fichier) }}" type="video/mp4">
-                </video>
-                <div class="p-3">
-                    <h6 class="fw-bold">{{ $video->titre }}</h6>
-                    <p class="text-muted mb-0">{{ $video->description }}</p>
+{{-- SECTION 2 : À LA DÉCOUVERTE --}}
+<div class="content-section">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6">
+                <div class="section-content">
+                    <h2 class="section-title">À la découverte du Bénin</h2>
+                    <p class="section-text">
+                        Terre de traditions, d'histoire et de créativité,
+                        le Bénin est l'un des berceaux de la culture africaine.
+                        Explorez ses langues, ses récits, ses rythmes, ses arts, ses peuples et son génie créatif.
+                    </p>
+                    <a href="{{ route('front.contenus.index') }}" class="btn btn-search">
+                        <i class="bi bi-compass me-2"></i>Explorer les contenus
+                    </a>
                 </div>
             </div>
-        </div>
-    @endforeach
-
-    @if(empty($latestVideos) || count($latestVideos) == 0)
-        <p class="text-muted">Aucune vidéo disponible pour le moment.</p>
-    @endif
-</div>
-
-
-
-{{-- 🖼️ SECTION 4 : GALERIE D’IMAGES --}}
-<h3 class="fw-bold mb-3">📸 Galerie d’images</h3>
-<div class="row g-3 mb-5">
-    @foreach($gallery ?? [] as $img)
-        <div class="col-6 col-md-3">
-            <div class="rounded shadow-sm"
-                 style="height:170px; background:url('{{ asset("storage/".$img->fichier) }}') center/cover;">
-            </div>
-        </div>
-    @endforeach
-
-    @if(empty($gallery) || count($gallery) == 0)
-        <p class="text-muted">Aucune image disponible.</p>
-    @endif
-</div>
-
-
-
-{{-- 📚 SECTION 5 : DERNIERS CONTENUS --}}
-<h3 class="fw-bold mb-3">📝 Derniers Contenus publiés</h3>
-
-<div class="row mb-5">
-    @foreach($latestContenus ?? [] as $c)
-    <div class="col-md-4 mb-4">
-        <div class="card shadow-sm h-100">
-            <img src="{{ asset('images/default-content.jpg') }}" class="card-img-top" style="height:180px; object-fit:cover;">
-            <div class="card-body">
-                <h5 class="fw-bold">{{ $c->titre }}</h5>
-                <p class="text-muted small">{{ Str::limit($c->description, 120) }}</p>
-                <a href="{{ route('front.contenus.show', $c->slug) }}" class="btn btn-outline-success btn-sm">
-                    Lire plus →
-                </a>
+            <div class="col-lg-6">
+                <img src="{{ asset('images/culture-degrade.jpg') }}" alt="Culture béninoise" class="section-image">
             </div>
         </div>
     </div>
-    @endforeach
-
-    @if(empty($latestContenus) || count($latestContenus) == 0)
-        <p class="text-muted">Aucun contenu pour le moment.</p>
-    @endif
 </div>
 
+{{-- SECTION 3 : DERNIERS MÉDIAS VIDÉOS --}}
+<div class="content-section alternate-bg">
+    <div class="container">
+        <h2 class="section-title"><i class="bi bi-camera-reel me-2"></i>Dernières Vidéos</h2>
+        
+        <div class="row g-4">
+            @foreach($latestVideos ?? [] as $video)
+                <div class="col-md-4">
+                    <div class="card card-custom">
+                        <video class="w-100" height="200" controls preload="metadata" style="border-radius: 0;">
+                            <source src="{{ asset('storage/' . $video->fichier) }}" type="video/mp4">
+                        </video>
+                        <div class="card-body">
+                            <h5 class="fw-bold">{{ $video->titre }}</h5>
+                            <p class="text-muted">{{ Str::limit($video->description, 100) }}</p>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
 
-
-{{-- 🔊 SECTION 6 : AUDIOS --}}
-<h3 class="fw-bold mb-3">🔊 Audios & Rythmes</h3>
-
-<div class="row mb-5">
-    @foreach($latestAudios ?? [] as $audio)
-        <div class="col-md-4 mb-3">
-            <div class="card shadow-sm p-3">
-                <h6 class="fw-bold">{{ $audio->titre }}</h6>
-                <audio controls class="w-100">
-                    <source src="{{ asset('storage/' . $audio->fichier) }}" type="audio/mpeg">
-                </audio>
-            </div>
+            @if(empty($latestVideos) || count($latestVideos) == 0)
+                <div class="col-12 text-center">
+                    <p class="text-muted"><i class="bi bi-film me-2"></i>Aucune vidéo disponible pour le moment.</p>
+                </div>
+            @endif
         </div>
-    @endforeach
-
-    @if(empty($latestAudios) || count($latestAudios) == 0)
-        <p class="text-muted">Aucun audio disponible.</p>
-    @endif
+    </div>
 </div>
 
+{{-- SECTION 4 : GALERIE D'IMAGES --}}
+<div class="content-section">
+    <div class="container">
+        <h2 class="section-title"><i class="bi bi-images me-2"></i>Galerie d'images</h2>
+        
+        <div class="row g-3">
+            @foreach($gallery ?? [] as $img)
+                <div class="col-6 col-md-3">
+                    <div class="gallery-img">
+                        <img src="{{ asset('storage/'.$img->fichier) }}" alt="{{ $img->titre ?? 'Image culturelle' }}">
+                    </div>
+                </div>
+            @endforeach
 
+            @if(empty($gallery) || count($gallery) == 0)
+                <div class="col-12 text-center">
+                    <p class="text-muted"><i class="bi bi-image me-2"></i>Aucune image disponible.</p>
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
 
+{{-- SECTION 5 : DERNIERS CONTENUS --}}
+<div class="content-section alternate-bg">
+    <div class="container">
+        <h2 class="section-title"><i class="bi bi-journal-text me-2"></i>Derniers Contenus publiés</h2>
+        
+        <div class="row g-4">
+            @foreach($latestContenus ?? [] as $c)
+                <div class="col-md-4">
+                    <div class="card card-custom">
+                        <img src="{{ asset('images/default-content.jpg') }}" class="card-img-top" alt="{{ $c->titre }}">
+                        <div class="card-body">
+                            <h5 class="fw-bold">{{ $c->titre }}</h5>
+                            <p class="text-muted">{{ Str::limit($c->description, 120) }}</p>
+                            <a href="{{ route('front.contenus.show', $c->slug) }}" class="btn btn-sm btn-search">
+                                <i class="bi bi-book me-2"></i>Lire plus
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+            @if(empty($latestContenus) || count($latestContenus) == 0)
+                <div class="col-12 text-center">
+                    <p class="text-muted"><i class="bi bi-journal me-2"></i>Aucun contenu pour le moment.</p>
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
+
+{{-- SECTION 6 : AUDIOS --}}
+<div class="content-section">
+    <div class="container">
+        <h2 class="section-title"><i class="bi bi-music-note-beamed me-2"></i>Audios & Rythmes</h2>
+        
+        <div class="row g-4">
+            @foreach($latestAudios ?? [] as $audio)
+                <div class="col-md-4">
+                    <div class="card card-custom">
+                        <div class="card-body">
+                            <h5 class="fw-bold"><i class="bi bi-mic me-2"></i>{{ $audio->titre }}</h5>
+                            <audio controls class="w-100 mt-2">
+                                <source src="{{ asset('storage/' . $audio->fichier) }}" type="audio/mpeg">
+                            </audio>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+
+            @if(empty($latestAudios) || count($latestAudios) == 0)
+                <div class="col-12 text-center">
+                    <p class="text-muted"><i class="bi bi-volume-up me-2"></i>Aucun audio disponible.</p>
+                </div>
+            @endif
+        </div>
+    </div>
+</div>
 
 @endsection
+
+@push('styles')
+<style>
+    /* Styles spécifiques pour cette page */
+    .gallery-img {
+        border-radius: 12px;
+        overflow: hidden;
+        height: 200px;
+        transition: all 0.4s ease;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+    }
+
+    .gallery-img:hover {
+        transform: scale(1.03);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    }
+
+    .gallery-img img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .btn-search {
+        border-radius: 30px;
+        background: linear-gradient(135deg, var(--accent-brown) 0%, var(--accent-dark) 100%);
+        color: white;
+        font-weight: 600;
+        padding: 0.8rem 2rem;
+        border: none;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-search:hover {
+        transform: scale(1.05);
+        box-shadow: 0 5px 15px rgba(139, 115, 85, 0.4);
+        color: white;
+    }
+
+    audio {
+        border-radius: 25px;
+        height: 40px;
+    }
+</style>
+@endpush
