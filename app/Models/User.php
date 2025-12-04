@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
+use App\Traits\HasAchats;
 
 
 class User extends Authenticatable
@@ -15,6 +16,7 @@ class User extends Authenticatable
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
     use HasApiTokens, Notifiable, HasRoles;
+    use HasAchats;
 
     /**
      * The attributes that are mass assignable.
@@ -78,4 +80,40 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function contenusAchetes()
+    {
+        return $this->belongsToMany(Contenu::class, 'paiements')
+                    ->wherePivot('statut', 'paye')
+                    ->withTimestamps();
+    }
+
+    public function aAcheteContenu($contenuId)
+    {
+        return $this->contenusAchetes()
+                    ->where('contenu_id', $contenuId)
+                    ->exists();
+    }
+    //traductions
+    public function traductions()
+    {
+        return $this->hasMany(ContenuTraduction::class, 'traduit_par');
+    }
+    public function scopeActif($query)
+{
+    return $query->where('is_active', true);
+}
+
+// Scope pour les contributeurs
+public function scopeContributeurs($query)
+{
+    return $query->whereHas('roles', function($q) {
+        $q->where('name', 'contributeur');
+    });
+}
+
+// Vérifie si l'utilisateur est actif
+public function estActif()
+{
+    return $this->is_active;
+}
 }

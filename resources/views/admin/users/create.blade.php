@@ -1,9 +1,9 @@
-@extends('layouts')
+@extends('admin.layouts')
 
 @section('page-title', 'Ajouter un utilisateur')
 
 @section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('utilisateurs.index') }}">Utilisateurs</a></li>
+    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Utilisateurs</a></li>
     <li class="breadcrumb-item active">Créer</li>
 @endsection
 
@@ -17,7 +17,7 @@
 
         <div class="card-body">
 
-            <form action="{{ route('utilisateurs.store') }}" method="POST">
+            <form action="{{ route('admin.users.store') }}" method="POST">
                 @csrf
 
                 <div class="row">
@@ -67,7 +67,7 @@
                 </div>
 
                 <div class="text-end mt-3">
-                    <a href="{{ route('utilisateurs.index') }}" class="btn btn-secondary">
+                    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
                         <i class="bi bi-arrow-left"></i> Annuler
                     </a>
 

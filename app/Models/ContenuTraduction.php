@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Contenu;
+use App\Models\Langue;
+use App\Models\User;
 
 class ContenuTraduction extends Model
 {
@@ -39,6 +42,7 @@ class ContenuTraduction extends Model
     {
         return $this->belongsTo(Langue::class);
     }
+
 
     // Utilisateur qui a créé la traduction
     public function traducteur()

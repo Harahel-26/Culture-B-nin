@@ -15,44 +15,35 @@ class UserController extends Controller
         $this->middleware(['auth', 'role:admin']);
     }
 
-    /**
-     * LISTE DES UTILISATEURS
-     */
     public function index()
     {
-        $utilisateurs = User::orderBy('created_at', 'desc')
-                            ->with('roles')
-                            ->paginate(10);
+        $users = User::orderBy('created_at', 'desc')
+                    ->with('roles')
+                    ->paginate(10);
 
-        return view('admin.utilisateurs.index', compact('utilisateurs'));
+        return view('admin.users.index', compact('users')); // Changé: utilisateurs -> users
     }
 
-    /**
-     * FORMULAIRE DE CRÉATION
-     */
     public function create()
     {
         $roles = Role::all();
-        return view('admin.utilisateurs.create', compact('roles'));
+        return view('admin.users.create', compact('roles'));
     }
 
-    /**
-     * ENREGISTRER UTILISATEUR
-     */
     public function store(Request $request)
     {
         $data = $request->validate([
-            'prenom'    => 'required|string|max:255',
-            'nom'       => 'required|string|max:255',
-            'email'     => 'required|email|unique:users,email',
-            'password'  => 'required|string|min:8|confirmed',
-            'role'      => 'required|exists:roles,id',
+            'name' => 'required|string|max:255',
+            'username' => 'nullable|string|max:255|unique:users',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|exists:roles,id',
         ]);
 
         $user = User::create([
-            'prenom'   => $data['prenom'],
-            'nom'      => $data['nom'],
-            'email'    => $data['email'],
+            'name' => $data['name'],
+            'username' => $data['username'] ?? null,
+            'email' => $data['email'],
             'password' => Hash::make($data['password']),
         ]);
 
@@ -60,67 +51,56 @@ class UserController extends Controller
         $role = Role::find($data['role']);
         $user->assignRole($role->name);
 
-        return redirect()->route('utilisateurs.index')
+        return redirect()->route('admin.users.index') // Changé la route
             ->with('success', 'Utilisateur créé avec succès.');
     }
 
-    /**
-     * AFFICHER UN UTILISATEUR
-     */
-    public function show(User $utilisateur)
+    public function show(User $user)
     {
-        return view('admin.utilisateurs.show', compact('utilisateur'));
+        return view('admin.users.show', compact('user'));
     }
 
-    /**
-     * FORMULAIRE EDIT
-     */
-    public function edit(User $utilisateur)
+    public function edit(User $user)
     {
         $roles = Role::all();
-
-        return view('admin.utilisateurs.edit', compact('utilisateur', 'roles'));
+        return view('admin.users.edit', compact('user', 'roles'));
     }
 
-    /**
-     * METTRE À JOUR
-     */
-    public function update(Request $request, User $utilisateur)
+    public function update(Request $request, User $user)
     {
         $data = $request->validate([
-            'prenom'    => 'required|string|max:255',
-            'nom'       => 'required|string|max:255',
-            'email'     => 'required|email|unique:users,email,' . $utilisateur->id,
-            'password'  => 'nullable|string|min:8|confirmed',
-            'role'      => 'required|exists:roles,id',
+            'name' => 'required|string|max:255',
+            'username' => 'nullable|string|max:255|unique:users,username,' . $user->id,
+            'email' => 'required|email|unique:users,email,' . $user->id,
+            'password' => 'nullable|string|min:8|confirmed',
+            'role' => 'required|exists:roles,id',
         ]);
 
         // Update infos
-        $utilisateur->update([
-            'prenom'  => $data['prenom'],
-            'nom'     => $data['nom'],
-            'email'   => $data['email'],
-            'password'=> $data['password']
-                            ? Hash::make($data['password'])
-                            : $utilisateur->password,
-        ]);
+        $updateData = [
+            'name' => $data['name'],
+            'username' => $data['username'] ?? null,
+            'email' => $data['email'],
+        ];
+
+        if (!empty($data['password'])) {
+            $updateData['password'] = Hash::make($data['password']);
+        }
+
+        $user->update($updateData);
 
         // Update rôle
         $role = Role::find($data['role']);
-        $utilisateur->syncRoles([$role->name]);
+        $user->syncRoles([$role->name]);
 
-        return redirect()->route('utilisateurs.index')
+        return redirect()->route('admin.users.index')
             ->with('success', 'Utilisateur mis à jour avec succès.');
     }
 
-    /**
-     * SUPPRESSION
-     */
-    public function destroy(User $utilisateur)
+    public function destroy(User $user)
     {
-        $utilisateur->delete();
-
-        return redirect()->route('utilisateurs.index')
+        $user->delete();
+        return redirect()->route('admin.users.index')
             ->with('success', 'Utilisateur supprimé avec succès.');
     }
 }

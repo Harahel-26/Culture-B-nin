@@ -21,7 +21,7 @@ class ContenuController extends Controller
 
     public function index()
     {
-        $contenus = Contenu::with(['langue','region','typecontenu','auteur'])
+        $contenus = Contenu::with(['langue','region','typecontenu','utilisateur'])
                             ->orderBy('created_at','desc')
                             ->paginate(10);
 

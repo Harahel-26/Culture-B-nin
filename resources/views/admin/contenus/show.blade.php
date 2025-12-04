@@ -1,4 +1,4 @@
-@extends('layouts')
+@extends('admin.layouts')
 
 @section('content')
 
@@ -23,7 +23,7 @@
             <strong>Type :</strong> {{ $contenu->typecontenu->nom }} <br>
             <strong>Langue :</strong> {{ $contenu->langue->nom }} <br>
             <strong>Région :</strong> {{ $contenu->region->nom ?? '—' }} <br>
-            <strong>Auteur :</strong> {{ $contenu->auteur->name }} <br>
+            <strong>Auteur :</strong> {{ $contenu->utilisateur->name }} <br>
             <strong>Status :</strong>
                 @if($contenu->status == 'validated')
                     <span class="badge bg-success">Validé</span>

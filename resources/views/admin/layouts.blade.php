@@ -44,7 +44,7 @@
                             <img src="{{ asset('adminlte/img/user2-160x160.jpg') }}"
                                  class="user-image rounded-circle shadow" alt="User">
                             <span class="d-none d-md-inline">
-                                {{ Auth::user()->prenom }} {{ substr(Auth::user()->nom, 0, 1) }}.
+                                {{ Auth::user()->name }}.
                             </span>
                         </a>
 
@@ -54,13 +54,13 @@
                                      class="rounded-circle shadow">
 
                                 <p>
-                                    {{ Auth::user()->prenom }} {{ Auth::user()->nom }}
+                                    {{ Auth::user()->name }}
                                     <small>{{ implode(', ', Auth::user()->getRoleNames()->toArray()) }}</small>
                                 </p>
                             </li>
 
                             <li class="user-footer">
-                                <a href="{{ route('profile.edit') }}" class="btn btn-default">Profil</a>
+                                <a href="{{ route('front.profil.edit', auth()->user()) }}" class="btn btn-default">Profil</a>
 
                                 <form action="{{ route('logout') }}" method="POST" class="d-inline">
                                     @csrf
@@ -145,7 +145,7 @@
                     <li class="nav-header mt-3">UTILISATEURS & RÔLES</li>
 
                     <li class="nav-item">
-                        <a href="{{ route('utilisateurs.index') }}" class="nav-link">
+                        <a href="{{ route('admin.users.index') }}" class="nav-link">
                             <i class="nav-icon bi bi-people"></i>
                             <p>Utilisateurs</p>
                         </a>
@@ -165,6 +165,12 @@
                         <a href="{{ route('admin.langues.index') }}" class="nav-link">
                             <i class="nav-icon bi bi-translate"></i>
                             <p>Langues</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="#" class="nav-link">
+                            <i class="nav-icon bi bi-translate"></i>
+                            <p>Paiements</p>
                         </a>
                     </li>
 

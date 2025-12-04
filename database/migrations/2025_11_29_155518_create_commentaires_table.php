@@ -30,11 +30,6 @@ return new class extends Migration
         // Texte du commentaire
         $table->text('commentaire');
 
-        // Réponses (commentaires imbriqués)
-        $table->foreignId('parent_id')
-              ->nullable()
-              ->constrained('commentaires')
-              ->nullOnDelete();
 
         // statut de modération
         $table->enum('statut', ['pending', 'validated', 'rejected'])

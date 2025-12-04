@@ -9,10 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
-
 class AuthenticatedSessionController extends Controller
 {
-
     /**
      * Display the login view.
      */
@@ -30,7 +28,19 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        // Redirection intelligente selon le rôle de l'utilisateur
+        $user = Auth::user();
+        
+        if ($user->hasRole('admin')) {
+            // Admin va vers le dashboard admin
+            return redirect()->route('admin.dashboards.index');
+        } elseif ($user->hasRole(['contributeur', 'moderateur'])) {
+            // Contributeurs et modérateurs vont vers leur profil
+            return redirect()->route('front.profil.index');
+        } else {
+            // Simple utilisateur va vers l'accueil
+            return redirect()->route('front.accueil');
+        }
     }
 
     /**
@@ -44,6 +54,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('front.accueil');
     }
 }

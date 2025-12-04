@@ -8,54 +8,74 @@ use Illuminate\Http\Request;
 
 class CommentaireController extends Controller
 {
-    public function __construct()
-    {
-        $this->middleware(['auth','role:admin|moderateur']);
-    }
-
-    // liste de tous les commentaires (avec filtres possibles)
+    /**
+     * Afficher la liste des commentaires avec filtres
+     */
     public function index(Request $request)
     {
-        $query = Commentaire::with(['auteur','contenu']);
+        $query = Commentaire::with(['contenu', 'utilisateur'])
+            ->orderBy('created_at', 'desc');
 
-        if ($request->filled('statut')) {
+        // Filtre par statut
+        if ($request->has('statut')) {
             $query->where('statut', $request->statut);
         }
 
-        $commentaires = $query->orderBy('created_at','desc')->paginate(20);
+        $commentaires = $query->paginate(20);
 
-        return view('admin.commentaires.index', compact('commentaires'));
+        $stats = [
+            'total' => Commentaire::count(),
+            'pending' => Commentaire::where('statut', 'pending')->count(),
+            'validated' => Commentaire::where('statut', 'validated')->count(),
+            'rejected' => Commentaire::where('statut', 'rejected')->count(),
+        ];
+
+        return view('admin.commentaires.index', compact('commentaires', 'stats'));
     }
 
-    public function show(Commentaire $commentaire)
+    /**
+     * Valider un commentaire
+     */
+    public function valider($id)
     {
-        return view('admin.commentaires.show', compact('commentaire'));
+        $commentaire = Commentaire::findOrFail($id);
+        $commentaire->update(['statut' => 'validated']);
+
+        return redirect()->route('admin.commentaires.index')
+            ->with('success', 'Commentaire validé avec succès.');
     }
 
-    // valider
-    public function valider(Commentaire $commentaire)
+    /**
+     * Rejeter un commentaire
+     */
+    public function rejeter($id)
     {
-        $commentaire->update([
-            'statut' => 'validated',
-        ]);
+        $commentaire = Commentaire::findOrFail($id);
+        $commentaire->update(['statut' => 'rejected']);
 
-        // option : notifier l'auteur ici (plus tard)
-        return back()->with('success', 'Commentaire validé.');
+        return redirect()->route('admin.commentaires.index')
+            ->with('success', 'Commentaire rejeté.');
     }
 
-    // rejeter
-    public function rejeter(Commentaire $commentaire)
+    /**
+     * Supprimer un commentaire (admin)
+     */
+    public function destroy($id)
     {
-        $commentaire->update([
-            'statut' => 'rejected',
-        ]);
-
-        return back()->with('success', 'Commentaire rejeté.');
-    }
-
-    public function destroy(Commentaire $commentaire)
-    {
+        $commentaire = Commentaire::findOrFail($id);
         $commentaire->delete();
-        return back()->with('success', 'Commentaire supprimé.');
+
+        return redirect()->route('admin.commentaires.index')
+            ->with('success', 'Commentaire supprimé définitivement.');
+    }
+
+    /**
+     * Voir les détails d'un commentaire
+     */
+    public function show($id)
+    {
+        $commentaire = Commentaire::with(['contenu', 'utilisateur'])->findOrFail($id);
+
+        return view('admin.commentaires.show', compact('commentaire'));
     }
 }

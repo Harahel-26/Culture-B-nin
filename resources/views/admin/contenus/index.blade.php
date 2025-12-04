@@ -1,4 +1,4 @@
-@extends('layouts')
+@extends('admin.layouts')
 
 @section('content')
 
@@ -46,7 +46,7 @@
                     <td>{{ $contenu->langue->nom }}</td>
                     <td>{{ $contenu->region->nom ?? '—' }}</td>
                     <td>{{ $contenu->typecontenu->nom }}</td>
-                    <td>{{ $contenu->auteur->name }}</td>
+                    <td>{{ $contenu->utilisateur->name }}</td>
 
                     <td>
                         @if($contenu->status == 'pending')

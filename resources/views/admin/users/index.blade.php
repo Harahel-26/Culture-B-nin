@@ -1,4 +1,4 @@
-@extends('layouts')
+@extends('admin.layouts')
 
 @section('page-title', 'Utilisateurs')
 
@@ -13,7 +13,7 @@
     <div class="card-header bg-white d-flex justify-content-between align-items-center">
         <h4 class="card-title mb-0">Liste des utilisateurs</h4>
 
-        <a href="{{ route('utilisateurs.create') }}" class="btn btn-primary" title="Ajouter">
+        <a href="{{ route('admin.users.create') }}" class="btn btn-primary" title="Ajouter">
             <i class="bi bi-plus-circle me-1"></i>
         </a>
     </div>
@@ -34,7 +34,7 @@
             </thead>
 
             <tbody>
-                @foreach($utilisateurs as $u)
+                @foreach($users as $u)
                 <tr>
                     <td>{{ $u->id }}</td>
 
@@ -67,19 +67,19 @@
                     <td class="text-end">
 
                         {{-- Show --}}
-                        <a href="{{ route('utilisateurs.show', $u) }}"
+                        <a href="{{ route('admin.users.show', $u) }}"
                            class="btn btn-sm btn-info" title="voir">
                             <i class="bi bi-eye"></i>
                         </a>
 
                         {{-- Edit --}}
-                        <a href="{{ route('utilisateurs.edit', $u) }}"
+                        <a href="{{ route('admin.users.edit', $u) }}"
                            class="btn btn-sm btn-warning" title="modifier">
                             <i class="bi bi-pencil-square"></i>
                         </a>
 
                         {{-- Delete --}}
-                        <form action="{{ route('utilisateurs.destroy', $u) }}"
+                        <form action="{{ route('admin.users.destroy', $u) }}"
                               method="POST" class="d-inline"
                               onsubmit="return confirm('Supprimer cet utilisateur ?')">
                             @csrf
@@ -97,7 +97,7 @@
 
         <!-- Pagination -->
         <div class="mt-3">
-            {{ $utilisateurs->links() }}
+            {{ $users->links() }}
         </div>
 
     </div>

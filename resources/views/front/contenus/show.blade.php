@@ -1,327 +1,269 @@
-@extends('front.layouts.app')
-
-@section('title', $contenu->titre . ' - Culture Bénin')
-
-@section('content')
-
-<div class="container py-4">
-
-    {{-- Fil d'Ariane --}}
-    <nav aria-label="breadcrumb" class="mb-4">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{{ route('front.accueil') }}">Accueil</a></li>
-            <li class="breadcrumb-item"><a href="{{ route('front.contenus.index') }}">Contenus</a></li>
-            <li class="breadcrumb-item active">{{ Str::limit($contenu->titre, 50) }}</li>
-        </ol>
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ $contenu->titre }} - Culture Bénin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .contenu-media {
+            max-width: 100%;
+            height: auto;
+            border-radius: 8px;
+        }
+        .premium-badge {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            color: #000;
+            font-weight: bold;
+        }
+        .star-rating {
+            color: #FFD700;
+            font-size: 1.2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container">
+            <a class="navbar-brand" href="{{ route('front.accueil') }}">← Retour à l'accueil</a>
+        </div>
     </nav>
 
-    {{-- En-tête --}}
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <h1 class="fw-bold text-primary">{{ $contenu->titre }}</h1>
-
-            {{-- Métadonnées --}}
-            <div class="d-flex flex-wrap gap-3 mb-3">
-                <span class="badge bg-success">{{ $contenu->typecontenu->nom }}</span>
-                <span class="badge bg-info text-dark">
-                    <i class="bi bi-translate"></i> {{ $contenu->langue->nom }}
-                </span>
-                <span class="badge bg-warning text-dark">
-                    <i class="bi bi-geo-alt"></i> {{ $contenu->region->nom }}
-                </span>
-
-                {{-- Notes --}}
-                @if($totalNotes > 0)
-                <span class="badge bg-light text-dark">
-                    <i class="bi bi-star-fill text-warning"></i>
-                    {{ number_format($moyenneNotes, 1) }} ({{ $totalNotes }} avis)
-                </span>
+    <!-- Contenu principal -->
+    <div class="container py-5">
+        <article>
+            <!-- En-tête du contenu -->
+            <header class="mb-4">
+                @if($contenu->is_premium)
+                <span class="badge premium-badge mb-2">Contenu Premium</span>
                 @endif
-            </div>
 
-            {{-- Auteur et date --}}
-            <div class="text-muted small">
-                <i class="bi bi-person"></i> Par {{ $contenu->auteur->name }}
-                • <i class="bi bi-calendar"></i> {{ $contenu->created_at->translatedFormat('d F Y') }}
-            </div>
-        </div>
-    </div>
+                <h1 class="display-5">{{ $contenu->titre }}</h1>
 
-    <div class="row">
+                <div class="text-muted mb-3">
+                    <p>
+                        Par <strong>{{ $contenu->auteur->name ?? 'Auteur inconnu' }}</strong>
+                        | Publié le {{ $contenu->created_at->format('d/m/Y') }}
+                        | Langue : {{ $contenu->langue->nom ?? 'Non spécifié' }}
+                        | Région : {{ $contenu->region->nom ?? 'Non spécifié' }}
+                    </p>
+                </div>
 
-        {{-- Contenu principal --}}
-        <div class="col-lg-8">
-
-            {{-- Image principale --}}
-            @if($contenu->image_couverture)
-            <div class="mb-4">
-                <img src="{{ asset('storage/'.$contenu->image_couverture) }}"
+                <!-- Image de couverture -->
+                @if($contenu->image_couverture)
+                <img src="{{ asset('storage/' . $contenu->image_couverture) }}"
                      alt="{{ $contenu->titre }}"
-                     class="img-fluid rounded shadow-sm w-100"
-                     style="max-height: 400px; object-fit: cover;">
-            </div>
-            @endif
-
-            {{-- Description --}}
-            @if($contenu->description)
-            <div class="mb-4">
-                <h5 class="fw-bold">Description</h5>
-                <p class="lead">{{ $contenu->description }}</p>
-            </div>
-            @endif
-
-            {{-- Contenu texte --}}
-            @if($contenu->contenu_texte)
-            <div class="mb-4">
-                <div class="content-text">
-                    {!! nl2br(e($contenu->contenu_texte)) !!}
-                </div>
-            </div>
-            @endif
-
-            {{-- Médias associés --}}
-            @if($contenu->medias->count() > 0)
-            <div class="mb-5">
-                <h5 class="fw-bold mb-3">📁 Médias associés</h5>
-
-                {{-- Images --}}
-                @php $images = $contenu->medias->where('type_media_id', 1); @endphp
-                @if($images->count() > 0)
-                <div class="mb-4">
-                    <h6 class="fw-semibold">Images ({{ $images->count() }})</h6>
-                    <div class="row g-2">
-                        @foreach($images as $media)
-                        <div class="col-6 col-md-3">
-                            <img src="{{ asset('storage/'.$media->fichier) }}"
-                                 class="img-fluid rounded shadow-sm"
-                                 style="height: 120px; width: 100%; object-fit: cover;"
-                                 data-bs-toggle="modal"
-                                 data-bs-target="#imageModal"
-                                 data-src="{{ asset('storage/'.$media->fichier) }}"
-                                 data-title="{{ $media->titre ?? $contenu->titre }}">
-                        </div>
-                        @endforeach
-                    </div>
-                </div>
+                     class="img-fluid rounded mb-4"
+                     style="max-height: 400px; object-fit: cover; width: 100%;">
                 @endif
+            </header>
 
-                {{-- Vidéos --}}
-                @php $videos = $contenu->medias->where('type_media_id', 2); @endphp
-                @if($videos->count() > 0)
-                <div class="mb-4">
-                    <h6 class="fw-semibold">Vidéos ({{ $videos->count() }})</h6>
-                    <div class="row g-3">
-                        @foreach($videos as $media)
-                        <div class="col-md-6">
-                            <div class="card shadow-sm">
-                                <video controls class="w-100 rounded-top" style="height: 200px;">
-                                    <source src="{{ asset('storage/'.$media->fichier) }}" type="video/mp4">
-                                    Votre navigateur ne supporte pas la lecture vidéo.
-                                </video>
-                                @if($media->titre)
-                                <div class="card-body">
-                                    <p class="card-text small">{{ $media->titre }}</p>
-                                </div>
-                                @endif
+            <!-- Description -->
+            @if($contenu->description)
+            <div class="alert alert-info mb-4">
+                <h5>Description</h5>
+                <p class="mb-0">{{ $contenu->description }}</p>
+            </div>
+            @endif
+
+            <!-- Contenu texte -->
+            <div class="mb-5">
+                <h3>Contenu</h3>
+
+                @if($contenu->is_premium && !$canView)
+                    <!-- Aperçu gratuit pour contenu premium non acheté -->
+                    <div class="card border-warning">
+                        <div class="card-body">
+                            <p>{{ Str::limit($contenu->contenu_texte, 500) }}</p>
+
+                            <div class="alert alert-warning mt-3">
+                                <h5>Contenu Premium</h5>
+                                <p>Ce contenu est réservé aux utilisateurs premium.</p>
+
+                                @auth
+                                    <a href="{{ route('front.paiement.init', $contenu) }}"
+                                       class="btn btn-primary">
+                                        Acheter pour {{ number_format($contenu->prix, 0, ',', ' ') }} FCFA
+                                    </a>
+                                @else
+                                    <a href="{{ route('login') }}" class="btn btn-primary">
+                                        Se connecter pour acheter
+                                    </a>
+                                @endauth
                             </div>
                         </div>
-                        @endforeach
                     </div>
-                </div>
-                @endif
-
-                {{-- Audios --}}
-                @php $audios = $contenu->medias->where('type_media_id', 3); @endphp
-                @if($audios->count() > 0)
-                <div class="mb-4">
-                    <h6 class="fw-semibold">Audios ({{ $audios->count() }})</h6>
-                    @foreach($audios as $media)
-                    <div class="card shadow-sm mb-2">
+                @else
+                    <!-- Contenu complet (gratuit ou premium acheté) -->
+                    <div class="card">
                         <div class="card-body">
-                            <h6 class="card-title">{{ $media->titre ?? 'Audio' }}</h6>
-                            <audio controls class="w-100">
-                                <source src="{{ asset('storage/'.$media->fichier) }}" type="audio/mpeg">
-                                Votre navigateur ne supporte pas la lecture audio.
-                            </audio>
-                            @if($media->description)
-                            <p class="card-text text-muted small mt-2">{{ $media->description }}</p>
-                            @endif
+                            <div class="contenu-texte">
+                                {!! nl2br(e($contenu->contenu_texte)) !!}
+                            </div>
+                        </div>
+                    </div>
+                @endif
+            </div>
+
+            <!-- Galerie média -->
+            @if($contenu->medias->count() > 0)
+            <div class="mb-5">
+                <h3>Galerie multimédia</h3>
+                <div class="row">
+                    @foreach($contenu->medias as $media)
+                    <div class="col-md-4 mb-3">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                @if($media->type_media_id == 1) <!-- Image -->
+                                    <img src="{{ asset('storage/' . $media->fichier) }}"
+                                         alt="{{ $media->titre }}"
+                                         class="contenu-media">
+                                @elseif($media->type_media_id == 2) <!-- Vidéo -->
+                                    <video controls class="contenu-media">
+                                        <source src="{{ asset('storage/' . $media->fichier) }}">
+                                        Votre navigateur ne supporte pas la vidéo.
+                                    </video>
+                                @elseif($media->type_media_id == 3) <!-- Audio -->
+                                    <audio controls class="w-100">
+                                        <source src="{{ asset('storage/' . $media->fichier) }}">
+                                        Votre navigateur ne supporte pas l'audio.
+                                    </audio>
+                                @endif
+
+                                @if($media->titre)
+                                <p class="mt-2 mb-0 text-muted">{{ $media->titre }}</p>
+                                @endif
+                            </div>
                         </div>
                     </div>
                     @endforeach
                 </div>
-                @endif
             </div>
             @endif
 
-            {{-- Section Commentaires --}}
+            <!-- Commentaires -->
             <div class="mb-5">
-                <h5 class="fw-bold mb-3">💬 Commentaires ({{ $contenu->commentaires->count() }})</h5>
+                <h3>Commentaires ({{ $contenu->commentaires->count() }})</h3>
 
-                {{-- Formulaire commentaire --}}
+                <!-- Formulaire de commentaire -->
                 @auth
-                <div class="card shadow-sm mb-4">
+                <div class="card mb-4">
                     <div class="card-body">
-                        <form action="{{ route('commentaires.store') }}" method="POST">
+                        <form action="{{ route('front.commentaires.store') }}" method="POST">
                             @csrf
                             <input type="hidden" name="contenu_id" value="{{ $contenu->id }}">
 
                             <div class="mb-3">
-                                <label class="form-label fw-semibold">Votre note</label>
-                                <div class="rating-stars">
-                                    @for($i = 5; $i >= 1; $i--)
-                                    <input type="radio" id="star{{ $i }}" name="note" value="{{ $i }}" required>
-                                    <label for="star{{ $i }}" class="star-label">
-                                        <i class="bi bi-star"></i>
-                                    </label>
-                                    @endfor
-                                </div>
+                                <label class="form-label">Votre commentaire</label>
+                                <textarea name="commentaire" class="form-control" rows="3" required></textarea>
                             </div>
 
                             <div class="mb-3">
-                                <label class="form-label fw-semibold">Votre commentaire</label>
-                                <textarea name="commentaire" class="form-control" rows="4"
-                                          placeholder="Partagez votre avis..." required></textarea>
+                                <label class="form-label">Note (optionnelle)</label>
+                                <select name="note" class="form-control">
+                                    <option value="">Sans note</option>
+                                    <option value="5">★★★★★ Excellent</option>
+                                    <option value="4">★★★★☆ Très bien</option>
+                                    <option value="3">★★★☆☆ Bien</option>
+                                    <option value="2">★★☆☆☆ Moyen</option>
+                                    <option value="1">★☆☆☆☆ Pas bien</option>
+                                </select>
                             </div>
 
-                            <button type="submit" class="btn btn-success">
-                                <i class="bi bi-send"></i> Publier le commentaire
-                            </button>
+                            <button type="submit" class="btn btn-primary">Publier le commentaire</button>
                         </form>
                     </div>
                 </div>
                 @else
                 <div class="alert alert-info">
-                    <a href="{{ route('login') }}" class="fw-bold">Connectez-vous</a> pour laisser un commentaire.
+                    <a href="{{ route('login') }}">Connectez-vous</a> pour laisser un commentaire.
                 </div>
                 @endauth
 
-                {{-- Liste des commentaires --}}
-                <div class="comments-list">
-                    @forelse($contenu->commentaires as $commentaire)
-                    <div class="card shadow-sm mb-3">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-between align-items-start mb-2">
-                                <div>
-                                    <strong>{{ $commentaire->auteur->name }}</strong>
-                                    <span class="text-warning ms-2">
-                                        @for($i = 1; $i <= 5; $i++)
-                                        <i class="bi bi-star{{ $i <= $commentaire->note ? '-fill' : '' }}"></i>
-                                        @endfor
-                                    </span>
-                                </div>
-                                <small class="text-muted">
-                                    {{ $commentaire->created_at->diffForHumans() }}
-                                </small>
-                            </div>
-                            <p class="mb-0">{{ $commentaire->commentaire }}</p>
-                        </div>
-                    </div>
-                    @empty
-                    <div class="text-center text-muted py-4">
-                        <i class="bi bi-chat-dots display-4"></i>
-                        <p class="mt-2">Aucun commentaire pour le moment.</p>
-                    </div>
-                    @endforelse
+                <!-- Liste des commentaires -->
+<div class="mt-4">
+    @forelse($contenu->commentaires as $commentaire)
+    <div class="card mb-3">
+        <div class="card-body">
+            <div class="d-flex justify-content-between align-items-start">
+                <div>
+                    <strong>{{ $commentaire->utilisateur->name ?? 'Utilisateur' }}</strong>
+                    <small class="text-muted ms-2">
+                        {{ $commentaire->created_at->diffForHumans() }}
+                    </small>
                 </div>
+
+                @if($commentaire->note)
+                <div class="star-rating" title="{{ $commentaire->note }}/5">
+                    {{ $commentaire->etoiles() }}
+                </div>
+                @endif
             </div>
 
+            <p class="mt-2 mb-0">{{ $commentaire->commentaire }}</p>
+
+            <!-- Bouton supprimer (seulement pour l'auteur ou admin) -->
+            @auth
+                @if(auth()->id() == $commentaire->user_id || auth()->user()->hasRole(['admin', 'moderateur']))
+                <form action="{{ route('front.commentaires.destroy', $commentaire->id) }}"
+                      method="POST"
+                      class="mt-2">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="btn btn-sm btn-outline-danger">
+                        Supprimer
+                    </button>
+                </form>
+                @endif
+            @endauth
         </div>
+    </div>
+    @empty
+    <div class="alert alert-light">
+        Aucun commentaire pour le moment. Soyez le premier à commenter !
+    </div>
+    @endforelse
+</div>
 
-        {{-- Sidebar --}}
-        <div class="col-lg-4">
+            <!-- Contenus similaires -->
+            @if($contenusSimilaires->count() > 0)
+            <div class="mt-5">
+                <h3>Contenus similaires</h3>
+                <div class="row">
+                    @foreach($contenusSimilaires as $similaire)
+                    <div class="col-md-3 mb-4">
+                        <div class="card h-100">
+                            @if($similaire->image_couverture)
+                            <img src="{{ asset('storage/' . $similaire->image_couverture) }}"
+                                 class="card-img-top"
+                                 alt="{{ $similaire->titre }}"
+                                 style="height: 150px; object-fit: cover;">
+                            @endif
 
-            {{-- Suggestions --}}
-            @if($suggestions->count() > 0)
-            <div class="card shadow-sm sticky-top" style="top: 20px;">
-                <div class="card-header bg-white">
-                    <h6 class="fw-bold mb-0">📚 Vous aimerez aussi</h6>
-                </div>
-                <div class="card-body">
-                    @foreach($suggestions as $suggestion)
-                    <a href="{{ route('front.contenus.show', $suggestion->slug) }}"
-                       class="text-decoration-none text-dark">
-                        <div class="d-flex mb-3 pb-3 border-bottom">
-                            <img src="{{ $suggestion->image_couverture ? asset('storage/'.$suggestion->image_couverture) : asset('images/default-content.jpg') }}"
-                                 class="rounded me-3"
-                                 style="width: 60px; height: 60px; object-fit: cover;">
-                            <div class="flex-grow-1">
-                                <h6 class="fw-semibold mb-1">{{ Str::limit($suggestion->titre, 50) }}</h6>
-                                <small class="text-muted">
-                                    {{ $suggestion->typecontenu->nom }} •
-                                    {{ $suggestion->created_at->diffForHumans() }}
-                                </small>
+                            <div class="card-body">
+                                <h6 class="card-title">{{ Str::limit($similaire->titre, 50) }}</h6>
+                                <a href="{{ route('front.contenus.show', $similaire->slug) }}"
+                                   class="btn btn-sm btn-outline-primary">
+                                    Voir
+                                </a>
                             </div>
                         </div>
-                    </a>
+                    </div>
                     @endforeach
                 </div>
             </div>
             @endif
-
-        </div>
+        </article>
     </div>
 
-</div>
-
-{{-- Modal pour images --}}
-<div class="modal fade" id="imageModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="imageModalTitle"></h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body text-center">
-                <img src="" id="imageModalSrc" class="img-fluid">
-            </div>
+    <!-- Footer -->
+    <footer class="py-4 bg-dark text-white mt-5">
+        <div class="container text-center">
+            <p>&copy; 2024 Culture Bénin. Tous droits réservés.</p>
         </div>
-    </div>
-</div>
+    </footer>
 
-@endsection
-
-@push('styles')
-<style>
-.rating-stars {
-    display: flex;
-    flex-direction: row-reverse;
-    justify-content: flex-end;
-}
-.rating-stars input {
-    display: none;
-}
-.rating-stars .star-label {
-    cursor: pointer;
-    font-size: 1.5rem;
-    color: #ddd;
-    transition: color 0.2s;
-}
-.rating-stars input:checked ~ .star-label,
-.rating-stars .star-label:hover,
-.rating-stars .star-label:hover ~ .star-label {
-    color: #ffc107;
-}
-.content-text {
-    line-height: 1.8;
-    font-size: 1.1rem;
-}
-</style>
-@endpush
-
-@push('scripts')
-<script>
-// Modal image
-document.addEventListener('DOMContentLoaded', function() {
-    const imageModal = new bootstrap.Modal(document.getElementById('imageModal'));
-
-    document.querySelectorAll('img[data-bs-toggle="modal"]').forEach(img => {
-        img.addEventListener('click', function() {
-            document.getElementById('imageModalSrc').src = this.dataset.src;
-            document.getElementById('imageModalTitle').textContent = this.dataset.title;
-            imageModal.show();
-        });
-    });
-});
-</script>
-@endpush
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

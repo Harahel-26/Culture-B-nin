@@ -27,10 +27,17 @@ return new class extends Migration {
 
             // Statut
             $table->enum('status', ['draft', 'pending', 'validated', 'rejected'])->default('pending');
-
             $table->boolean('is_active')->default(true);
 
+            // Options premium - PLACÉS APRÈS 'status' SANS after()
+            $table->boolean('is_premium')->default(false);
+            $table->decimal('prix', 10, 2)->nullable();
+            $table->text('extrait_gratuit')->nullable();
+            $table->integer('vues_gratuites')->default(0);
+            $table->integer('vues_total')->default(0); // Ajouté pour suivre toutes les vues
+
             $table->timestamps();
+            $table->timestamp('published_at')->nullable();
         });
     }
 

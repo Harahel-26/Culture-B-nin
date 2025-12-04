@@ -9,9 +9,14 @@ use App\Models\Commentaire;
 use App\Models\User;
 use App\Models\Langue;
 use Illuminate\Support\Facades\DB;
+use App\Models\Paiement;
 
 class DashboardController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(['auth', 'role:admin|moderateur']);
+    }
     public function index()
     {
         // STATISTIQUES GLOBALES
@@ -65,12 +70,44 @@ $users_roles = DB::table('model_has_roles')
             ->take(5)
             ->get();
 
+        // Statistiques sur les paiements
+        $paiements = [
+            'total' => Paiement::where('statut', 'paye')->count(),
+            'montant_total' => Paiement::where('statut', 'paye')->sum('montant'),
+            'recent' => Paiement::where('statut', 'paye')->orderBy('created_at', 'desc')->take(5)->get(),
+        ];
+
+        // Contenus premium
+        $stats['contenus_premium'] = Contenu::where('is_premium', true)->count();
+
+        // Commentaires en attente
+        $stats['commentaires_attente'] = Commentaire::where('statut', 'pending')->count();
+
+        // Utilisateurs contributeurs/admins
+        $stats['users_contributeurs'] = User::role('contributeur')->count();
+        $stats['users_admins'] = User::role('admin')->count();
+
+        // Contenus récents
+        $contenusRecents = Contenu::with(['utilisateur', 'langue'])
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
+        // Commentaires récents
+        $commentairesRecents = Commentaire::with(['utilisateur', 'contenu'])
+            ->orderBy('created_at', 'desc')
+            ->take(10)
+            ->get();
+
         return view('admin.dashboards.index', compact(
             'stats',
             'users_roles',
             'contenus_mois',
             'langues_plus',
-            'types_plus'
+            'types_plus',
+            'paiements',
+            'contenusRecents',
+            'commentairesRecents'
         ));
     }
 }

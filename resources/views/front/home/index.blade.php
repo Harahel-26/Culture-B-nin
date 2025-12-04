@@ -73,7 +73,7 @@
 <div class="content-section alternate-bg">
     <div class="container">
         <h2 class="section-title"><i class="bi bi-camera-reel me-2"></i>Dernières Vidéos</h2>
-        
+
         <div class="row g-4">
             @foreach($latestVideos ?? [] as $video)
                 <div class="col-md-4">
@@ -102,7 +102,7 @@
 <div class="content-section">
     <div class="container">
         <h2 class="section-title"><i class="bi bi-images me-2"></i>Galerie d'images</h2>
-        
+
         <div class="row g-3">
             @foreach($gallery ?? [] as $img)
                 <div class="col-6 col-md-3">
@@ -125,7 +125,7 @@
 <div class="content-section alternate-bg">
     <div class="container">
         <h2 class="section-title"><i class="bi bi-journal-text me-2"></i>Derniers Contenus publiés</h2>
-        
+
         <div class="row g-4">
             @foreach($latestContenus ?? [] as $c)
                 <div class="col-md-4">
@@ -155,7 +155,7 @@
 <div class="content-section">
     <div class="container">
         <h2 class="section-title"><i class="bi bi-music-note-beamed me-2"></i>Audios & Rythmes</h2>
-        
+
         <div class="row g-4">
             @foreach($latestAudios ?? [] as $audio)
                 <div class="col-md-4">

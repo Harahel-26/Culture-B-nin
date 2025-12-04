@@ -1,9 +1,9 @@
-@extends('layouts')
+@extends('admin.layouts')
 
 @section('page-title', 'Détails utilisateur')
 @section('breadcrumb')
-<li class="breadcrumb-item"><a href="{{ route('utilisateurs.index') }}">Utilisateurs</a></li>
-<li class="breadcrumb-item active">{{ $utilisateur->prenom }} {{ $utilisateur->nom }}</li>
+<li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Utilisateurs</a></li>
+<li class="breadcrumb-item active">{{ $user->name }}</li>
 @endsection
 
 @section('content')
@@ -18,24 +18,24 @@
                 <img src="{{ URL::asset('adminlte/img/user2-160x160.jpg') }}"
                      class="rounded-circle mb-3" width="120">
 
-                <h4>{{ $utilisateur->name }}</h4>
+                <h4>{{ $user->name }}</h4>
 
-                <p class="text-muted">{{ $utilisateur->email }}</p>
+                <p class="text-muted">{{ $user->email }}</p>
 
                 <span class="badge bg-primary">
-                    {{ $utilisateur->roles->first()->name ?? 'Aucun rôle' }}
+                    {{ $user->roles->first()->name ?? 'Aucun rôle' }}
                 </span>
 
                 <hr>
 
                 <p>
                     <strong>Inscrit le :</strong><br>
-                    {{ $utilisateur->created_at->format('d/m/Y à H:i') }}
+                    {{ $user->created_at->format('d/m/Y à H:i') }}
                 </p>
 
                 <p>
                     <strong>Dernière connexion :</strong><br>
-                    {{ $utilisateur->updated_at->format('d/m/Y à H:i') }}
+                    {{ $user->updated_at->format('d/m/Y à H:i') }}
                 </p>
 
             </div>
@@ -51,12 +51,12 @@
             </div>
             <div class="card-body">
 
-                <a href="{{ route('utilisateurs.edit', $utilisateur) }}"
+                <a href="{{ route('admin.users.edit', $user) }}"
                    class="btn btn-warning">
                     <i class="bi bi-pencil-square me-1"></i> Modifier
                 </a>
 
-                <form action="{{ route('utilisateurs.destroy', $utilisateur) }}"
+                <form action="{{ route('admin.users.destroy', $user) }}"
                       method="POST"
                       class="d-inline"
                       onsubmit="return confirm('Supprimer cet utilisateur ?')">
@@ -73,9 +73,9 @@
             <div class="card-header fw-bold">Informations supplémentaires</div>
             <div class="card-body">
 
-                <p><strong>ID :</strong> {{ $utilisateur->id }}</p>
+                <p><strong>ID :</strong> {{ $user->id }}</p>
                 <p><strong>Email vérifié :</strong>
-                    @if ($utilisateur->email_verified_at)
+                    @if ($user->email_verified_at)
                         <span class="badge bg-success">Oui</span>
                     @else
                         <span class="badge bg-danger">Non</span>

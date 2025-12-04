@@ -1,9 +1,9 @@
-@extends('layouts')
+@extends('admin.layouts')
 
 @section('page-title', 'Modifier utilisateur')
 
 @section('breadcrumb')
-<li class="breadcrumb-item"><a href="{{ route('utilisateurs.index') }}">Utilisateurs</a></li>
+<li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Utilisateurs</a></li>
 <li class="breadcrumb-item active">Modifier</li>
 @endsection
 
@@ -17,7 +17,7 @@
 
     <div class="card-body">
 
-        <form action="{{ route('utilisateurs.update', $utilisateur) }}" method="POST">
+        <form action="{{ route('admin.users.update', $user) }}" method="POST">
             @csrf
             @method('PUT')
 
@@ -34,7 +34,7 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Adresse email</label>
                     <input type="email" name="email" class="form-control"
-                        value="{{ old('email', $utilisateur->email) }}" required>
+                        value="{{ old('email', $user->email) }}" required>
                     @error('email') <small class="text-danger">{{ $message }}</small> @enderror
                 </div>
 
@@ -46,7 +46,7 @@
 
                         @foreach ($roles as $role)
                             <option value="{{ $role->id }}"
-                                {{ $utilisateur->roles->first()->id ?? null == $role->id ? 'selected' : '' }}>
+                                {{ $user->roles->first()->id ?? null == $role->id ? 'selected' : '' }}>
                                 {{ ucfirst($role->name) }}
                             </option>
                         @endforeach
@@ -58,8 +58,8 @@
                 <div class="col-md-6 mb-3">
                     <label class="form-label">Statut</label>
                     <select name="is_active" class="form-select">
-                        <option value="1" {{ $utilisateur->is_active ? 'selected' : '' }}>Actif</option>
-                        <option value="0" {{ !$utilisateur->is_active ? 'selected' : '' }}>Inactif</option>
+                        <option value="1" {{ $user->is_active ? 'selected' : '' }}>Actif</option>
+                        <option value="0" {{ !$user->is_active ? 'selected' : '' }}>Inactif</option>
                     </select>
                 </div>
 
@@ -79,7 +79,7 @@
             </div>
 
             <div class="text-end mt-3">
-                <a href="{{ route('utilisateurs.index') }}" class="btn btn-secondary">
+                <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
                     <i class="bi bi-arrow-left"></i> Annuler
                 </a>
 

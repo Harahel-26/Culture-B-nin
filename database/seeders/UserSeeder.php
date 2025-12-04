@@ -28,10 +28,5 @@ class UserSeeder extends Seeder
         // Récupérer tous les rôles existants
         $roles = Role::all();
 
-        // Générer des utilisateurs aléatoires avec des rôles différents
-        User::factory()->count(10)->create()->each(function ($user) use ($roles) {
-            $randomRole = $roles->random(); // Sélectionner un rôle aléatoire
-            $user->assignRole($randomRole);
-        });
     }
 }

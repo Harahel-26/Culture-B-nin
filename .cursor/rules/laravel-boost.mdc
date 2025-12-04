@@ -180,7 +180,7 @@ protected function isAccessible(User $user, ?string $path = null): bool
 - No middleware files in `app/Http/Middleware/`.
 - `bootstrap/app.php` is the file to register middleware, exceptions, and routing files.
 - `bootstrap/providers.php` contains application specific service providers.
-- **No app\Console\Kernel.php** - use `bootstrap/app.php` or `routes/console.php` for console configuration.
+- **No app\Console\el.php** - use `bootstrap/app.php` or `routes/console.php` for console configuration.
 - **Commands auto-register** - files in `app/Console/Commands/` are automatically available and do not require manual registration.
 
 ### Database

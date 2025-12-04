@@ -15,9 +15,11 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
+            'premium' => \App\Http\Middleware\CheckContenuPremium::class,
+
             // Si vous avez d'autres middlewares personnalisés ou de package, ajoutez-les ici.
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+
     })->create();
