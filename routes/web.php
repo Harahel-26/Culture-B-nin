@@ -8,60 +8,87 @@ use App\Http\Controllers\Front\ProfilController;
 use App\Http\Controllers\Front\PaiementController;
 use App\Http\Controllers\Front\CommentaireController;
 use App\Http\Controllers\Front\MediaController;
+use App\Http\Controllers\Front\MediaGalleryController;
+use App\Http\Controllers\Front\TypeContenuController as FrontTypeContenuController;
+use App\Http\Controllers\Front\TypeMediaController as FrontTypeMediaController;
+use App\Http\Controllers\Front\LangueController as FrontLangueController;
 use App\Http\Controllers\Front\DemandeContributeurUserController;
 use App\Http\Controllers\Admin\DashboardController;
 
-
-
-
 /*
 |--------------------------------------------------------------------------
-| Page d'accueil du front
+| Accueil
 |--------------------------------------------------------------------------
 */
+Route::get('/paiement/callback', [App\Http\Controllers\PaiementController::class, 'callback'])
+    ->name('paiement.callback');
+
 Route::get('/', [HomeController::class, 'index'])->name('front.accueil');
 
 /*
 |--------------------------------------------------------------------------
-| Routes PUBLIQUES (tout le monde peut voir)
+| Contenus (public)
 |--------------------------------------------------------------------------
 */
-
-// 1. LISTE DES CONTENUS (AJOUTÉ)
 Route::get('/contenus', [ContenuController::class, 'index'])->name('front.contenus.index');
-
-// 2. DÉTAIL D'UN CONTENU
 Route::get('/contenu/{slug}', [ContenuController::class, 'show'])->name('front.contenus.show');
-
-// 3. FILTRES
 Route::get('/categorie/{slug}', [ContenuController::class, 'parCategorie'])->name('front.contenus.categorie');
 Route::get('/region/{slug}', [ContenuController::class, 'parRegion'])->name('front.contenus.region');
 Route::get('/langue/{code}', [ContenuController::class, 'parLangue'])->name('front.contenus.langue');
 
-// 4. RECHERCHE
-Route::get('/recherche', [SearchController::class, 'index'])->name('front.search');
-// 5. MÉDIAS
-// Routes pour les médias (à mettre dans les routes publiques)
+/*
+|--------------------------------------------------------------------------
+| Types de contenus (public)
+|--------------------------------------------------------------------------
+*/
+Route::get('/types', [FrontTypeContenuController::class, 'index'])->name('front.typecontenus.index');
+Route::get('/types/{slug}', [FrontTypeContenuController::class, 'show'])->name('front.typecontenus.show');
+
+/*
+|--------------------------------------------------------------------------
+| Médias (public)
+|--------------------------------------------------------------------------
+*/
 Route::prefix('medias')->name('front.medias.')->group(function () {
     Route::get('/', [MediaController::class, 'index'])->name('index');
     Route::get('/images', [MediaController::class, 'images'])->name('images');
     Route::get('/videos', [MediaController::class, 'videos'])->name('videos');
     Route::get('/audios', [MediaController::class, 'audios'])->name('audios');
 });
+Route::get('/medias/gallery', [MediaGalleryController::class, 'index'])->name('front.medias.gallery');
+Route::get('/medias/types', [FrontTypeMediaController::class, 'index'])->name('front.typemedia.index');
+Route::get('/medias/types/{slug}', [FrontTypeMediaController::class, 'show'])->name('front.typemedia.show');
 
 /*
 |--------------------------------------------------------------------------
-| Routes PROTÉGÉES (nécessite connexion)
+| Langues (public)
 |--------------------------------------------------------------------------
 */
+Route::get('/langues', [FrontLangueController::class, 'index'])->name('front.langues.index');
+Route::get('/langues/{code}', [FrontLangueController::class, 'show'])->name('front.langues.show');
 
-// COMMENTAIRES
+/*
+|--------------------------------------------------------------------------
+| Recherche (public)
+|--------------------------------------------------------------------------
+*/
+Route::get('/recherche', [SearchController::class, 'index'])->name('front.search');
+
+/*
+|--------------------------------------------------------------------------
+| Commentaires (protégé)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->prefix('commentaires')->name('front.commentaires.')->group(function () {
     Route::post('/', [CommentaireController::class, 'store'])->name('store');
     Route::delete('/{commentaire}', [CommentaireController::class, 'destroy'])->name('destroy');
 });
 
-// PROFIL UTILISATEUR
+/*
+|--------------------------------------------------------------------------
+| Profil utilisateur (protégé)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->prefix('profil')->name('front.profil.')->group(function () {
     Route::get('/', [ProfilController::class, 'index'])->name('index');
     Route::get('/edit', [ProfilController::class, 'edit'])->name('edit');
@@ -72,14 +99,22 @@ Route::middleware(['auth'])->prefix('profil')->name('front.profil.')->group(func
     Route::post('/demande-contributeur', [ProfilController::class, 'demandeContributeur'])->name('demande-contributeur');
 });
 
-// DEVENIR CONTRIBUTEUR
+/*
+|--------------------------------------------------------------------------
+| Devenir contributeur (protégé)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->prefix('devenir-contributeur')->group(function () {
     Route::get('/', [DemandeContributeurUserController::class, 'form'])->name('contributeur.form');
     Route::post('/', [DemandeContributeurUserController::class, 'store'])->name('contributeur.store');
     Route::get('/mes-demandes', [DemandeContributeurUserController::class, 'mesDemandes'])->name('contributeur.mes-demandes');
 });
 
-// PAIEMENTS
+/*
+|--------------------------------------------------------------------------
+| Paiements (protégé)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth'])->prefix('paiement')->name('front.paiement.')->group(function () {
     Route::get('/{contenu}', [PaiementController::class, 'init'])->name('init');
     Route::post('/{contenu}/process', [PaiementController::class, 'process'])->name('process');
@@ -89,13 +124,12 @@ Route::middleware(['auth'])->prefix('paiement')->name('front.paiement.')->group(
 
 /*
 |--------------------------------------------------------------------------
-| Admin (nécessite rôle admin)
+| Admin (protégé, admin uniquement)
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboards.index');
 
-    // Ressources admin
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     Route::resource('contenus', \App\Http\Controllers\Admin\ContenuController::class);
     Route::resource('langues', \App\Http\Controllers\Admin\LangueController::class);

@@ -2,26 +2,28 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Paiement extends Model
 {
-    use HasFactory;
+    protected $table = 'paiements';
 
     protected $fillable = [
+        'reference',
         'user_id',
         'contenu_id',
         'montant',
-        'numero_telephone',
-        'statut'
+        'devise',
+        'gateway',
+        'statut',
+        'paye_le',
     ];
 
     protected $casts = [
-        'montant' => 'decimal:2'
+        'montant' => 'float',
+        'paye_le' => 'datetime',
     ];
 
-    // Relations
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -32,19 +34,13 @@ class Paiement extends Model
         return $this->belongsTo(Contenu::class);
     }
 
-    // Méthode helper
-    public function estPaye()
+    public function scopePayes($query)
     {
-        return $this->statut === 'paye';
+        return $query->where('statut', 'paye');
     }
 
-    // Format le numéro pour l'affichage
-    public function getNumeroFormateAttribute()
+    public function estPaye(): bool
     {
-        $num = $this->numero_telephone;
-        if (str_starts_with($num, '229')) {
-            return '+229 ' . substr($num, 3);
-        }
-        return $num;
+        return $this->statut === 'paye';
     }
 }

@@ -1,63 +1,54 @@
-@extends('admin.layouts')
+@extends('layout_projet')
+
+@section('title', 'Détails du Média')
 
 @section('content')
 
-<div class="card">
+<style>
+    .preview-large {
+        width: 100%;
+        max-height: 420px;
+        object-fit: cover;
+        border-radius: 12px;
+        box-shadow: 0 5px 18px rgba(0,0,0,0.15);
+        margin-bottom: 20px;
+    }
+</style>
 
-    <div class="card-header">
-        <h3 class="card-title">Détails du média</h3>
-    </div>
+<h3 class="fw-bold mb-4" style="color:#1e1b4b;">
+    <i class="bi bi-eye"></i> Aperçu du Média
+</h3>
 
-    <div class="card-body">
+<div class="card p-4 shadow-sm">
 
-        {{-- Aperçu --}}
-        <div class="mb-3">
-            <label class="form-label">Aperçu :</label><br>
+    <!-- APERÇU -->
+    @if($media->typeMedia->nom === 'image')
+        <img src="{{ $media->url }}" class="preview-large">
 
-            @if(in_array($media->extension, ['jpg','jpeg','png']))
-                <img src="{{ asset('storage/'.$media->fichier) }}" width="300" class="rounded shadow">
-            @elseif(in_array($media->extension, ['mp4','mov','avi']))
-                <video width="300" controls>
-                    <source src="{{ asset('storage/'.$media->fichier) }}">
-                </video>
-            @elseif(in_array($media->extension, ['mp3','wav']))
-                <audio controls>
-                    <source src="{{ asset('storage/'.$media->fichier) }}">
-                </audio>
-            @else
-                <a href="{{ asset('storage/'.$media->fichier) }}" target="_blank">
-                    <i class="fas fa-file fa-3x"></i>
-                </a>
-            @endif
-        </div>
+    @elseif($media->typeMedia->nom === 'video')
+        <video class="preview-large" controls>
+            <source src="{{ $media->url }}">
+        </video>
 
-        <hr>
+    @elseif($media->typeMedia->nom === 'audio')
+        <audio controls class="w-100 mb-3">
+            <source src="{{ $media->url }}">
+        </audio>
+    @endif
 
-        <p><strong>Titre :</strong> {{ $media->titre ?? '—' }}</p>
-        <p><strong>Description :</strong> {{ $media->description ?? '—' }}</p>
-        <p><strong>Contenu lié :</strong> {{ $media->contenu->titre }}</p>
-        <p><strong>Type de média :</strong> {{ $media->typeMedia->nom }}</p>
-        <p><strong>Langue :</strong> {{ $media->langue->nom ?? '—' }}</p>
-        <p><strong>Uploadé par :</strong> {{ $media->uploader->name }}</p>
-        <p><strong>Taille :</strong> {{ round($media->taille, 2) }} KB</p>
-        <p><strong>Status :</strong>
-            @if($media->status == 'pending')
-                <span class="badge bg-warning">En attente</span>
-            @elseif($media->status == 'validated')
-                <span class="badge bg-success">Validé</span>
-            @else
-                <span class="badge bg-danger">Rejeté</span>
-            @endif
-        </p>
+    <h4>{{ $media->titre ?? 'Sans titre' }}</h4>
+    <p class="text-muted">{{ $media->description }}</p>
 
-        <a href="{{ route('medias.index') }}" class="btn btn-secondary mt-2">
-            <i class="fas fa-arrow-left"></i> Retour
+    <p><strong>Type :</strong> {{ $media->typeMedia->nom }}</p>
+    <p><strong>Langue :</strong> {{ $media->langue->nom ?? 'Aucune' }}</p>
+    <p><strong>Taille :</strong> {{ $media->taille }} KB</p>
+    <p><strong>Status :</strong> {{ $media->status }}</p>
+    <p><strong>Uploader :</strong> {{ $media->uploader->name }}</p>
+
+    <div class="mt-3">
+        <a href="{{ route('admin.medias.index') }}" class="btn btn-secondary">
+            Retour
         </a>
-
-        <a href="{{ route('medias.edit', $media) }}" class="btn btn-warning mt-2">
-            <i class="fas fa-edit"></i> Modifier
-        </a>
-
     </div>
 
 </div>

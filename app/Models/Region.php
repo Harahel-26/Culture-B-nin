@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class Region extends Model
 {
@@ -10,14 +11,17 @@ class Region extends Model
         'nom',
         'type',
         'description',
-        'langue_principale',
+        'langue_principale_id',
         'is_active',
     ];
 
-    // AJOUTER CES RELATIONS :
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
     public function languePrincipale()
     {
-        return $this->belongsTo(Langue::class, 'langue_principale', 'id');
+        return $this->belongsTo(Langue::class, 'langue_principale_id');
     }
 
     public function contenus()
@@ -25,9 +29,8 @@ class Region extends Model
         return $this->hasMany(Contenu::class);
     }
 
-    // Pour le slug (optionnel mais utile)
     public function getSlugAttribute()
     {
-        return \Illuminate\Support\Str::slug($this->nom);
+        return Str::slug($this->nom);
     }
 }

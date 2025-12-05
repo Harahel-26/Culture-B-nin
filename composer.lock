@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "13127e76300b862ffa828a4887e59c2d",
+    "content-hash": "dc0662ac845eb8af1dc0a4327c3fd37d",
     "packages": [
         {
             "name": "brick/math",
@@ -1195,6 +1195,47 @@
                 }
             ],
             "time": "2025-07-30T13:13:19+00:00"
+        },
+        {
+            "name": "kkiapay/kkiapay-php",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/kkiapay/php-sdk.git",
+                "reference": "39ebb357812cc7edec42476dc8c358e48259c97e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/kkiapay/php-sdk/zipball/39ebb357812cc7edec42476dc8c358e48259c97e",
+                "reference": "39ebb357812cc7edec42476dc8c358e48259c97e",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.0.1"
+            },
+            "default-branch": true,
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Kkiapay\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "KKIAPAY",
+                    "email": "support.dev@kkiapay.me"
+                }
+            ],
+            "description": "Php sdk for kkiapay payment gateway",
+            "support": {
+                "issues": "https://github.com/kkiapay/php-sdk/issues",
+                "source": "https://github.com/kkiapay/php-sdk/tree/master"
+            },
+            "time": "2023-05-02T14:35:43+00:00"
         },
         {
             "name": "laravel/framework",
@@ -9906,7 +9947,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {},
+    "stability-flags": {
+        "kkiapay/kkiapay-php": 20
+    },
     "prefer-stable": true,
     "prefer-lowest": false,
     "platform": {

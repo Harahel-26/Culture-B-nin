@@ -1,5 +1,4 @@
 <?php
-
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -9,24 +8,30 @@ return new class extends Migration {
     {
         Schema::create('paiements', function (Blueprint $table) {
             $table->id();
-            $table->string('reference')->unique();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('contenu_id')->constrained()->onDelete('cascade');
+
+            $table->string('reference')->unique(); // référence transaction du provider
+
+            $table->foreignId('user_id')
+                  ->constrained()
+                  ->onDelete('cascade');
+
+            $table->foreignId('contenu_id')
+                  ->constrained()
+                  ->onDelete('cascade');
 
             $table->decimal('montant', 10, 2);
-            $table->string('devise')->default('XOF');
+            $table->string('devise', 10)->default('XOF');
 
-            $table->enum('methode', ['mobile_money', 'wave', 'carte', 'paypal'])
-                  ->default('mobile_money');
+            // passerelle utilisée : fedapay ou kkiapay
+            $table->enum('gateway', ['fedapay', 'kkiapay'])
+                  ->comment('Passerelle de paiement utilisée');
 
-            $table->string('operateur')->nullable();
-            $table->string('numero_transaction')->nullable();
-
+            // statut du paiement
             $table->enum('statut', ['en_attente', 'paye', 'echec', 'annule'])
                   ->default('en_attente');
 
-            $table->json('metadata')->nullable();
             $table->timestamp('paye_le')->nullable();
+
             $table->timestamps();
 
             $table->index(['user_id', 'contenu_id']);

@@ -12,10 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('typecontenus', function (Blueprint $table) {
-            $table->id();
-            $table->string('nom')->unique();
-            $table->timestamps();
-        });
+    $table->id();
+    $table->string('nom')->unique()->comment('Nom du type de contenu : conte, musique, histoire, art…');
+    $table->boolean('is_active')->default(true);
+    $table->timestamps();
+
+    $table->index('nom');
+});
+
     }
 
     /**

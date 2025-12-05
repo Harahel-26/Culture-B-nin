@@ -1,84 +1,97 @@
 @extends('admin.layouts')
 
-@section('page-title', 'Ajouter un utilisateur')
-
-@section('breadcrumb')
-    <li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Utilisateurs</a></li>
-    <li class="breadcrumb-item active">Créer</li>
-@endsection
+@section('title', 'Créer un utilisateur')
 
 @section('content')
 
-    <div class="card shadow-sm">
+<style>
+    .label-premium {
+        font-weight: 600;
+        color: #1e1b4b;
+    }
+    .avatar-preview {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #eee;
+        display: block;
+        margin-bottom: 15px;
+    }
+</style>
 
-        <div class="card-header bg-white">
-            <h4 class="card-title mb-0">Créer un nouvel utilisateur</h4>
+<h3 class="fw-bold mb-4" style="color:#1e1b4b;">
+    <i class="bi bi-person-plus"></i> Nouvel utilisateur
+</h3>
+
+<div class="card shadow-sm p-4">
+
+    <form action="{{ route('admin.users.store') }}" method="POST" enctype="multipart/form-data">
+        @csrf
+
+        <div class="row g-4">
+
+            <div class="col-md-6">
+                <label class="label-premium">Nom *</label>
+                <input type="text" name="name" class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label class="label-premium">Nom d'utilisateur</label>
+                <input type="text" name="username" class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label class="label-premium">Email *</label>
+                <input type="email" name="email" class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label class="label-premium">Téléphone</label>
+                <input type="text" name="phone" class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label class="label-premium">Mot de passe *</label>
+                <input type="password" name="password" class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label class="label-premium">Confirmation *</label>
+                <input type="password" name="password_confirmation" class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label class="label-premium">Rôle *</label>
+                <select name="role" class="form-select">
+                    @foreach($roles as $role)
+                        <option value="{{ $role->id }}">{{ ucfirst($role->name) }}</option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="label-premium">Avatar</label>
+
+                <img id="avatarPreview" class="avatar-preview"
+                     src="{{ asset('adminlte/img/user2-160x160.jpg') }}">
+
+                <input type="file" name="avatar" class="form-control"
+                       onchange="document.getElementById('avatarPreview').src = window.URL.createObjectURL(this.files[0])">
+            </div>
+
         </div>
 
-        <div class="card-body">
+        <div class="mt-4">
+            <button class="btn btn-primary" style="background:#1e1b4b; border:none;">
+                <i class="bi bi-save"></i> Enregistrer
+            </button>
 
-            <form action="{{ route('admin.users.store') }}" method="POST">
-                @csrf
-
-                <div class="row">
-
-                    <!-- Nom complet -->
-                    <div class="col-12 mb-3">
-                        <label class="form-label">Nom complet</label>
-                        <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
-                        @error('name') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
-
-                    <!-- Email -->
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Adresse email</label>
-                        <input type="email" name="email" class="form-control" value="{{ old('email') }}" required>
-                        @error('email') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
-
-                    <!-- Rôle -->
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Rôle</label>
-                        <select name="role" class="form-select" required>
-                            <option value="">-- Choisir un rôle --</option>
-
-                            @foreach ($roles as $role)
-                                <option value="{{ $role->id }}" {{ old('role') == $role->id ? 'selected' : '' }}>
-                                    {{ ucfirst($role->name) }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('role') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
-
-                    <!-- Password -->
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Mot de passe</label>
-                        <input type="password" name="password" class="form-control" required>
-                        @error('password') <small class="text-danger">{{ $message }}</small> @enderror
-                    </div>
-
-                    <!-- Confirm -->
-                    <div class="col-md-6 mb-3">
-                        <label class="form-label">Confirmer mot de passe</label>
-                        <input type="password" name="password_confirmation" class="form-control" required>
-                    </div>
-
-                </div>
-
-                <div class="text-end mt-3">
-                    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
-                        <i class="bi bi-arrow-left"></i> Annuler
-                    </a>
-
-                    <button type="submit" class="btn btn-primary">
-                        <i class="bi bi-check-circle"></i> Créer l’utilisateur
-                    </button>
-                </div>
-
-            </form>
-
+            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">Annuler</a>
         </div>
-    </div>
+
+    </form>
+
+</div>
 
 @endsection

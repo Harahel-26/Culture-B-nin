@@ -1,96 +1,100 @@
 @extends('admin.layouts')
 
-@section('page-title', 'Modifier utilisateur')
-
-@section('breadcrumb')
-<li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Utilisateurs</a></li>
-<li class="breadcrumb-item active">Modifier</li>
-@endsection
+@section('title', 'Modifier utilisateur')
 
 @section('content')
 
-<div class="card shadow-sm">
+<style>
+    .label-premium { font-weight: 600; color:#1e1b4b; }
+    .avatar-preview {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid #eee;
+        display: block;
+        margin-bottom: 15px;
+    }
+</style>
 
-    <div class="card-header bg-white">
-        <h4 class="card-title mb-0">Modifier l’utilisateur</h4>
-    </div>
+<h3 class="fw-bold mb-4" style="color:#1e1b4b;">
+    <i class="bi bi-pencil-square"></i> Modifier : {{ $user->name }}
+</</h3>
 
-    <div class="card-body">
+<div class="card shadow-sm p-4">
 
-        <form action="{{ route('admin.users.update', $user) }}" method="POST">
-            @csrf
-            @method('PUT')
+    <form action="{{ route('admin.users.update', $user) }}" method="POST" enctype="multipart/form-data">
 
-            <div class="row">
+        @csrf
+        @method('PUT')
 
-                <!-- Nom complet -->
-<div class="col-12 mb-3">
-    <label class="form-label">Nom complet</label>
-    <input type="text" name="name" class="form-control" value="{{ old('name') }}" required>
-    @error('name') <small class="text-danger">{{ $message }}</small> @enderror
-</div>
+        <div class="row g-4">
 
-                <!-- Email -->
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Adresse email</label>
-                    <input type="email" name="email" class="form-control"
-                        value="{{ old('email', $user->email) }}" required>
-                    @error('email') <small class="text-danger">{{ $message }}</small> @enderror
-                </div>
-
-                <!-- Rôle Spatie -->
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Rôle</label>
-                    <select name="role" class="form-select" required>
-                        <option value="">-- Choisir un rôle --</option>
-
-                        @foreach ($roles as $role)
-                            <option value="{{ $role->id }}"
-                                {{ $user->roles->first()->id ?? null == $role->id ? 'selected' : '' }}>
-                                {{ ucfirst($role->name) }}
-                            </option>
-                        @endforeach
-                    </select>
-                    @error('role') <small class="text-danger">{{ $message }}</small> @enderror
-                </div>
-
-                <!-- Statut -->
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Statut</label>
-                    <select name="is_active" class="form-select">
-                        <option value="1" {{ $user->is_active ? 'selected' : '' }}>Actif</option>
-                        <option value="0" {{ !$user->is_active ? 'selected' : '' }}>Inactif</option>
-                    </select>
-                </div>
-
-                <!-- Nouveau mot de passe -->
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Nouveau mot de passe (optionnel)</label>
-                    <input type="password" name="password" class="form-control">
-                    @error('password') <small class="text-danger">{{ $message }}</small> @enderror
-                </div>
-
-                <!-- Confirmation -->
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Confirmer nouveau mot de passe</label>
-                    <input type="password" name="password_confirmation" class="form-control">
-                </div>
-
+            <div class="col-md-6">
+                <label class="label-premium">Nom *</label>
+                <input type="text" name="name" class="form-control" value="{{ $user->name }}">
             </div>
 
-            <div class="text-end mt-3">
-                <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
-                    <i class="bi bi-arrow-left"></i> Annuler
-                </a>
-
-                <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-circle"></i> Mettre à jour
-                </button>
+            <div class="col-md-6">
+                <label class="label-premium">Nom d'utilisateur</label>
+                <input type="text" name="username" class="form-control" value="{{ $user->username }}">
             </div>
 
-        </form>
+            <div class="col-md-6">
+                <label class="label-premium">Email *</label>
+                <input type="email" name="email" class="form-control" value="{{ $user->email }}">
+            </div>
 
-    </div>
+            <div class="col-md-6">
+                <label class="label-premium">Téléphone</label>
+                <input type="text" name="phone" class="form-control" value="{{ $user->phone }}">
+            </div>
+
+            <div class="col-md-6">
+                <label class="label-premium">Nouveau mot de passe</label>
+                <input type="password" name="password" class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label class="label-premium">Confirmation</label>
+                <input type="password" name="password_confirmation" class="form-control">
+            </div>
+
+            <div class="col-md-6">
+                <label class="label-premium">Rôle *</label>
+                <select name="role" class="form-select">
+                    @foreach($roles as $role)
+                        <option value="{{ $role->id }}"
+                            @selected($user->hasRole($role->name))>
+                            {{ ucfirst($role->name) }}
+                        </option>
+                    @endforeach
+                </select>
+            </div>
+
+            <div class="col-md-6">
+                <label class="label-premium">Avatar</label>
+
+                <img id="avatarPreview" class="avatar-preview"
+                     src="{{ $user->avatar_url }}">
+
+                <input type="file" name="avatar" class="form-control"
+                       onchange="document.getElementById('avatarPreview').src = window.URL.createObjectURL(this.files[0])">
+            </div>
+
+        </div>
+
+        <div class="mt-4">
+            <button class="btn btn-primary" style="background:#1e1b4b; border:none;">
+                <i class="bi bi-save"></i> Mettre à jour
+            </button>
+
+            <a href="{{ route('admin.users.index') }}" class="btn btn-secondary">
+                Annuler
+            </a>
+        </div>
+
+    </form>
 
 </div>
 

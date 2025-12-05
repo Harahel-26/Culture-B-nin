@@ -2,27 +2,16 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Laravel\Sanctum\HasApiTokens;
-use App\Traits\HasAchats;
-
 
 class User extends Authenticatable
 {
-    /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable;
-    use HasApiTokens, Notifiable, HasRoles;
-    use HasAchats;
+    use HasFactory, Notifiable, HasApiTokens, HasRoles;
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var list<string>
-     */
     protected $fillable = [
         'name',
         'username',
@@ -31,30 +20,30 @@ class User extends Authenticatable
         'avatar',
         'phone',
         'bio',
-        'is_active',
-        'is_admin',
-        ];
+        'adresse',
+        'is_active'
+    ];
 
-    /**
-     * The attributes that should be hidden for serialization.
-     *
-     * @var list<string>
-     */
     protected $hidden = [
         'password',
         'remember_token',
     ];
 
-
     protected $casts = [
         'email_verified_at' => 'datetime',
-        'is_active' => 'boolean',
-        'is_admin' => 'boolean',
+        'password'          => 'hashed',
+        'is_active'         => 'boolean',
     ];
 
+    /** Relations */
     public function contenus()
     {
         return $this->hasMany(Contenu::class);
+    }
+
+    public function commentaires()
+    {
+        return $this->hasMany(Commentaire::class);
     }
 
     public function favoris()
@@ -62,58 +51,40 @@ class User extends Authenticatable
         return $this->belongsToMany(Contenu::class, 'favoris')->withTimestamps();
     }
 
-    public function commentaires()
-  {
-        return $this->hasMany(Commentaire::class);
- }
-
-
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
-    protected function casts(): array
-    {
-        return [
-            'email_verified_at' => 'datetime',
-            'password' => 'hashed',
-        ];
-    }
-    public function contenusAchetes()
-    {
-        return $this->belongsToMany(Contenu::class, 'paiements')
-                    ->wherePivot('statut', 'paye')
-                    ->withTimestamps();
-    }
-
-    public function aAcheteContenu($contenuId)
-    {
-        return $this->contenusAchetes()
-                    ->where('contenu_id', $contenuId)
-                    ->exists();
-    }
-    //traductions
     public function traductions()
     {
         return $this->hasMany(ContenuTraduction::class, 'traduit_par');
     }
-    public function scopeActif($query)
+
+    /** Accessor avatar */
+    public function getAvatarUrlAttribute()
+    {
+        if (!$this->avatar) {
+            return asset('adminlte/img/user2-160x160.jpg');
+        }
+        return asset('storage/' . $this->avatar);
+    }
+
+    /** Scopes professionnels */
+    public function scopeActifs($query)
+    {
+        return $query->where('is_active', true);
+    }
+
+    public function scopeContributeurs($query)
+    {
+        return $query->whereHas('roles', fn($q) => $q->where('name', 'contributeur'));
+    }
+
+    public function estActif()
+    {
+        return $this->is_active;
+    }
+    public function contenusAchetes()
 {
-    return $query->where('is_active', true);
+    return $this->belongsToMany(Contenu::class, 'paiements')
+                ->wherePivot('statut', 'paye')
+                ->withTimestamps();
 }
 
-// Scope pour les contributeurs
-public function scopeContributeurs($query)
-{
-    return $query->whereHas('roles', function($q) {
-        $q->where('name', 'contributeur');
-    });
-}
-
-// Vérifie si l'utilisateur est actif
-public function estActif()
-{
-    return $this->is_active;
-}
 }

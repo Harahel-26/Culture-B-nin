@@ -1,105 +1,131 @@
 @extends('admin.layouts')
 
-@section('page-title', 'Utilisateurs')
-
-@section('breadcrumb')
-<li class="breadcrumb-item active">Utilisateurs</li>
-@endsection
+@section('title', 'Gestion des utilisateurs')
 
 @section('content')
 
+<style>
+    .user-avatar {
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid #eee;
+    }
+
+    .badge-role {
+        background: #d4a017;
+        color: #fff;
+        font-size: .75rem;
+        padding: 6px 10px;
+        border-radius: 6px;
+    }
+
+    .badge-active {
+        background: #28a745;
+        padding: 5px 10px;
+        border-radius: 6px;
+        color: #fff;
+        font-size: .75rem;
+    }
+
+    .badge-inactive {
+        background: #dc3545;
+        padding: 5px 10px;
+        border-radius: 6px;
+        color: #fff;
+        font-size: .75rem;
+    }
+
+    .table-row-hover:hover {
+        background: rgba(0,0,0,0.03);
+    }
+</style>
+
+<div class="d-flex justify-content-between mb-3">
+    <h3 class="fw-bold" style="color:#1e1b4b;">
+        <i class="bi bi-people"></i> Utilisateurs
+    </h3>
+
+    <a href="{{ route('admin.users.create') }}" class="btn btn-primary" style="background:#1e1b4b; border:none;">
+        <i class="bi bi-plus-circle"></i> Nouvel utilisateur
+    </a>
+</div>
+
+@if(session('success'))
+    <div class="alert alert-success shadow-sm">{{ session('success') }}</div>
+@endif
+
 <div class="card shadow-sm">
-
-    <div class="card-header bg-white d-flex justify-content-between align-items-center">
-        <h4 class="card-title mb-0">Liste des utilisateurs</h4>
-
-        <a href="{{ route('admin.users.create') }}" class="btn btn-primary" title="Ajouter">
-            <i class="bi bi-plus-circle me-1"></i>
-        </a>
-    </div>
-
-    <div class="card-body">
-
+    <div class="table-responsive">
         <table class="table table-hover align-middle">
-            <thead>
+            <thead class="table-light">
                 <tr>
-                    <th>N</th>
-                    <th>Nom  Prénom</th>
+                    <th>Avatar</th>
+                    <th>Nom</th>
                     <th>Email</th>
                     <th>Rôle</th>
                     <th>Statut</th>
-                    <th>Date d’inscription</th>
-                    <th class="text-end">Actions</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
             <tbody>
-                @foreach($users as $u)
-                <tr>
-                    <td>{{ $u->id }}</td>
+                @foreach($users as $user)
+                <tr class="table-row-hover">
 
                     <td>
-                        <strong>{{ $u->name }} </strong>
+                        <img src="{{ $user->avatar_url }}" class="user-avatar">
                     </td>
 
-                    <td>{{ $u->email }}</td>
+                    <td>
+                        <strong>{{ $user->name }}</strong><br>
+                        <small class="text-muted">{{ $user->username }}</small>
+                    </td>
+
+                    <td>{{ $user->email }}</td>
 
                     <td>
-                        @if($u->roles->first())
-                            <span class="badge bg-primary">
-                                {{ ucfirst($u->roles->first()->name) }}
-                            </span>
+                        @foreach($user->roles as $role)
+                            <span class="badge-role">{{ $role->name }}</span>
+                        @endforeach
+                    </td>
+
+                    <td>
+                        @if($user->is_active)
+                            <span class="badge-active">Actif</span>
                         @else
-                            <span class="badge bg-secondary">Aucun</span>
+                            <span class="badge-inactive">Inactif</span>
                         @endif
                     </td>
 
                     <td>
-                        @if($u->is_active)
-                            <span class="badge bg-success">Actif</span>
-                        @else
-                            <span class="badge bg-danger">Inactif</span>
-                        @endif
-                    </td>
-
-                    <td>{{ $u->created_at->format('d/m/Y') }}</td>
-
-                    <td class="text-end">
-
-                        {{-- Show --}}
-                        <a href="{{ route('admin.users.show', $u) }}"
-                           class="btn btn-sm btn-info" title="voir">
+                        <a href="{{ route('admin.users.show', $user) }}" class="btn btn-sm btn-info text-white">
                             <i class="bi bi-eye"></i>
                         </a>
 
-                        {{-- Edit --}}
-                        <a href="{{ route('admin.users.edit', $u) }}"
-                           class="btn btn-sm btn-warning" title="modifier">
+                        <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-sm btn-warning">
                             <i class="bi bi-pencil-square"></i>
                         </a>
 
-                        {{-- Delete --}}
-                        <form action="{{ route('admin.users.destroy', $u) }}"
-                              method="POST" class="d-inline"
+                        <form action="{{ route('admin.users.destroy', $user) }}" method="POST" class="d-inline"
                               onsubmit="return confirm('Supprimer cet utilisateur ?')">
-                            @csrf
-                            @method('DELETE')
-                            <button class="btn btn-sm btn-danger" title="supprimer">
+                            @csrf @method('DELETE')
+                            <button class="btn btn-sm btn-danger">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
 
                     </td>
+
                 </tr>
                 @endforeach
             </tbody>
         </table>
+    </div>
 
-        <!-- Pagination -->
-        <div class="mt-3">
-            {{ $users->links() }}
-        </div>
-
+    <div class="card-footer">
+        {{ $users->links() }}
     </div>
 
 </div>

@@ -1,91 +1,59 @@
 @extends('admin.layouts')
 
-@section('page-title', 'Détails utilisateur')
-@section('breadcrumb')
-<li class="breadcrumb-item"><a href="{{ route('admin.users.index') }}">Utilisateurs</a></li>
-<li class="breadcrumb-item active">{{ $user->name }}</li>
-@endsection
+@section('title', 'Profil utilisateur')
 
 @section('content')
 
-<div class="row">
+<style>
+    .avatar-large {
+        width: 130px;
+        height: 130px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid #d4a017;
+    }
+    .info-title {
+        font-weight: 700;
+        font-size: 1.2rem;
+        color: #1e1b4b;
+    }
+</style>
 
-    <!-- INFO USER -->
-    <div class="col-md-4">
-        <div class="card shadow-sm">
-            <div class="card-body text-center">
+<div class="text-center mb-4">
 
-                <img src="{{ URL::asset('adminlte/img/user2-160x160.jpg') }}"
-                     class="rounded-circle mb-3" width="120">
+    <img src="{{ $user->avatar_url }}" class="avatar-large mb-3">
 
-                <h4>{{ $user->name }}</h4>
+    <h2 class="fw-bold" style="color:#1e1b4b;">{{ $user->name }}</h2>
 
-                <p class="text-muted">{{ $user->email }}</p>
+    <p class="text-muted">{{ $user->email }}</p>
 
-                <span class="badge bg-primary">
-                    {{ $user->roles->first()->name ?? 'Aucun rôle' }}
-                </span>
+    @foreach($user->roles as $role)
+        <span class="badge-role">{{ $role->name }}</span>
+    @endforeach
 
-                <hr>
+</div>
 
-                <p>
-                    <strong>Inscrit le :</strong><br>
-                    {{ $user->created_at->format('d/m/Y à H:i') }}
-                </p>
+<div class="card shadow-sm p-4">
 
-                <p>
-                    <strong>Dernière connexion :</strong><br>
-                    {{ $user->updated_at->format('d/m/Y à H:i') }}
-                </p>
+    <h4 class="info-title">Informations</h4>
+    <p><strong>Nom d'utilisateur :</strong> {{ $user->username }}</p>
+    <p><strong>Téléphone :</strong> {{ $user->phone ?? 'Non renseigné' }}</p>
+    <p><strong>Adresse :</strong> {{ $user->adresse ?? 'Non renseignée' }}</p>
+    <p><strong>Bio :</strong> {{ $user->bio ?? 'Aucune biographie.' }}</p>
 
-            </div>
-        </div>
-    </div>
+    <h4 class="info-title mt-4">Statut du compte</h4>
+    <p>
+        @if($user->is_active)
+            <span class="badge-active">Actif</span>
+        @else
+            <span class="badge-inactive">Inactif</span>
+        @endif
+    </p>
 
-    <!-- ACTIONS -->
-    <div class="col-md-8">
+    <a href="{{ route('admin.users.index') }}" class="btn btn-secondary mt-3">
+        Retour
+    </a>
 
-        <div class="card shadow-sm">
-            <div class="card-header fw-bold">
-                Actions rapides
-            </div>
-            <div class="card-body">
-
-                <a href="{{ route('admin.users.edit', $user) }}"
-                   class="btn btn-warning">
-                    <i class="bi bi-pencil-square me-1"></i> Modifier
-                </a>
-
-                <form action="{{ route('admin.users.destroy', $user) }}"
-                      method="POST"
-                      class="d-inline"
-                      onsubmit="return confirm('Supprimer cet utilisateur ?')">
-                    @csrf @method('DELETE')
-                    <button class="btn btn-danger">
-                        <i class="bi bi-trash me-1"></i> Supprimer
-                    </button>
-                </form>
-
-            </div>
-        </div>
-
-        <div class="card shadow-sm mt-3">
-            <div class="card-header fw-bold">Informations supplémentaires</div>
-            <div class="card-body">
-
-                <p><strong>ID :</strong> {{ $user->id }}</p>
-                <p><strong>Email vérifié :</strong>
-                    @if ($user->email_verified_at)
-                        <span class="badge bg-success">Oui</span>
-                    @else
-                        <span class="badge bg-danger">Non</span>
-                    @endif
-                </p>
-
-            </div>
-        </div>
-
-    </div>
 </div>
 
 @endsection

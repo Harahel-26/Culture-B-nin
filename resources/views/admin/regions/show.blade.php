@@ -1,19 +1,45 @@
 @extends('admin.layouts')
 
+@section('title', 'Détails Région')
+
 @section('content')
-<div class="card">
-    <div class="card-header">Détails de la région</div>
 
-    <div class="card-body">
-        <p><strong>Nom :</strong> {{ $region->nom }}</p>
-        <p><strong>Type :</strong> {{ $region->type }}</p>
-        <p><strong>Langue principale :</strong> {{ $region->langue_principale }}</p>
-        <p><strong>Description :</strong> {{ $region->description }}</p>
-        <p><strong>Active :</strong> {{ $region->is_active ? 'Oui' : 'Non' }}</p>
+<style>
+    .detail-title {
+        font-size: 1.4rem;
+        font-weight: 700;
+        color: #1e1b4b;
+    }
+</style>
 
-        <a href="{{ route('admin.regions.index') }}" class="btn btn-secondary mt-3">
-            Retour
-        </a>
-    </div>
+<h3 class="fw-bold mb-4 detail-title">
+    📌 {{ $region->nom }}
+</h3>
+
+<div class="card shadow-sm p-4">
+
+    <p><strong>Type :</strong> {{ $region->type ?? '—' }}</p>
+    <p><strong>Langue principale :</strong>
+        {{ $region->languePrincipale->nom ?? 'Aucune' }}
+    </p>
+
+    <p><strong>Description :</strong></p>
+    <p>{{ $region->description ?? 'Aucune description disponible.' }}</p>
+
+    <p><strong>Statut :</strong>
+        @if($region->is_active)
+            <span class="badge bg-success">Active</span>
+        @else
+            <span class="badge bg-danger">Inactive</span>
+        @endif
+    </p>
+
+    <hr>
+
+    <a href="{{ route('admin.regions.index') }}" class="btn btn-secondary">
+        Retour
+    </a>
+
 </div>
+
 @endsection

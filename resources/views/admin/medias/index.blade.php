@@ -1,92 +1,160 @@
 @extends('admin.layouts')
 
+@section('title', 'Gestion des Médias')
+
 @section('content')
 
-<div class="card">
-    <div class="card-header">
-        <h3 class="card-title">Liste des médias</h3>
-    </div>
+<style>
+    .media-card-img {
+        width: 80px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #eee;
+    }
 
-    <div class="card-body">
+    .video-preview, .audio-preview {
+        width: 120px;
+        height: 80px;
+        border-radius: 6px;
+    }
 
-        <table class="table table-hover">
-            <thead>
+    .status-badge {
+        font-size: .8rem;
+        padding: 6px 10px;
+        border-radius: 6px;
+    }
+
+    .status-pending { background: #ffc107; color: #000; }
+    .status-validated { background: #28a745; color: #fff; }
+    .status-rejected { background: #dc3545; color: #fff; }
+
+    .media-table-row:hover {
+        background: rgba(0,0,0,0.03);
+    }
+</style>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h3 class="fw-bold" style="color:#1e1b4b;">
+        <i class="bi bi-collection-play"></i> Médias
+    </h3>
+
+    <a href="{{ route('admin.medias.create') }}" class="btn btn-primary" style="background:#1e1b4b; border:none;">
+        <i class="bi bi-plus-circle"></i> Ajouter un média
+    </a>
+</div>
+
+@if(session('success'))
+    <div class="alert alert-success shadow-sm">{{ session('success') }}</div>
+@endif
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
                 <tr>
                     <th>Aperçu</th>
                     <th>Titre</th>
-                    <th>Contenu</th>
                     <th>Type</th>
-                    <th>Uploadé par</th>
-                    <th>Status</th>
-                    <th class="text-end">Actions</th>
+                    <th>Auteur</th>
+                    <th>Statut</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
 
             <tbody>
-                @foreach($medias as $m)
-                <tr>
+                @foreach($medias as $media)
+                <tr class="media-table-row">
+
+                    <!-- Aperçu -->
                     <td>
-                        @if(in_array($m->extension, ['jpg','jpeg','png']))
-                            <img src="{{ asset('storage/'.$m->fichier) }}"
-                                 width="60" class="rounded">
+                        @if($media->typeMedia->nom === 'image')
+                            <img src="{{ asset('storage/'.$media->fichier) }}" class="media-card-img">
+
+                        @elseif($media->typeMedia->nom === 'video')
+                            <video class="video-preview" controls>
+                                <source src="{{ asset('storage/'.$media->fichier) }}">
+                            </video>
+
+                        @elseif($media->typeMedia->nom === 'audio')
+                            <audio controls class="audio-preview">
+                                <source src="{{ asset('storage/'.$media->fichier) }}">
+                            </audio>
+
                         @else
-                            <i class="fas fa-file"></i>
+                            <i class="bi bi-file-earmark"></i>
                         @endif
                     </td>
 
-                    <td>{{ $m->titre ?? '—' }}</td>
-                    <td>{{ $m->contenu->titre }}</td>
-                    <td>{{ $m->typeMedia->nom }}</td>
-                    <td>{{ $m->uploader->name }}</td>
-
+                    <!-- Titre -->
                     <td>
-                        @if($m->status == 'pending')
-                            <span class="badge bg-warning">En attente</span>
-                        @elseif($m->status == 'validated')
-                            <span class="badge bg-success">Validé</span>
+                        <strong>{{ $media->titre ?? 'Sans titre' }}</strong><br>
+                        <small class="text-muted">{{ $media->contenu->titre ?? 'Aucun contenu associé' }}</small>
+                    </td>
+
+                    <!-- Type -->
+                    <td>
+                        <span class="badge bg-primary">{{ $media->typeMedia->nom }}</span>
+                    </td>
+
+                    <!-- Uploader -->
+                    <td>
+                        <i class="bi bi-person"></i> {{ $media->uploader->name }}
+                    </td>
+
+                    <!-- Statut -->
+                    <td>
+                        @if($media->status == 'pending')
+                            <span class="status-badge status-pending">En attente</span>
+                        @elseif($media->status == 'validated')
+                            <span class="status-badge status-validated">Validé</span>
                         @else
-                            <span class="badge bg-danger">Rejeté</span>
+                            <span class="status-badge status-rejected">Rejeté</span>
                         @endif
                     </td>
 
-                    <td class="text-end">
+                    <!-- Actions -->
+                    <td>
 
-                        {{-- Valider --}}
-                        @if($m->status != 'validated')
-                        <form method="POST" action="{{ route('medias.valider', $m) }}" class="d-inline">
-                            @csrf @method('PUT')
-                            <button class="btn btn-sm btn-success">
-                                <i class="bi bi-check"></i>
-                            </button>
-                        </form>
+                        <a href="{{ route('admin.medias.show', $media) }}"
+                            class="btn btn-sm btn-info text-white">
+                            <i class="bi bi-eye"></i>
+                        </a>
+
+                        @if($media->status !== 'validated')
+                            <a href="{{ route('admin.medias.valider', $media) }}"
+                                class="btn btn-sm btn-success">
+                                <i class="bi bi-check2-circle"></i>
+                            </a>
                         @endif
 
-                        {{-- Rejeter --}}
-                        @if($m->status != 'rejected')
-                        <form method="POST" action="{{ route('medias.rejeter', $m) }}" class="d-inline">
-                            @csrf @method('PUT')
-                            <button class="btn btn-sm btn-danger">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </form>
+                        @if($media->status !== 'rejected')
+                            <a href="{{ route('admin.medias.rejeter', $media) }}"
+                                class="btn btn-sm btn-warning text-dark">
+                                <i class="bi bi-x-circle"></i>
+                            </a>
                         @endif
 
-                        {{-- Supprimer --}}
-                        <form method="POST" action="{{ route('medias.destroy', $m) }}" class="d-inline">
+                        <form action="{{ route('admin.medias.destroy', $media) }}"
+                              class="d-inline"
+                              method="POST"
+                              onsubmit="return confirm('Supprimer ce média ?')">
                             @csrf @method('DELETE')
-                            <button class="btn btn-sm btn-dark">
+                            <button class="btn btn-sm btn-danger">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
 
                     </td>
+
                 </tr>
                 @endforeach
             </tbody>
         </table>
+    </div>
 
+    <div class="card-footer">
         {{ $medias->links() }}
-
     </div>
 </div>
 

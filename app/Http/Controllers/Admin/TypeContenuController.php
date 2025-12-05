@@ -27,13 +27,13 @@ class TypeContenuController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nom' => 'required|string|unique:typecontenus,nom',
+            'nom' => 'required|string|max:255|unique:typecontenus,nom',
         ]);
 
-        TypeContenu::create($request->all());
+        TypeContenu::create($request->only(['nom']));
 
         return redirect()->route('admin.typecontenus.index')
-            ->with('success', 'Type de contenu créé');
+            ->with('success', 'Type de contenu créé avec succès.');
     }
 
     public function show(TypeContenu $typecontenu)
@@ -49,13 +49,13 @@ class TypeContenuController extends Controller
     public function update(Request $request, TypeContenu $typecontenu)
     {
         $request->validate([
-            'nom' => "required|string|unique:typecontenus,nom,{$typecontenu->id}",
+            'nom' => "required|string|max:255|unique:typecontenus,nom,{$typecontenu->id}",
         ]);
 
-        $typecontenu->update($request->all());
+        $typecontenu->update($request->only(['nom']));
 
         return redirect()->route('admin.typecontenus.index')
-            ->with('success', 'Modification enregistrée');
+            ->with('success', 'Type de contenu mis à jour.');
     }
 
     public function destroy(TypeContenu $typecontenu)
@@ -63,6 +63,6 @@ class TypeContenuController extends Controller
         $typecontenu->delete();
 
         return redirect()->route('admin.typecontenus.index')
-            ->with('success', 'Type supprimé');
+            ->with('success', 'Type de contenu supprimé.');
     }
 }

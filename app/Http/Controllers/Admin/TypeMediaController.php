@@ -15,8 +15,8 @@ class TypeMediaController extends Controller
 
     public function index()
     {
-        $medias = TypeMedia::orderBy('nom')->paginate(10);
-        return view('admin.typemedias.index', compact('medias'));
+        $typemedias = TypeMedia::orderBy('nom')->paginate(10);
+        return view('admin.typemedias.index', compact('typemedias'));
     }
 
     public function create()
@@ -27,13 +27,13 @@ class TypeMediaController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'nom' => 'required|string|unique:typemedias,nom',
+            'nom' => 'required|string|max:255|unique:typemedias,nom',
         ]);
 
-        TypeMedia::create($request->all());
+        TypeMedia::create($request->only(['nom']));
 
         return redirect()->route('admin.typemedias.index')
-            ->with('success', 'Type de média créé avec succès');
+            ->with('success', 'Type de média créé avec succès.');
     }
 
     public function show(TypeMedia $typemedia)
@@ -49,13 +49,13 @@ class TypeMediaController extends Controller
     public function update(Request $request, TypeMedia $typemedia)
     {
         $request->validate([
-            'nom' => "required|string|unique:typemedias,nom,{$typemedia->id}",
+            'nom' => "required|string|max:255|unique:typemedias,nom,{$typemedia->id}",
         ]);
 
-        $typemedia->update($request->all());
+        $typemedia->update($request->only(['nom']));
 
         return redirect()->route('admin.typemedias.index')
-            ->with('success', 'Type de média modifié');
+            ->with('success', 'Type de média modifié avec succès.');
     }
 
     public function destroy(TypeMedia $typemedia)
@@ -63,6 +63,6 @@ class TypeMediaController extends Controller
         $typemedia->delete();
 
         return redirect()->route('admin.typemedias.index')
-            ->with('success', 'Type de média supprimé');
+            ->with('success', 'Type de média supprimé.');
     }
 }

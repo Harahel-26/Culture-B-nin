@@ -1,60 +1,130 @@
 @extends('admin.layouts')
 
+@section('title', 'Gestion des Régions')
+
 @section('content')
-<div class="card">
 
-    <div class="card-header d-flex justify-content-between">
-        <h3 class="card-title">Liste des régions</h3>
-        <a href="{{ route('admin.regions.create') }}" class="btn btn-primary" title="Ajouter">
-            <i class="bi bi-plus-circle ma-1"></i>
-        </a>
-    </div>
+<style>
+    .premium-card {
+        border-radius: 14px;
+        background: #fff;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+        padding: 20px;
+        transition: .3s;
+    }
+    .premium-card:hover {
+        box-shadow: 0 6px 22px rgba(0,0,0,0.15);
+    }
+    .region-title {
+        font-weight: 700;
+        font-size: 1.1rem;
+        color: #1e1b4b;
+    }
+    .badge-type {
+        background: #1e1b4b;
+        color: #fff;
+        font-size: .75rem;
+        padding: 6px 10px;
+        border-radius: 6px;
+    }
+    .badge-langue {
+        background: #d4a017;
+        color: #fff;
+        font-size: .75rem;
+        padding: 6px 10px;
+        border-radius: 6px;
+    }
+</style>
 
-    <div class="card-body">
-        <table class="table table-hover">
-            <thead>
-                <tr>
-                    <th>Nom</th>
-                    <th>Type</th>
-                    <th>Langue principale</th>
-                    <th>Active</th>
-                    <th class="text-end">Actions</th>
-                </tr>
+<div class="d-flex justify-content-between mb-3">
+    <h3 class="fw-bold" style="color:#1e1b4b;">📍 Régions du Bénin</h3>
+
+    <a href="{{ route('admin.regions.create') }}" class="btn btn-primary"
+       style="background:#1e1b4b; border:none;">
+        <i class="bi bi-plus-circle"></i> Nouvelle Région
+    </a>
+</div>
+
+@if(session('success'))
+    <div class="alert alert-success shadow-sm">{{ session('success') }}</div>
+@endif
+
+<div class="card shadow-sm">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+            <tr>
+                <th>#</th>
+                <th>Nom</th>
+                <th>Type</th>
+                <th>Langue principale</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
             </thead>
 
             <tbody>
-                @foreach($regions as $region)
-                <tr>
-                    <td>{{ $region->nom }}</td>
-                    <td>{{ $region->type }}</td>
-                    <td>{{ $region->langue_principale }}</td>
-                    <td>{{ $region->is_active ? 'Oui' : 'Non' }}</td>
+            @foreach($regions as $region)
+                <tr class="premium-card">
+                    <td>{{ $region->id }}</td>
 
-                    <td class="text-end">
+                    <td>
+                        <span class="region-title">{{ $region->nom }}</span>
+                    </td>
 
-                        <a href="{{ route('admin.regions.show', $region) }}" class="btn btn-sm btn-info" title="voir">
+                    <td>
+                        <span class="badge-type">{{ $region->type ?? 'Non défini' }}</span>
+                    </td>
+
+                    <td>
+                        @if($region->languePrincipale)
+                            <span class="badge-langue">
+                                {{ $region->languePrincipale->nom }}
+                            </span>
+                        @else
+                            <span class="text-muted">Aucune</span>
+                        @endif
+                    </td>
+
+                    <td>
+                        @if($region->is_active)
+                            <span class="badge bg-success">Active</span>
+                        @else
+                            <span class="badge bg-danger">Inactive</span>
+                        @endif
+                    </td>
+
+                    <td>
+                        <a href="{{ route('admin.regions.show', $region) }}"
+                           class="btn btn-sm btn-info text-white">
                             <i class="bi bi-eye"></i>
                         </a>
 
-                        <a href="{{ route('admin.regions.edit', $region) }}" class="btn btn-sm btn-warning" title="mofifier">
+                        <a href="{{ route('admin.regions.edit', $region) }}"
+                           class="btn btn-sm btn-warning">
                             <i class="bi bi-pencil-square"></i>
                         </a>
 
-                        <form action="{{ route('admin.regions.destroy', $region) }}" method="POST" class="d-inline">
+                        <form action="{{ route('admin.regions.destroy', $region) }}"
+                              method="POST" class="d-inline"
+                              onsubmit="return confirm('Supprimer cette région ?')">
                             @csrf @method('DELETE')
-                            <button class="btn btn-sm btn-danger" title="supprimer" onclick="return confirm('Supprimer ?')">
+                            <button class="btn btn-sm btn-danger">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
 
                     </td>
-
                 </tr>
-                @endforeach
+            @endforeach
             </tbody>
-        </table>
 
+        </table>
+    </div>
+
+    <div class="card-footer">
         {{ $regions->links() }}
     </div>
 </div>
+
 @endsection

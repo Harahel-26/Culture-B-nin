@@ -20,8 +20,8 @@ class MediaController extends Controller
     public function index()
     {
         $medias = Media::with(['contenu', 'typeMedia', 'uploader'])
-                        ->orderBy('created_at', 'desc')
-                        ->paginate(15);
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
 
         return view('admin.medias.index', compact('medias'));
     }
@@ -29,9 +29,9 @@ class MediaController extends Controller
     public function create()
     {
         return view('admin.medias.create', [
-            'contenus' => Contenu::all(),
-            'types' => TypeMedia::all(),
-            'langues' => Langue::all()
+            'contenus' => Contenu::orderBy('titre')->get(),
+            'types' => TypeMedia::orderBy('nom')->get(),
+            'langues' => Langue::orderBy('nom')->get()
         ]);
     }
 
@@ -40,7 +40,7 @@ class MediaController extends Controller
         $request->validate([
             'contenu_id' => 'required|exists:contenus,id',
             'type_media_id' => 'required|exists:typemedias,id',
-            'fichier' => 'required|file|max:20000', // 20 MB
+            'fichier' => 'required|file|max:20000',
             'titre' => 'nullable|string|max:255',
             'description' => 'nullable|string',
             'langue_id' => 'nullable|exists:langues,id',
@@ -57,48 +57,70 @@ class MediaController extends Controller
             'description' => $request->description,
             'fichier' => $path,
             'extension' => $file->extension(),
-            'taille' => $file->getSize() / 1024, // KB
-            'uploaded_by' => auth()->id(), // CORRIGÉ: upload_par -> uploaded_by
+            'taille' => intval($file->getSize() / 1024),
+            'uploaded_by' => auth()->id(),
             'status' => 'pending',
         ]);
 
-        return redirect()->route('admin.medias.index') // Changé la route
-                         ->with('success', 'Média ajouté.');
+        return redirect()
+            ->route('admin.medias.index')
+            ->with('success', 'Média ajouté avec succès.');
     }
 
     public function destroy(Media $media)
     {
-        // Seul l'uploader ou un admin/modérateur peut supprimer
-        if ($media->uploaded_by !== auth()->id() && // CORRIGÉ
+        if ($media->uploaded_by !== auth()->id() &&
             !auth()->user()->hasRole(['admin', 'moderateur'])) {
             abort(403, 'Action non autorisée');
         }
 
-        // Supprimer le fichier physique
         if (Storage::disk('public')->exists($media->fichier)) {
             Storage::disk('public')->delete($media->fichier);
         }
 
         $media->delete();
 
-        return back()->with('success', 'Média supprimé');
+        return back()->with('success', 'Média supprimé avec succès.');
     }
 
     public function valider(Media $media)
     {
         $media->update([
             'status' => 'validated',
-            'validated_by' => auth()->id() // CORRIGÉ: valide_par -> validated_by
+            'validated_by' => auth()->id()
         ]);
 
         return back()->with('success', 'Média validé.');
     }
+    public function update(Request $request, Media $media)
+{
+    $request->validate([
+        'contenu_id' => 'required|exists:contenus,id',
+        'type_media_id' => 'required|exists:typemedias,id',
+        'titre' => 'nullable|string|max:255',
+        'description' => 'nullable|string',
+        'langue_id' => 'nullable|exists:langues,id',
+    ]);
+
+    $media->update([
+        'contenu_id' => $request->contenu_id,
+        'type_media_id' => $request->type_media_id,
+        'titre' => $request->titre,
+        'description' => $request->description,
+        'langue_id' => $request->langue_id,
+    ]);
+
+    return redirect()
+        ->route('admin.medias.index')
+        ->with('success', 'Média mis à jour avec succès.');
+}
+
 
     public function rejeter(Media $media)
     {
         $media->update([
             'status' => 'rejected',
-            'validated_by' => auth()->id() // CORRIGÉ
+            'validated_by' => auth()->id()
         ]);
 
         return back()->with('success', 'Média rejeté.');

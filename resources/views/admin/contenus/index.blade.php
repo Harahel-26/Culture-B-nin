@@ -1,93 +1,116 @@
 @extends('admin.layouts')
 
+@section('title', 'Gestion des contenus')
+
 @section('content')
 
-<div class="card">
+<style>
+    .badge-premium {
+        background: #d4a017;
+        color: #fff;
+        padding: 5px 8px;
+        border-radius: 5px;
+        font-size: .75rem;
+        font-weight: 600;
+    }
+    .badge-status {
+        padding: 6px 10px;
+        border-radius: 6px;
+        font-size: .8rem;
+    }
+    .draft { background: #6c757d; color: #fff; }
+    .pending { background: #ffc107; }
+    .validated { background: #28a745; color: #fff; }
+    .rejected { background: #dc3545; color: #fff; }
 
-    <div class="card-header d-flex justify-content-between">
-        <h3 class="card-title">Liste des contenus</h3>
+    .cover-thumb {
+        width: 70px;
+        height: 50px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1px solid #eee;
+    }
+</style>
 
-        <a href="{{ route('admin.contenus.create') }}" class="btn btn-primary" title="Ajouter">
-            <i class="bi bi-plus-circle me-1"></i>
-        </a>
-    </div>
+<div class="d-flex justify-content-between mb-4">
+    <h3 class="fw-bold" style="color:#1e1b4b;">
+        <i class="bi bi-journal-text"></i> Contenus
+    </h3>
 
-    <div class="card-body">
+    <a href="{{ route('admin.contenus.create') }}"
+       class="btn btn-primary" style="background:#1e1b4b; border:none;">
+        <i class="bi bi-plus-circle"></i> Nouveau contenu
+    </a>
+</div>
 
-        <table class="table table-hover">
-            <thead>
+<div class="card shadow-sm">
+
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
                 <tr>
-                    <th>Image</th>
+                    <th>Couverture</th>
                     <th>Titre</th>
                     <th>Langue</th>
-                    <th>Région</th>
                     <th>Type</th>
+                    <th>Premium</th>
+                    <th>Statut</th>
                     <th>Auteur</th>
-                    <th>Status</th>
-                    <th class="text-end">Actions</th>
+                    <th></th>
                 </tr>
             </thead>
 
             <tbody>
 
-                @foreach($contenus as $contenu)
+                @foreach($contenus as $c)
                 <tr>
 
                     <td>
-                        @if($contenu->image_couverture)
-                            <img src="{{ asset('storage/'.$contenu->image_couverture) }}"
-                                 width="50" height="50" class="rounded">
-                        @else
-                            <span class="text-muted">—</span>
-                        @endif
+                        <img src="{{ $c->image_couverture ? asset('storage/'.$c->image_couverture) : asset('images/default-cover.jpg') }}"
+                            class="cover-thumb">
                     </td>
-
-                    <td>{{ $contenu->titre }}</td>
-                    <td>{{ $contenu->langue->nom }}</td>
-                    <td>{{ $contenu->region->nom ?? '—' }}</td>
-                    <td>{{ $contenu->typecontenu->nom }}</td>
-                    <td>{{ $contenu->utilisateur->name }}</td>
 
                     <td>
-                        @if($contenu->status == 'pending')
-                            <span class="badge bg-warning">En attente</span>
-                        @elseif($contenu->status == 'validated')
-                            <span class="badge bg-success">Validé</span>
-                        @elseif($contenu->status == 'rejected')
-                            <span class="badge bg-danger">Rejeté</span>
+                        <strong>{{ $c->titre }}</strong>
+                    </td>
+
+                    <td>{{ $c->langue->nom }}</td>
+
+                    <td>{{ $c->typecontenu->nom }}</td>
+
+                    <td>
+                        @if($c->is_premium)
+                            <span class="badge-premium">Premium</span>
                         @else
-                            <span class="badge bg-secondary">Brouillon</span>
+                            <span class="text-muted">Gratuit</span>
                         @endif
                     </td>
+
+                    <td>
+                        <span class="badge-status {{ $c->status }}">
+                            {{ ucfirst($c->status) }}
+                        </span>
+                    </td>
+
+                    <td>{{ $c->utilisateur->name }}</td>
 
                     <td class="text-end">
 
-                        {{-- Show --}}
-                        <a href="{{ route('admin.contenus.show', $contenu) }}" class="btn btn-sm btn-info" title="voir">
+                        <a href="{{ route('admin.contenus.show', $c) }}"
+                           class="btn btn-sm btn-info text-white">
                             <i class="bi bi-eye"></i>
                         </a>
 
-                        {{-- Edit --}}
-                        <a href="{{ route('admin.contenus.edit', $contenu) }}" class="btn btn-sm btn-warning" title="modifier">
-                            <i class="bi bi-pencil-square"></i>
+                        <a href="{{ route('admin.contenus.edit', $c) }}"
+                           class="btn btn-sm btn-warning">
+                            <i class="bi bi-pencil"></i>
                         </a>
 
-                        {{-- Valider (si pas encore validé) --}}
-                        @if($contenu->status != 'validated')
-                        <form action="{{ route('admin.contenus.valider', $contenu) }}"
-                              method="POST" class="d-inline">
-                            @csrf @method('PUT')
-                            <button class="btn btn-sm btn-success">
-                                <i class="bi bi-check"></i>
-                            </button>
-                        </form>
-                        @endif
-
-                        {{-- Delete --}}
-                        <form action="{{ route('admin.contenus.destroy', $contenu) }}"
-                              method="POST" class="d-inline">
+                        <form action="{{ route('admin.contenus.destroy', $c) }}"
+                              method="POST" class="d-inline"
+                              onsubmit="return confirm('Supprimer ce contenu ?')">
                             @csrf @method('DELETE')
-                            <button class="btn btn-sm btn-danger" title="supprimer" onclick="return confirm('Supprimer ?')">
+                            <button class="btn btn-sm btn-danger">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </form>
@@ -99,9 +122,10 @@
 
             </tbody>
         </table>
+    </div>
 
+    <div class="card-footer">
         {{ $contenus->links() }}
-
     </div>
 
 </div>

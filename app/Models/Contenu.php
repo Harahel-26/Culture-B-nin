@@ -23,25 +23,32 @@ class Contenu extends Model
         'is_premium',
         'prix',
         'extrait_gratuit',
+        'max_vues_gratuites',
         'vues_gratuites',
+        'vues_total',
         'published_at',
     ];
 
     protected $casts = [
+        'is_active' => 'boolean',
         'is_premium' => 'boolean',
         'prix' => 'decimal:2',
         'published_at' => 'datetime',
     ];
 
-    protected $appends = ['extrait', 'prix_formatte', 'est_accessible'];
+    protected $appends = [
+        'prix_formatte',
+        'est_accessible',
+        'extrait',
+        'moyenne_notes',
+        'total_notes',
+    ];
 
     /*
     |--------------------------------------------------------------------------
-    | Boot
+    | Boot : génération slug unique
     |--------------------------------------------------------------------------
     */
-
-    // Slug automatique lors de la création
     protected static function boot()
     {
         parent::boot();
@@ -50,55 +57,6 @@ class Contenu extends Model
             if (empty($contenu->slug)) {
                 $contenu->slug = Str::slug($contenu->titre) . '-' . uniqid();
             }
-        });
-    }
-
-    /*
-    |--------------------------------------------------------------------------
-    | Scopes
-    |--------------------------------------------------------------------------
-    */
-
-    // Contenus validés
-    public function scopeValides($query)
-    {
-        return $query->where('status', 'validated');
-    }
-
-    // Contenus en attente
-    public function scopeEnAttente($query)
-    {
-        return $query->where('status', 'pending');
-    }
-
-    // Contenus premium
-    public function scopePremium($query)
-    {
-        return $query->where('is_premium', true);
-    }
-
-    // Contenus gratuits
-    public function scopeGratuit($query)
-    {
-        return $query->where('is_premium', false);
-    }
-
-    // Contenus accessibles à l'utilisateur
-    public function scopeAccessible($query, $user = null)
-    {
-        if (!$user) {
-            return $query->where('is_premium', false);
-        }
-
-        if ($user->hasRole(['admin', 'moderateur'])) {
-            return $query;
-        }
-
-        $contenusAchetes = $user->contenusAchetes()->pluck('contenu_id');
-
-        return $query->where(function ($q) use ($contenusAchetes) {
-            $q->where('is_premium', false)
-              ->orWhereIn('id', $contenusAchetes);
         });
     }
 
@@ -138,18 +96,9 @@ class Contenu extends Model
         return $this->hasMany(Media::class);
     }
 
-    public function traductions()
-    {
-        return $this->hasMany(ContenuTraduction::class);
-    }
     public function commentaires()
     {
         return $this->hasMany(Commentaire::class)->where('statut', 'validated');
-    }
-
-    public function touscommentaires()
-    {
-        return $this->hasMany(Commentaire::class);
     }
 
     public function paiements()
@@ -159,28 +108,50 @@ class Contenu extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Accesseurs
+    | Scopes
     |--------------------------------------------------------------------------
     */
 
-    // Vérifie si le contenu est accessible à l'utilisateur actuel
-    public function getEstAccessibleAttribute()
+    public function scopeValides($q)
     {
-        if (!$this->is_premium) {
-            return true;
-        }
-
-        $user = auth()->user();
-        if (!$user) {
-            return false;
-        }
-
-        return $user->aAcheteContenu($this->id) ||
-               $user->hasRole(['admin', 'moderateur', 'contributeur_premium']);
+        return $q->where('status', 'validated');
     }
 
-    // Formate le prix du contenu
-    public function getPrixFormateAttribute()
+    public function scopePremium($q)
+    {
+        return $q->where('is_premium', true);
+    }
+
+    public function scopeGratuit($q)
+    {
+        return $q->where('is_premium', false);
+    }
+
+    public function scopeAccessible($q, $user = null)
+    {
+        if (!$user) {
+            return $q->where('is_premium', false);
+        }
+
+        if ($user->hasRole(['admin', 'moderateur'])) {
+            return $q;
+        }
+
+        $ids = $user->contenusAchetes()->pluck('contenu_id');
+
+        return $q->where(function ($sub) use ($ids) {
+            $sub->where('is_premium', false)
+                ->orWhereIn('id', $ids);
+        });
+    }
+
+    /*
+    |--------------------------------------------------------------------------
+    | Accessors (Champs Virtuels)
+    |--------------------------------------------------------------------------
+    */
+
+    public function getPrixFormatteAttribute()
     {
         if (!$this->is_premium) {
             return 'Gratuit';
@@ -188,7 +159,19 @@ class Contenu extends Model
         return number_format($this->prix, 0, ',', ' ') . ' FCFA';
     }
 
-    // Génère un extrait intelligent du contenu
+    public function getEstAccessibleAttribute()
+    {
+        if (!$this->is_premium) {
+            return true;
+        }
+
+        $user = auth()->user();
+        if (!$user) return false;
+
+        return $user->aAcheteContenu($this->id)
+            || $user->hasRole(['admin', 'moderateur']);
+    }
+
     public function getExtraitAttribute()
     {
         if ($this->extrait_gratuit) {
@@ -196,69 +179,40 @@ class Contenu extends Model
         }
 
         if ($this->description) {
-            return Str::limit($this->description, 300);
+            return Str::limit(strip_tags($this->description), 200);
         }
 
-        // Extrait intelligent (premier paragraphe ou 300 caractères)
-        $texte = strip_tags($this->contenu_texte);
-        $sentences = explode('.', $texte);
+        return Str::limit(strip_tags($this->contenu_texte), 200);
+    }
 
-        if (count($sentences) > 1) {
-            $extrait = $sentences[0] . '.';
-            if (strlen($extrait) < 100 && isset($sentences[1])) {
-                $extrait .= ' ' . $sentences[1] . '.';
-            }
-            return Str::limit($extrait, 350);
-        }
+    public function getMoyenneNotesAttribute()
+    {
+        return round($this->commentaires()->avg('note') ?? 0, 1);
+    }
 
-        return Str::limit($texte, 300);
+    public function getTotalNotesAttribute()
+    {
+        return $this->commentaires()->count();
     }
 
     /*
     |--------------------------------------------------------------------------
-    | Méthodes
+    | Méthodes Métiers
     |--------------------------------------------------------------------------
     */
 
-    // Vérifie si l'utilisateur a acheté ce contenu
-    public function estAchetePar($user = null)
+    public function incrementerVues()
     {
-        if (!$user) {
-            return false;
-        }
-
-        return $this->paiements()
-            ->where('user_id', $user->id)
-            ->where('statut', 'paye')
-            ->exists();
+        $this->increment('vues_total');
     }
 
-    // Calcul moyenne des notes
-    public function moyenneNotes()
-    {
-        return $this->commentaires()
-            ->where('statut', 'validated')
-            ->avg('note') ?? 0;
-    }
-
-    // Nombre total de votes/commentaires
-    public function totalNotes()
-    {
-        return $this->commentaires()
-            ->where('statut', 'validated')
-            ->count();
-    }
-
-    // Incrémente le nombre de vues gratuites
     public function incrementerVuesGratuites()
     {
         $this->increment('vues_gratuites');
     }
 
-    // Calcule le pourcentage de vues gratuites utilisées
-    public function pourcentageVueGratuite()
+    public function vuesGratuitesRestantes()
     {
-        $maxVues = 3; // Nombre max de vues gratuites autorisées
-        return min(($this->vues_gratuites / $maxVues) * 100, 100);
+        return max(0, $this->max_vues_gratuites - $this->vues_gratuites);
     }
 }

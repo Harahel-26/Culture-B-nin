@@ -2,8 +2,6 @@
 
 namespace App\Models;
 
-
-
 use Illuminate\Database\Eloquent\Model;
 
 class Langue extends Model
@@ -12,11 +10,26 @@ class Langue extends Model
         'code',
         'nom',
         'description',
-        'is_active'
+        'is_active',
+        'icone'
     ];
-     public function contenus()
+
+    protected $casts = [
+        'is_active' => 'boolean',
+    ];
+
+    public function contenus()
     {
         return $this->hasMany(Contenu::class);
     }
 
+    // Accessor pour récupérer l’icône (front + admin)
+    public function getIconeUrlAttribute()
+    {
+        if (!$this->icone) {
+            return asset('images/default-langue.png');
+        }
+
+        return asset('storage/' . $this->icone);
+    }
 }
