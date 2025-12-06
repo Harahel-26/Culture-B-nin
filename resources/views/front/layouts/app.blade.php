@@ -1,158 +1,313 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@yield('title', 'Culture Bénin')</title>
+    <meta charset="utf-8" />
+    <title>@yield('title', 'Culture Bénin | Plateforme culturelle')</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap Icons -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    {{-- Fonts --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fontsource/inter@5/index.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+
+    {{-- Icons --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+
+    {{-- Bootstrap --}}
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    {{-- Style front personnalisé (à créer ensuite si tu veux) --}}
+    <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
 
     <style>
         body {
-            padding-top: 56px;
+            font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f5f5f8;
         }
-        .navbar-brand {
-            font-weight: bold;
+
+        .front-navbar {
+            background: #0b1020;
         }
-        .footer {
-            background-color: #f8f9fa;
-            margin-top: auto;
+
+        .front-navbar .navbar-brand,
+        .front-navbar .nav-link,
+        .front-navbar .dropdown-item {
+            color: #f8fafc !important;
+        }
+
+        .front-navbar .nav-link.active,
+        .front-navbar .nav-link:hover {
+            color: #facc15 !important;
+        }
+
+        .btn-gold {
+            background: #d4a017;
+            border-color: #d4a017;
+            color: #0b1020;
+            font-weight: 600;
+        }
+
+        .btn-gold:hover {
+            background: #e0b329;
+            border-color: #e0b329;
+            color: #020617;
+        }
+
+        .site-footer {
+            background: #020617;
+            color: #e5e7eb;
+        }
+
+        .site-footer a {
+            color: #e5e7eb;
+            text-decoration: none;
+        }
+
+        .site-footer a:hover {
+            color: #facc15;
+        }
+
+        .page-header-hero {
+            background: radial-gradient(circle at top left, #1d2960, #020617);
+            color: #f9fafb;
+            padding: 40px 0 30px;
+            margin-bottom: 20px;
         }
     </style>
+
+    @stack('styles')
 </head>
+
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white fixed-top shadow-sm">
+
+    {{-- NAVBAR --}}
+    <nav class="navbar navbar-expand-lg front-navbar shadow-sm">
+        {{-- OVERLAY DE RECHERCHE PREMIUM --}}
+<div id="searchOverlay"
+     style="
+        display:none;
+        position:fixed;
+        top:0; left:0; width:100%; height:100%;
+        background:rgba(0,0,0,0.86);
+        backdrop-filter: blur(4px);
+        z-index:9999;
+        padding-top:120px;
+        text-align:center;
+     ">
+
+    <div class="container">
+
+        {{-- Champ de recherche --}}
+        <form action="{{ route('front.search') }}" method="GET" class="mb-4">
+            <input type="text" name="q" class="form-control form-control-lg"
+                   placeholder="Rechercher un contenu..."
+                   style="
+                        max-width:650px;
+                        margin:auto;
+                        border-radius:12px;
+                        padding:20px;
+                        font-size:1.3rem;
+                   ">
+        </form>
+
+        {{-- Bouton fermer --}}
+        <button onclick="closeSearch()"
+                class="btn btn-light"
+                style="border-radius:50%; width:50px; height:50px;">
+            <i class="bi bi-x-lg"></i>
+        </button>
+
+    </div>
+
+</div>
+
         <div class="container">
-            <a class="navbar-brand" href="{{ route('front.accueil') }}">
-                <i class="bi bi-globe-americas"></i> Culture Bénin
+
+            {{-- Logo / titre du site --}}
+            <a class="navbar-brand d-flex align-items-center gap-2" href="{{ url('/') }}">
+                <img src="{{ asset('images/slides/logo-b.jpg') }}" alt="Logo" style="height:32px; width:auto;">
+                <span class="fw-bold">Culture Bénin</span>
             </a>
 
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler text-white" type="button" data-bs-toggle="collapse" data-bs-target="#frontNavbar">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav me-auto">
+            <div class="collapse navbar-collapse" id="frontNavbar">
+
+                {{-- Liens de gauche --}}
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('front.accueil') }}">
-                            <i class="bi bi-house"></i> Accueil
+                        <a class="nav-link {{ request()->routeIs('front.home') ? 'active' : '' }}"
+                           href="{{ route('front.home') }}">
+                            Accueil
                         </a>
                     </li>
+
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ route('front.contenus.index') }}">
-                            <i class="bi bi-book"></i> Contenus
+                        <a class="nav-link {{ request()->routeIs('front.contenus.*') ? 'active' : '' }}"
+                           href="{{ route('front.contenus.index') }}">
+                            Contenus
                         </a>
                     </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="languesDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-translate"></i> Langues
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('front.medias.*') ? 'active' : '' }}"
+                           href="{{ route('front.medias.index') ?? '#' }}">
+                            Médias
                         </a>
-                        <ul class="dropdown-menu">
-                            @foreach(App\Models\Langue::where('is_active', true)->get() as $langue)
-                            <li>
-                                <a class="dropdown-item" href="{{ route('front.contenus.langue', $langue->code) }}">
-                                    {{ $langue->nom }}
-                                </a>
-                            </li>
-                            @endforeach
-                        </ul>
                     </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('front.apropos') ? 'active' : '' }}"
+                           href="#">
+                            À propos
+                        </a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {{ request()->routeIs('front.contact') ? 'active' : '' }}"
+                           href="#">
+                            Contact
+                        </a>
+                    </li>
+
                 </ul>
 
-                <!-- Right side -->
-                <ul class="navbar-nav">
+                {{-- Espace utilisateur --}}
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    <li class="nav-item me-3">
+                       <a href="#" class="nav-link text-white fs-5" onclick="openSearch()">
+                           <i class="bi bi-search"></i>
+                        </a>
+                    </li>
+
+
                     @auth
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <i class="bi bi-person-circle"></i> {{ Auth::user()->name }}
-                        </a>
-                        <ul class="dropdown-menu dropdown-menu-end">
-                            <li>
-                                <a class="dropdown-item" href="{{ route('front.profil.index') }}">
-                                    <i class="bi bi-person"></i> Mon profil
-                                </a>
-                            </li>
-                            @if(Auth::user()->hasRole('contributeur') || Auth::user()->hasRole('admin'))
-                            <li>
-                                <a class="dropdown-item" href="{{ route('admin.dashboard') }}">
-                                    <i class="bi bi-speedometer2"></i> Administration
-                                </a>
-                            </li>
-                            @else
-                            <li>
-                                <a class="dropdown-item" href="{{ route('contributeur.form') }}">
-                                    <i class="bi bi-pencil-square"></i> Devenir contributeur
-                                </a>
-                            </li>
-                            @endif
-                            <li><hr class="dropdown-divider"></li>
-                            <li>
-                                <form method="POST" action="{{ route('logout') }}">
-                                    @csrf
-                                    <button type="submit" class="dropdown-item">
-                                        <i class="bi bi-box-arrow-right"></i> Déconnexion
-                                    </button>
-                                </form>
-                            </li>
-                        </ul>
-                    </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle d-flex align-items-center gap-2"
+                               href="#" role="button" data-bs-toggle="dropdown">
+
+                                <i class="bi bi-person-circle fs-5"></i>
+                                <span>{{ Auth::user()->name }}</span>
+                            </a>
+
+                            <ul class="dropdown-menu dropdown-menu-end">
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('front.profil.edit', auth()->user()) }}">
+                                        <i class="bi bi-person"></i> Mon profil
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a class="dropdown-item" href="{{ route('front.mes.achats') ?? '#' }}">
+                                        <i class="bi bi-bag-check"></i> Mes achats
+                                    </a>
+                                </li>
+
+                                <li><hr class="dropdown-divider"></li>
+
+                                <li>
+                                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                                        @csrf
+                                        <button class="dropdown-item">
+                                            <i class="bi bi-box-arrow-right"></i> Déconnexion
+                                        </button>
+                                    </form>
+                                </li>
+                            </ul>
+                        </li>
                     @else
-                    <li class="nav-item">
-                        <a class="nav-link" href="{{ route('login') }}">
-                            <i class="bi bi-box-arrow-in-right"></i> Connexion
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="btn btn-primary ms-2" href="{{ route('register') }}">
-                            <i class="bi bi-person-plus"></i> Inscription
-                        </a>
-                    </li>
+                        <li class="nav-item me-2">
+                            <a href="{{ route('login') }}" class="nav-link">
+                                <i class="bi bi-box-arrow-in-right"></i> Connexion
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="{{ route('register') }}" class="btn btn-gold btn-sm">
+                                <i class="bi bi-person-plus"></i> Inscription
+                            </a>
+                        </li>
                     @endauth
+
                 </ul>
+
+
             </div>
         </div>
     </nav>
 
-    <!-- Contenu principal -->
-    <main class="flex-shrink-0">
-        @yield('content')
+    {{-- BANNIÈRE / TITRE DE PAGE OPTIONNEL --}}
+    @hasSection('hero')
+        @yield('hero')
+    @endif
+
+    {{-- CONTENU PRINCIPAL --}}
+    <main class="min-vh-100">
+        <div class="container py-4">
+
+            {{-- messages flash --}}
+            @if(session('success'))
+                <div class="alert alert-success shadow-sm">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="alert alert-danger shadow-sm">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @yield('content')
+        </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer mt-5 py-4 bg-light">
+    {{-- FOOTER --}}
+    <footer class="site-footer mt-auto py-4">
         <div class="container">
-            <div class="row">
-                <div class="col-md-4">
-                    <h5>Culture Bénin</h5>
-                    <p>Plateforme de promotion de la culture béninoise.</p>
+            <div class="row align-items-center">
+
+                <div class="col-md-6 mb-3 mb-md-0">
+                    <div class="d-flex flex-column">
+                        <span class="fw-semibold">Culture Bénin</span>
+                        <small class="text-muted">
+                            &copy; {{ date('Y') }} – Tous droits réservés.
+                        </small>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <h5>Liens rapides</h5>
-                    <ul class="list-unstyled">
-                        <li><a href="{{ route('front.accueil') }}" class="text-decoration-none">Accueil</a></li>
-                        <li><a href="{{ route('front.contenus.index') }}" class="text-decoration-none">Contenus</a></li>
-                        <li><a href="{{ route('login') }}" class="text-decoration-none">Connexion</a></li>
-                    </ul>
+
+                <div class="col-md-6 text-md-end">
+                    <small>
+                        <a href="#">À propos</a> ·
+                        <a href="#">Contact</a> ·
+                        <a href="#">Politique de confidentialité</a>
+                    </small>
                 </div>
-                <div class="col-md-4">
-                    <h5>Contact</h5>
-                    <p><i class="bi bi-envelope"></i> contact@culturebenin.bj</p>
-                </div>
-            </div>
-            <hr>
-            <div class="text-center">
-                <p class="mb-0">&copy; {{ date('Y') }} Culture Bénin. Tous droits réservés.</p>
+
             </div>
         </div>
     </footer>
 
-    <!-- Scripts -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    {{-- SCRIPTS --}}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
     @stack('scripts')
+    <script>
+function openSearch() {
+    document.getElementById('searchOverlay').style.display = 'block';
+}
+
+function closeSearch() {
+    document.getElementById('searchOverlay').style.display = 'none';
+}
+document.addEventListener('keydown', function(e) {
+    if (e.key === "Escape") closeSearch();
+});
+
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+
 </body>
 </html>

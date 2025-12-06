@@ -1,5 +1,6 @@
 <?php
-
+use App\Http\Controllers\Front\FavoriController;
+use App\Http\Controllers\Front\AchatController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\ContenuController;
@@ -20,11 +21,10 @@ use App\Http\Controllers\Admin\DashboardController;
 | Accueil
 |--------------------------------------------------------------------------
 */
+Route::get('/', [HomeController::class, 'index'])->name('front.home');
+
 Route::get('/paiement/callback', [App\Http\Controllers\PaiementController::class, 'callback'])
     ->name('paiement.callback');
-
-Route::get('/', [HomeController::class, 'index'])->name('front.accueil');
-
 /*
 |--------------------------------------------------------------------------
 | Contenus (public)
@@ -49,12 +49,9 @@ Route::get('/types/{slug}', [FrontTypeContenuController::class, 'show'])->name('
 | Médias (public)
 |--------------------------------------------------------------------------
 */
-Route::prefix('medias')->name('front.medias.')->group(function () {
-    Route::get('/', [MediaController::class, 'index'])->name('index');
-    Route::get('/images', [MediaController::class, 'images'])->name('images');
-    Route::get('/videos', [MediaController::class, 'videos'])->name('videos');
-    Route::get('/audios', [MediaController::class, 'audios'])->name('audios');
-});
+Route::get('/medias', [MediaController::class, 'index'])
+    ->name('front.medias.index');
+
 Route::get('/medias/gallery', [MediaGalleryController::class, 'index'])->name('front.medias.gallery');
 Route::get('/medias/types', [FrontTypeMediaController::class, 'index'])->name('front.typemedia.index');
 Route::get('/medias/types/{slug}', [FrontTypeMediaController::class, 'show'])->name('front.typemedia.show');
@@ -66,6 +63,19 @@ Route::get('/medias/types/{slug}', [FrontTypeMediaController::class, 'show'])->n
 */
 Route::get('/langues', [FrontLangueController::class, 'index'])->name('front.langues.index');
 Route::get('/langues/{code}', [FrontLangueController::class, 'show'])->name('front.langues.show');
+
+
+
+
+
+Route::middleware('auth')->group(function () {
+
+    Route::post('/favoris/toggle', [FavoriController::class, 'toggle'])
+        ->name('front.favoris.toggle');
+
+    Route::get('/mes-favoris', [FavoriController::class, 'index'])
+        ->name('front.favoris.index');
+});
 
 /*
 |--------------------------------------------------------------------------
@@ -79,48 +89,38 @@ Route::get('/recherche', [SearchController::class, 'index'])->name('front.search
 | Commentaires (protégé)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth'])->prefix('commentaires')->name('front.commentaires.')->group(function () {
-    Route::post('/', [CommentaireController::class, 'store'])->name('store');
+
+Route::post('/commentaires/store', [CommentaireController::class, 'store'])
+    ->middleware('auth')
+    ->name('front.commentaire.store');
     Route::delete('/{commentaire}', [CommentaireController::class, 'destroy'])->name('destroy');
-});
+
+
+
+Route::get('/mes-achats', [AchatController::class, 'index'])
+    ->middleware('auth')
+    ->name('front.mes.achats');
 
 /*
 |--------------------------------------------------------------------------
 | Profil utilisateur (protégé)
 |--------------------------------------------------------------------------
 */
-Route::middleware(['auth'])->prefix('profil')->name('front.profil.')->group(function () {
-    Route::get('/', [ProfilController::class, 'index'])->name('index');
-    Route::get('/edit', [ProfilController::class, 'edit'])->name('edit');
-    Route::post('/update', [ProfilController::class, 'update'])->name('update');
-    Route::get('/contenus', [ProfilController::class, 'contenus'])->name('contenus');
-    Route::get('/traductions', [ProfilController::class, 'traductions'])->name('traductions');
-    Route::get('/commentaires', [ProfilController::class, 'commentaires'])->name('commentaires');
-    Route::post('/demande-contributeur', [ProfilController::class, 'demandeContributeur'])->name('demande-contributeur');
+
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/profil', [ProfilController::class, 'edit'])
+        ->name('front.profil.edit');
+
+    Route::post('/profil/update', [ProfilController::class, 'update'])
+        ->name('front.profil.update');
+
+    Route::post('/profil/password', [ProfilController::class, 'updatePassword'])
+        ->name('front.profil.password');
+
 });
 
-/*
-|--------------------------------------------------------------------------
-| Devenir contributeur (protégé)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth'])->prefix('devenir-contributeur')->group(function () {
-    Route::get('/', [DemandeContributeurUserController::class, 'form'])->name('contributeur.form');
-    Route::post('/', [DemandeContributeurUserController::class, 'store'])->name('contributeur.store');
-    Route::get('/mes-demandes', [DemandeContributeurUserController::class, 'mesDemandes'])->name('contributeur.mes-demandes');
-});
-
-/*
-|--------------------------------------------------------------------------
-| Paiements (protégé)
-|--------------------------------------------------------------------------
-*/
-Route::middleware(['auth'])->prefix('paiement')->name('front.paiement.')->group(function () {
-    Route::get('/{contenu}', [PaiementController::class, 'init'])->name('init');
-    Route::post('/{contenu}/process', [PaiementController::class, 'process'])->name('process');
-    Route::get('/success/{reference}', [PaiementController::class, 'success'])->name('success');
-    Route::get('/failed/{reference}', [PaiementController::class, 'failed'])->name('failed');
-});
 
 /*
 |--------------------------------------------------------------------------

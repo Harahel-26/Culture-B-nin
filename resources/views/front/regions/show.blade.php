@@ -32,6 +32,12 @@
         transform: translateY(-6px);
         box-shadow: 0 12px 35px rgba(0,0,0,0.15);
     }
+    .favori-btn {
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+}
+
 </style>
 
 <div class="container py-4">

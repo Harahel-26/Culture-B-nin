@@ -28,6 +28,12 @@
         transform: translateY(-8px);
         box-shadow: 0 12px 35px rgba(0,0,0,0.15);
     }
+    .favori-btn {
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+}
+
     .contenu-title {
         font-size: 1.1rem;
         font-weight: 700;
@@ -65,6 +71,7 @@
                 <a href="{{ route('front.contenus.show', $contenu->slug) }}" class="text-decoration-none">
 
                     <div class="card contenu-card">
+                        <x-favori-button :contenu="$c" />
 
                         <img src="{{ asset('storage/' . $contenu->image_couverture) }}"
                              class="card-img-top"

@@ -44,6 +44,12 @@
         transform: translateY(-6px);
         box-shadow: 0 12px 30px rgba(0,0,0,0.15);
     }
+    .favori-btn {
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+}
+
 
     .media-thumb {
         height: 200px;
@@ -111,6 +117,7 @@
                 <div class="col-md-4">
 
                     <div class="media-card">
+                        
                         <img src="{{ $img->url }}" class="media-thumb">
 
                         <div class="media-caption">

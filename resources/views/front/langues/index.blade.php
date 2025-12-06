@@ -17,6 +17,12 @@
         transform: translateY(-6px);
         box-shadow: 0 10px 25px rgba(0,0,0,0.12);
     }
+    .favori-btn {
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+}
+
     .lang-img {
         width: 90px;
         height: 90px;

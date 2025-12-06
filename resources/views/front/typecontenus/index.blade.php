@@ -36,6 +36,12 @@
     .type-body {
         padding: 20px 25px;
     }
+    .favori-btn {
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+}
+
 </style>
 
 <div class="container py-5">

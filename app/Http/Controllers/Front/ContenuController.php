@@ -9,15 +9,33 @@ use Illuminate\Http\Request;
 class ContenuController extends Controller
 {
     public function index(Request $request)
-    {
-        $contenus = Contenu::with(['langue','region','typecontenu'])
-            ->where('status', 'validated')
-            ->where('is_active', true)
-            ->orderBy('published_at', 'desc')
-            ->paginate(9);
+{
+    $query = Contenu::where('status', 'validated')
+                    ->where('is_active', true)
+                    ->with(['langue','region','typecontenu']);
 
-        return view('front.contenus.index', compact('contenus'));
+    if ($request->filled('langue')) {
+        $query->where('langue_id', $request->langue);
     }
+
+    if ($request->filled('region')) {
+        $query->where('region_id', $request->region);
+    }
+
+    if ($request->filled('type')) {
+        $query->where('typecontenu_id', $request->type);
+    }
+
+    $contenus = $query->orderBy('published_at','desc')->paginate(9);
+
+    return view('front.contenus.index', [
+        'contenus' => $contenus,
+        'langues' => \App\Models\Langue::all(),
+        'regions' => \App\Models\Region::all(),
+        'typecontenus' => \App\Models\TypeContenu::all(),
+    ]);
+}
+
 
     public function show($slug)
     {

@@ -30,6 +30,12 @@
     .region-body {
         padding: 20px 25px;
     }
+    .favori-btn {
+    top: 10px;
+    right: 10px;
+    z-index: 3;
+}
+
     .region-type {
         color: #1e1b4b;
         font-weight: 600;
