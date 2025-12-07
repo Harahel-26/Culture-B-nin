@@ -14,6 +14,7 @@
 
     {{-- Bootstrap --}}
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://unpkg.com/scrollreveal"></script>
 
     {{-- Style front personnalisé (à créer ensuite si tu veux) --}}
     <link rel="stylesheet" href="{{ asset('front/css/style.css') }}">
@@ -72,16 +73,22 @@
             padding: 40px 0 30px;
             margin-bottom: 20px;
         }
+        .hero-animate {
+    animation: zoomHero 18s infinite alternate ease-in-out;
+}
+
+@keyframes zoomHero {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.12); }
+}
+
     </style>
 
     @stack('styles')
 </head>
 
 <body>
-
-    {{-- NAVBAR --}}
-    <nav class="navbar navbar-expand-lg front-navbar shadow-sm">
-        {{-- OVERLAY DE RECHERCHE PREMIUM --}}
+            {{-- OVERLAY DE RECHERCHE PREMIUM --}}
 <div id="searchOverlay"
      style="
         display:none;
@@ -120,6 +127,8 @@
 
 </div>
 
+    {{-- NAVBAR --}}
+    <nav class="navbar navbar-expand-lg front-navbar shadow-sm">
         <div class="container">
 
             {{-- Logo / titre du site --}}
@@ -160,14 +169,14 @@
 
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('front.apropos') ? 'active' : '' }}"
-                           href="#">
+                           href="{{ route('front.apropos') }}">
                             À propos
                         </a>
                     </li>
 
                     <li class="nav-item">
                         <a class="nav-link {{ request()->routeIs('front.contact') ? 'active' : '' }}"
-                           href="#">
+                           href="{{ route('front.contact') }}">
                             Contact
                         </a>
                     </li>
@@ -265,29 +274,31 @@
 
     {{-- FOOTER --}}
     <footer class="site-footer mt-auto py-4">
-        <div class="container">
-            <div class="row align-items-center">
+    <div class="container">
+        <div class="row align-items-center">
 
-                <div class="col-md-6 mb-3 mb-md-0">
-                    <div class="d-flex flex-column">
-                        <span class="fw-semibold">Culture Bénin</span>
-                        <small class="text-muted">
-                            &copy; {{ date('Y') }} – Tous droits réservés.
-                        </small>
-                    </div>
-                </div>
-
-                <div class="col-md-6 text-md-end">
-                    <small>
-                        <a href="#">À propos</a> ·
-                        <a href="#">Contact</a> ·
-                        <a href="#">Politique de confidentialité</a>
+            <div class="col-md-6 mb-3 mb-md-0">
+                <div class="d-flex flex-column">
+                    <span class="fw-semibold">Culture Bénin</span>
+                    <small class="text-muted">
+                        &copy; {{ date('Y') }} – Plateforme culturelle numérique. Tous droits réservés.
                     </small>
                 </div>
-
             </div>
+
+            <div class="col-md-6 text-md-end">
+                <small>
+                    <a href="{{ route('front.apropos') }}">À propos</a> ·
+                    <a href="{{ route('front.contact') }}">Contact</a> ·
+                    <a href="#">Mentions légales</a> ·
+                    <a href="#">Confidentialité</a>
+                </small>
+            </div>
+
         </div>
-    </footer>
+    </div>
+</footer>
+
 
     {{-- SCRIPTS --}}
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
@@ -308,6 +319,41 @@ document.addEventListener('keydown', function(e) {
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+<script>
+var swiper = new Swiper(".mySwiper", {
+    slidesPerView: 1.2,
+    spaceBetween: 10,
+    centeredSlides: false,
+    grabCursor: true,
+    breakpoints: {
+        540: { slidesPerView: 2.2 },
+        768: { slidesPerView: 3 },
+        1200: { slidesPerView: 4 },
+    },
+    pagination: {
+        el: ".swiper-pagination",
+        clickable: true,
+    },
+});
+</script>
+<script>
+ScrollReveal().reveal('.home-section-title', {
+    delay: 100,
+    distance: '20px',
+    origin: 'bottom',
+    opacity: 0,
+    duration: 800
+});
+
+ScrollReveal().reveal('.contenu-card', {
+    delay: 200,
+    distance: '30px',
+    origin: 'bottom',
+    opacity: 0,
+    interval: 100,
+    duration: 900
+});
+</script>
 
 </body>
 </html>

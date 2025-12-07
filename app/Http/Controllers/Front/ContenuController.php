@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use App\Models\Contenu;
 use Illuminate\Http\Request;
+use App\Models\Langue;
+use App\Models\Region;
+use App\Models\TypeContenu;
 
 class ContenuController extends Controller
 {
@@ -13,6 +16,13 @@ class ContenuController extends Controller
     $query = Contenu::where('status', 'validated')
                     ->where('is_active', true)
                     ->with(['langue','region','typecontenu']);
+
+        if ($q = $request->q) {
+            $query->where(function($sub) use ($q) {
+                $sub->where('titre', 'like', "%$q%")
+                    ->orWhere('description', 'like', "%$q%");
+            });
+        }
 
     if ($request->filled('langue')) {
         $query->where('langue_id', $request->langue);
@@ -26,14 +36,20 @@ class ContenuController extends Controller
         $query->where('typecontenu_id', $request->type);
     }
 
+    if ($request->premium === '0') {
+            $query->where('is_premium', false);
+        } elseif ($request->premium === '1') {
+            $query->where('is_premium', true);
+        }
+
     $contenus = $query->orderBy('published_at','desc')->paginate(9);
 
     return view('front.contenus.index', [
-        'contenus' => $contenus,
-        'langues' => \App\Models\Langue::all(),
-        'regions' => \App\Models\Region::all(),
-        'typecontenus' => \App\Models\TypeContenu::all(),
-    ]);
+            'contenus' => $query->latest()->paginate(12),
+            'langues'  => Langue::orderBy('nom')->get(),
+            'typecontenus'    => TypeContenu::orderBy('nom')->get(),
+            'regions'  => Region::orderBy('nom')->get(),
+        ]);
 }
 
 

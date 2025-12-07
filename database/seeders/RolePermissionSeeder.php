@@ -8,56 +8,112 @@ use Spatie\Permission\Models\Permission;
 
 class RolePermissionSeeder extends Seeder
 {
-    public function run()
+    public function run(): void
     {
-        // Création des rôles
-        $admin = Role::firstOrCreate(['name' => 'admin']);
-        $moderateur = Role::firstOrCreate(['name' => 'moderateur']);
-        $contributeur = Role::firstOrCreate(['name' => 'contributeur']);
-        $lecteur = Role::firstOrCreate(['name' => 'lecteur']);
-
-        // Permissions essentielles
+        // ------------------------
+        //  PERMISSIONS
+        // ------------------------
         $permissions = [
-            'voir contenus',
-            'ajouter contenus',
-            'modifier contenus',
-            'supprimer contenus',
-            'valider contenus',
-            'ajouter traductions',
-            'modérer commentaires',
-            'gerer utilisateurs',
-            'gerer langues',
-            'gerer regions',
-            'gerer types contenus',
-            'gerer medias'
+
+            // LECTEUR
+            'voir-contenus',
+            'commenter',
+            'noter',
+            'favoris',
+
+            // CONTRIBUTEUR
+            'creer-contenu',
+            'modifier-contenu',
+            'supprimer-contenu',
+
+            'uploader-media',
+            'supprimer-media',
+
+            'proposer-traduction',
+
+            // MODÉRATEUR
+            'valider-contenu',
+            'rejeter-contenu',
+
+            'valider-media',
+            'rejeter-media',
+
+            'valider-commentaire',
+            'rejeter-commentaire',
+
+            'valider-traduction',
+            'rejeter-traduction',
+
+            // ADMIN (gère tout)
+            'gerer-langues',
+            'gerer-regions',
+            'gerer-typecontenu',
+            'gerer-typemedia',
+            'gerer-users',
+            'gerer-paiements',
+
         ];
 
-        foreach ($permissions as $permission) {
-            Permission::firstOrCreate(['name' => $permission]);
+        foreach ($permissions as $perm) {
+            Permission::firstOrCreate(['name' => $perm]);
         }
 
-        // Attribution des permissions
+        // ------------------------
+        //  ROLES
+        // ------------------------
 
-        // ADMIN = toutes
-        $admin->givePermissionTo(Permission::all());
+        $admin        = Role::firstOrCreate(['name' => 'admin']);
+        $moderateur   = Role::firstOrCreate(['name' => 'moderateur']);
+        $contributeur = Role::firstOrCreate(['name' => 'contributeur']);
+        $lecteur      = Role::firstOrCreate(['name' => 'lecteur']);
 
-        // MODÉRATEUR
-        $moderateur->givePermissionTo([
-            'voir contenus',
-            'valider contenus',
-            'modérer commentaires',
+        // ------------------------
+        //  ATTRIBUTION
+        // ------------------------
+
+        // LECTEUR
+        $lecteur->givePermissionTo([
+            'voir-contenus',
+            'commenter',
+            'noter',
+            'favoris',
         ]);
 
         // CONTRIBUTEUR
         $contributeur->givePermissionTo([
-            'voir contenus',
-            'ajouter contenus',
-            'ajouter traductions'
+            'voir-contenus',
+            'commenter',
+            'noter',
+            'favoris',
+
+            'creer-contenu',
+            'modifier-contenu',
+            'supprimer-contenu',
+
+            'uploader-media',
+            'supprimer-media',
+
+            'proposer-traduction',
         ]);
 
-        // LECTEUR
-        $lecteur->givePermissionTo([
-            'voir contenus'
+        // MODÉRATEUR
+        $moderateur->givePermissionTo([
+            'voir-contenus',
+
+            'valider-contenu',
+            'rejeter-contenu',
+
+            'valider-media',
+            'rejeter-media',
+
+            'valider-commentaire',
+            'rejeter-commentaire',
+
+            'valider-traduction',
+            'rejeter-traduction',
         ]);
+
+        // ADMIN → tout
+        $admin->givePermissionTo(Permission::all());
     }
 }

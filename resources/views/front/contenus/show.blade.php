@@ -58,6 +58,21 @@
             <span class="badge bg-success ms-2">Gratuit</span>
         @endif
     </div>
+    @if($contenu->traductions()->where('status','validated')->count())
+    <div class="mb-3">
+        <form method="GET">
+            <select name="langue" class="form-select w-auto d-inline" onchange="this.form.submit()">
+                <option value="">Langue originale ({{ $contenu->langue->nom }})</option>
+                @foreach($contenu->traductions()->where('status','validated')->get() as $t)
+                    <option value="{{ $t->langue_id }}" @selected(request('langue') == $t->langue_id)>
+                        Traduction : {{ $t->langue->nom }}
+                    </option>
+                @endforeach
+            </select>
+        </form>
+    </div>
+@endif
+
 
 
     {{-- ⭐ SI NON ACCESSIBLE (premium non acheté) --}}
@@ -115,8 +130,22 @@
 
         {{-- ⭐ CONTENU COMPLET --}}
         <div class="content-area fs-6 mb-4">
-            {!! $contenu->contenu_texte !!}
-        </div>
+
+    @if(request('langue'))
+        {!! nl2br(e(
+            $contenu->traductions()
+                ->where('langue_id', request('langue'))
+                ->where('status','validated')
+                ->first()
+                ->texte
+                ?? 'Aucune traduction disponible pour cette langue.'
+        )) !!}
+    @else
+        {!! $contenu->contenu_texte !!}
+    @endif
+
+</div>
+
 
     @endif
 
@@ -222,7 +251,7 @@
                class="text-decoration-none text-dark">
 
                 <div class="contenu-card">
-                    <x-favori-button :contenu="$c" />
+                    <x-favori-button :contenu="$sim" />
                     <img src="{{ asset('storage/'.$sim->image_couverture) }}"
                          class="contenu-cover">
 

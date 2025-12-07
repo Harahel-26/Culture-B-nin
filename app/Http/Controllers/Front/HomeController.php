@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Front;
 
 use App\Http\Controllers\Controller;
 use App\Models\Contenu;
+use App\Models\Langue;
 
 class HomeController extends Controller
 {
@@ -28,6 +29,11 @@ class HomeController extends Controller
                            ->take(6)
                            ->get();
 
-        return view('front.home.index', compact('recents','premium','gratuits'));
+        return view('front.home.index', [
+            'recents' => Contenu::valideS()->latest()->take(8)->get(),
+            'premium' => Contenu::valideS()->premium()->latest()->take(8)->get(),
+            'langues' => Langue::withCount('contenus')->get(),
+            'gratuits' => Contenu::valideS()->gratuit()->latest()->take(8)->get(),
+        ]);
     }
 }

@@ -10,11 +10,11 @@ class RegionSeeder extends Seeder
     public function run()
     {
         $regions = [
-            ['nom' => 'Atacora', 'type' => 'Département', 'langue_principale' => 'bar'],
-            ['nom' => 'Donga', 'type' => 'Département', 'langue_principale' => 'yor'],
-            ['nom' => 'Zou', 'type' => 'Département', 'langue_principale' => 'fon'],
-            ['nom' => 'Mono', 'type' => 'Département', 'langue_principale' => 'gou'],
-            ['nom' => 'Collines', 'type' => 'Département', 'langue_principale' => 'yor'],
+            ['nom' => 'Atacora', 'type' => 'Département'],
+            ['nom' => 'Donga', 'type' => 'Département'],
+            ['nom' => 'Zou', 'type' => 'Département'],
+            ['nom' => 'Mono', 'type' => 'Département'],
+            ['nom' => 'Collines', 'type' => 'Département'],
         ];
 
         foreach ($regions as $region) {

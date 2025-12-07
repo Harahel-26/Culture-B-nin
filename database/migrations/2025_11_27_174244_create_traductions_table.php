@@ -28,9 +28,8 @@ return new class extends Migration
                   ->onDelete('set null');
 
             // Texte traduit
-            $table->text('titre')->nullable();
-            $table->text('description')->nullable();
-            $table->longText('contenu_texte')->nullable();
+
+            $table->longText('texte')->nullable();
 
             // Statut (pending / validated / rejected)
             $table->enum('status', ['pending', 'validated', 'rejected'])

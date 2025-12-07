@@ -2,18 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class DemandeContributeur extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'user_id',
-        'motif',
-        'status',
-        'validated_by',
+        'motivation',
+        'statut',
+        'traite_par'
     ];
 
     public function user()
@@ -21,8 +18,8 @@ class DemandeContributeur extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function validateur()
+    public function moderateur()
     {
-        return $this->belongsTo(User::class, 'validated_by');
+        return $this->belongsTo(User::class, 'traite_par');
     }
 }

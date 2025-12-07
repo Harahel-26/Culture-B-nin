@@ -17,14 +17,14 @@ return new class extends Migration
                   ->onDelete('cascade');
 
             // Un petit message
-            $table->text('motif')->nullable();
+            $table->text('motivation');
 
             // Statut de la demande
             $table->enum('status', ['pending', 'approved', 'rejected'])
                   ->default('pending');
 
             // Admin/Modérateur qui traite la demande
-            $table->foreignId('validated_by')
+            $table->foreignId('traite_par')
                   ->nullable()
                   ->constrained('users')
                   ->onDelete('set null');

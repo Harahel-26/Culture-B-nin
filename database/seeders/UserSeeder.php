@@ -14,9 +14,9 @@ class UserSeeder extends Seeder
 
         // Super admin
         $user = User::firstOrCreate(
-            ['email' => 'admin@example.com'],
+            ['email' => 'harahelkoutchika@gmail.com'],
             [
-                'name' => 'Super Admin',
+                'name' => 'Harahel',
                 'username' => 'admin',
                 'password' => Hash::make('Admin@1234'), // Changez le mot de passe après le premier login
                 'is_admin' => true,

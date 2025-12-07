@@ -108,41 +108,50 @@
 </section>
 
 
-{{-- SECTION 2 : PREMIUM POPULAIRES --}}
+{{-- ⭐ CARROUSEL PREMIUM --}}
 <section class="mb-5">
     <h2 class="home-section-title">
-        <i class="bi bi-star-fill text-warning"></i> Contenus premium populaires
+        <i class="bi bi-star-fill text-warning"></i> Contenus Premium populaires
     </h2>
 
-    <div class="row g-4">
+    <div class="swiper mySwiper">
+        <div class="swiper-wrapper">
 
-        @forelse($premium as $c)
-        <div class="col-md-4">
-            <a href="{{ route('front.contenus.show', $c->slug) }}" class="text-decoration-none text-dark">
+            @foreach($premium as $c)
+            <div class="swiper-slide">
 
-                <div class="contenu-card">
-                    <img src="{{ asset('storage/'.$c->image_couverture) }}"
-                         class="contenu-cover">
+                <a href="{{ route('front.contenus.show', $c->slug) }}"
+                   class="text-decoration-none text-dark">
 
-                    <div class="p-3">
-                        <h5 class="fw-bold">{{ $c->titre }}</h5>
-                        <small class="text-muted">
-                            {{ $c->prix_formatte }}
-                        </small>
-                        <div class="mt-2">
-                            <span class="badge-premium">Premium</span>
+                    <div class="contenu-card position-relative" style="height:100%;">
+
+                        <x-favori-button :contenu="$c" />
+
+                        <img src="{{ asset('storage/'.$c->image_couverture) }}"
+                             class="contenu-cover">
+
+                        <div class="p-3">
+                            <h5 class="fw-bold">{{ $c->titre }}</h5>
+                            <small class="text-muted">
+                                {{ $c->typecontenu->nom }} • {{ $c->langue->nom }}
+                            </small>
                         </div>
+
                     </div>
-                </div>
 
-            </a>
+                </a>
+
+            </div>
+            @endforeach
+
         </div>
-        @empty
-            <p>Aucun contenu premium disponible pour le moment.</p>
-        @endforelse
 
+        <!-- Pagination -->
+        <div class="swiper-pagination"></div>
     </div>
+
 </section>
+
 
 
 {{-- SECTION 3 : GRATUITS --}}

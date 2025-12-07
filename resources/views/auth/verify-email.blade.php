@@ -1,31 +1,35 @@
-<x-guest-layout>
-    <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
-        {{ __('Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn\'t receive the email, we will gladly send you another.') }}
+@extends('auth.layout')
+
+@section('title', 'Vérification email')
+
+@section('content')
+
+<h2 class="auth-title mb-4 text-center">
+    <i class="bi bi-envelope-check"></i> Vérifiez votre email
+</h2>
+
+<p class="text-white-50 mb-4">
+    Un lien de confirmation a été envoyé à votre adresse email.
+</p>
+
+@if(session('status') === 'verification-link-sent')
+    <div class="alert alert-success">
+        Un nouveau lien a été envoyé ! Vérifiez votre boîte mail.
     </div>
+@endif
 
-    @if (session('status') == 'verification-link-sent')
-        <div class="mb-4 font-medium text-sm text-green-600 dark:text-green-400">
-            {{ __('A new verification link has been sent to the email address you provided during registration.') }}
-        </div>
-    @endif
+<form method="POST" action="{{ route('verification.send') }}">
+    @csrf
+    <button class="btn btn-gold w-100 mb-3">
+        Renvoyer le lien
+    </button>
+</form>
 
-    <div class="mt-4 flex items-center justify-between">
-        <form method="POST" action="{{ route('verification.send') }}">
-            @csrf
+<form method="POST" action="{{ route('logout') }}">
+    @csrf
+    <button class="btn btn-secondary w-100">
+        Se déconnecter
+    </button>
+</form>
 
-            <div>
-                <x-primary-button>
-                    {{ __('Resend Verification Email') }}
-                </x-primary-button>
-            </div>
-        </form>
-
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-
-            <button type="submit" class="underline text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-800">
-                {{ __('Log Out') }}
-            </button>
-        </form>
-    </div>
-</x-guest-layout>
+@endsection

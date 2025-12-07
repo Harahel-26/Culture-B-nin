@@ -1,4 +1,5 @@
 <?php
+use App\Http\Controllers\Front\ContactController;
 use App\Http\Controllers\Front\FavoriController;
 use App\Http\Controllers\Front\AchatController;
 use Illuminate\Support\Facades\Route;
@@ -145,6 +146,147 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/commentaires/{id}/rejeter', [\App\Http\Controllers\Admin\CommentaireController::class, 'rejeter'])->name('commentaires.rejeter');
     Route::delete('/commentaires/{id}', [\App\Http\Controllers\Admin\CommentaireController::class, 'destroy'])->name('commentaires.destroy');
 });
+
+//-----------------------------------------
+// DASHBOARD CONTRIBUTEUR
+//-----------------------------------------
+
+Route::middleware(['auth', 'role:contributeur'])->group(function () {
+
+    Route::get('/contributeur/dashboard',
+        [\App\Http\Controllers\Front\Contributeur\DashboardController::class, 'index']
+    )->name('contributeur.dashboard');
+
+    Route::get('/contributeur/contenus',
+        [\App\Http\Controllers\Front\Contributeur\ContenuController::class, 'index']
+    )->name('contributeur.contenus.index');
+
+    Route::get('/contributeur/contenus/create',
+        [\App\Http\Controllers\Front\Contributeur\ContenuController::class, 'create']
+    )->name('contributeur.contenus.create');
+
+    Route::post('/contributeur/contenus',
+        [\App\Http\Controllers\Front\Contributeur\ContenuController::class, 'store']
+    )->name('contributeur.contenus.store');
+    Route::get('/contributeur/contenus/{contenu}/traductions/create',
+        [\App\Http\Controllers\Front\Contributeur\TraductionController::class, 'create'])
+        ->name('contributeur.traductions.create');
+
+    Route::post('/contributeur/contenus/{contenu}/traductions',
+        [\App\Http\Controllers\Front\Contributeur\TraductionController::class, 'store'])
+        ->name('contributeur.traductions.store');
+});
+
+
+// Demande pour devenir contributeur
+Route::middleware(['auth'])->group(function () {
+
+    Route::get('/profil/devenir-contributeur',
+        [\App\Http\Controllers\Front\DemandeContributeurController::class, 'form'])
+        ->name('front.devenir.form');
+
+    Route::post('/profil/devenir-contributeur',
+        [\App\Http\Controllers\Front\DemandeContributeurController::class, 'store'])
+        ->name('front.devenir.store');
+
+});
+
+
+// ESPACE MODÉRATEUR
+//---------------------------------------------
+Route::middleware(['auth', 'role:moderateur'])->prefix('moderateur')->group(function () {
+
+    Route::get('/dashboard',
+        [\App\Http\Controllers\Moderateur\DashboardController::class, 'index']
+    )->name('moderateur.dashboard');
+
+    // Contenus en attente
+    Route::get('/contenus/en-attente',
+        [\App\Http\Controllers\Moderateur\ContenuModerationController::class, 'index']
+    )->name('moderateur.contenus.pending');
+
+    Route::post('/contenus/{contenu}/valider',
+        [\App\Http\Controllers\Moderateur\ContenuModerationController::class, 'valider']
+    )->name('moderateur.contenus.valider');
+
+    Route::post('/contenus/{contenu}/rejeter',
+        [\App\Http\Controllers\Moderateur\ContenuModerationController::class, 'rejeter']
+    )->name('moderateur.contenus.rejeter');
+
+    // Médias en attente
+    Route::get('/medias/en-attente',
+        [\App\Http\Controllers\Moderateur\MediaModerationController::class, 'index']
+    )->name('moderateur.medias.pending');
+
+    Route::post('/medias/{media}/valider',
+        [\App\Http\Controllers\Moderateur\MediaModerationController::class, 'valider']
+    )->name('moderateur.medias.valider');
+
+    Route::post('/medias/{media}/rejeter',
+        [\App\Http\Controllers\Moderateur\MediaModerationController::class, 'rejeter']
+    )->name('moderateur.medias.rejeter');
+
+    // Commentaires en attente
+    Route::get('/commentaires/en-attente',
+        [\App\Http\Controllers\Moderateur\CommentaireModerationController::class, 'index']
+    )->name('moderateur.commentaires.pending');
+
+    Route::post('/commentaires/{commentaire}/valider',
+        [\App\Http\Controllers\Moderateur\CommentaireModerationController::class, 'valider']
+    )->name('moderateur.commentaires.valider');
+
+    Route::post('/commentaires/{commentaire}/rejeter',
+        [\App\Http\Controllers\Moderateur\CommentaireModerationController::class, 'rejeter']
+    )->name('moderateur.commentaires.rejeter');
+
+    // Traductions en attente
+    Route::get('/traductions/en-attente',
+        [\App\Http\Controllers\Moderateur\TraductionModerationController::class, 'index']
+    )->name('moderateur.traductions.pending');
+
+    Route::post('/traductions/{trad}/valider',
+        [\App\Http\Controllers\Moderateur\TraductionModerationController::class, 'valider']
+    )->name('moderateur.traductions.valider');
+
+    Route::post('/traductions/{trad}/rejeter',
+        [\App\Http\Controllers\Moderateur\TraductionModerationController::class, 'rejeter']
+    )->name('moderateur.traductions.rejeter');
+
+});
+
+Route::middleware(['auth', 'role:admin|moderateur'])->group(function () {
+
+    Route::get('/admin/demandes',
+        [\App\Http\Controllers\Admin\DemandeContributeurAdminController::class, 'index'])
+        ->name('admin.demandes.index');
+
+    Route::post('/admin/demandes/{demande}/accepter',
+        [\App\Http\Controllers\Admin\DemandeContributeurAdminController::class, 'accepter'])
+        ->name('admin.demandes.accepter');
+
+    Route::post('/admin/demandes/{demande}/rejeter',
+        [\App\Http\Controllers\Admin\DemandeContributeurAdminController::class, 'rejeter'])
+        ->name('admin.demandes.rejeter');
+
+});
+/*
+|--------------------------------------------------------------------------
+| PAGES STATIQUES (Front)
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/apropos', function () {
+    return view('front.pages.apropos');
+})->name('front.apropos');
+
+Route::get('/contact', function () {
+    return view('front.pages.contact');
+})->name('front.contact');
+
+
+Route::get('/contact', [ContactController::class, 'index'])->name('front.contact');
+Route::post('/contact/send', [ContactController::class, 'send'])->name('front.contact.send');
+
 
 /*
 |--------------------------------------------------------------------------

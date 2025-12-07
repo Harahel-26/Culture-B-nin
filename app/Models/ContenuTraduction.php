@@ -18,9 +18,7 @@ class ContenuTraduction extends Model
         'contenu_id',
         'langue_id',
         'traduit_par',
-        'titre',
-        'description',
-        'contenu_texte',
+        'texte',
         'status',
         'validated_by',
     ];

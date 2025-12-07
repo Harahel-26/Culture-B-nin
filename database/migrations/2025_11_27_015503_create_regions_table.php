@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->string('type')->nullable(); // département, commune, village...
             $table->text('description')->nullable();
 
-            // Relation avec langue principale (optionnelle)
+            
             $table->foreignId('langue_principale_id')
                   ->nullable()
                   ->constrained('langues')
