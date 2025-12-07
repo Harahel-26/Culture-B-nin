@@ -105,6 +105,11 @@ class Contenu extends Model
     {
         return $this->hasMany(Paiement::class);
     }
+    public function traductions()
+{
+    return $this->hasMany(ContenuTraduction::class);
+}
+
 
     /*
     |--------------------------------------------------------------------------

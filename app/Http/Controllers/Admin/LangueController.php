@@ -31,11 +31,11 @@ class LangueController extends Controller
             'code' => 'required|string|max:10|unique:langues,code',
             'nom' => 'required|string|max:255|unique:langues,nom',
             'description' => 'nullable|string',
-            'is_active' => 'boolean',
             'icone' => 'nullable|image|mimes:png,svg,jpg,jpeg|max:2048'
         ]);
 
-        $data = $request->only(['code', 'nom', 'description', 'is_active']);
+        $data = $request->only(['code', 'nom', 'description']);
+        $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('icone')) {
             $data['icone'] = $request->file('icone')->store('langues', 'public');
@@ -63,11 +63,11 @@ class LangueController extends Controller
             'code' => "required|string|max:10|unique:langues,code,{$langue->id}",
             'nom' => "required|string|max:255|unique:langues,nom,{$langue->id}",
             'description' => 'nullable|string',
-            'is_active' => 'boolean',
             'icone' => 'nullable|image|mimes:png,svg,jpg,jpeg|max:2048'
         ]);
 
-        $data = $request->only(['code', 'nom', 'description', 'is_active']);
+        $data = $request->only(['code', 'nom', 'description']);
+        $data['is_active'] = $request->has('is_active');
 
         if ($request->hasFile('icone')) {
             // supprime ancienne icône

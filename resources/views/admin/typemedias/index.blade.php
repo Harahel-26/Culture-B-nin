@@ -43,7 +43,7 @@
         <table class="table table-hover align-middle">
             <thead class="table-light">
             <tr>
-                <th>#</th>
+                <th>N</th>
                 <th>Nom</th>
                 <th>Médias associés</th>
                 <th>Actions</th>

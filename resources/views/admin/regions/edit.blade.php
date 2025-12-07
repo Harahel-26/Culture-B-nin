@@ -12,7 +12,7 @@
 </style>
 
 <h3 class="fw-bold mb-3" style="color:#1e1b4b;">
-    ✏️ Modifier : {{ $region->nom }}
+    Modifier : {{ $region->nom }}
 </h3>
 
 <div class="card shadow-sm p-4">

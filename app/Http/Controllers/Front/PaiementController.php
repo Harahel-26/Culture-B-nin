@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Front;
 
 use App\Models\Paiement;
 use App\Models\Contenu;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class PaiementController extends Controller
 {

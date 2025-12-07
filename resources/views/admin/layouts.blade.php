@@ -167,12 +167,7 @@
                             <p>Langues</p>
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a href="#" class="nav-link">
-                            <i class="nav-icon bi bi-translate"></i>
-                            <p>Paiements</p>
-                        </a>
-                    </li>
+                    
 
                 </ul>
             </nav>

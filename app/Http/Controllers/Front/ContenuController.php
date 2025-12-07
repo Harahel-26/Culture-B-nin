@@ -57,14 +57,16 @@ class ContenuController extends Controller
     {
         $contenu = Contenu::with(['langue','region','typecontenu','medias','commentaires'])
             ->where('slug', $slug)
-            ->where('status', 'validated')
+            ->valideS()
             ->firstOrFail();
-
-        // On incrémente les vues
-        $contenu->incrementerVues();
 
         $user = auth()->user();
         $accessible = $contenu->est_accessible;
+
+        // On incrémente les vues
+        $contenu->increment('vues_total');
+
+
 
         return view('front.contenus.show', compact('contenu','accessible','user'));
     }

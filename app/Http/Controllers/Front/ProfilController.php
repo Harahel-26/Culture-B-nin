@@ -8,54 +8,58 @@ use Illuminate\Support\Facades\Hash;
 
 class ProfilController extends Controller
 {
+    public function index()
+    {
+        return view('front.profil.index');
+    }
+
     public function edit()
     {
-        $user = auth()->user();
-        return view('front.profil.edit', compact('user'));
+        return view('front.profil.edit');
     }
 
     public function update(Request $request)
     {
         $user = auth()->user();
 
-        $request->validate([
-            'name'  => 'required|string|max:255',
-            'phone' => 'nullable|string|max:20',
-            'bio'   => 'nullable|string|max:500',
+        $data = $request->validate([
+            'name'   => 'required|string|max:255',
+            'phone'  => 'nullable|string|max:50',
+            'adresse'=> 'nullable|string|max:255',
+            'bio'    => 'nullable|string|max:500',
             'avatar' => 'nullable|image|max:4096',
         ]);
 
-        $data = $request->only('name','phone','bio');
-
-        // Si avatar changé
+        // Upload avatar
         if ($request->hasFile('avatar')) {
-            $path = $request->file('avatar')->store('avatars','public');
+
+            $path = $request->file('avatar')->store('avatars', 'public');
             $data['avatar'] = $path;
         }
 
         $user->update($data);
 
-        return back()->with('success','Profil mis à jour avec succès.');
+        return back()->with('success', 'Profil mis à jour avec succès.');
     }
 
     public function updatePassword(Request $request)
     {
-        $user = auth()->user();
-
-        $request->validate([
+        $data = $request->validate([
             'current_password' => 'required',
             'password'         => 'required|min:8|confirmed',
         ]);
 
-        // Vérifier si le mot de passe actuel est correct
-        if (!Hash::check($request->current_password, $user->password)) {
-            return back()->with('error','Mot de passe actuel incorrect.');
+        $user = auth()->user();
+
+        // Vérifier mot de passe actuel
+        if (!Hash::check($data['current_password'], $user->password)) {
+            return back()->with('error', 'Mot de passe actuel incorrect.');
         }
 
-        // Mettre à jour
-        $user->password = Hash::make($request->password);
-        $user->save();
+        $user->update([
+            'password' => Hash::make($data['password'])
+        ]);
 
-        return back()->with('success','Mot de passe mis à jour avec succès.');
+        return back()->with('success', 'Mot de passe modifié avec succès.');
     }
 }

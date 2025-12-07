@@ -51,6 +51,13 @@
             </div>
 
             <div class="col-md-6">
+                <label class="label-premium">Adresse</label>
+                <input type="text" name="adresse" class="form-control">
+            </div>
+
+
+
+            <div class="col-md-6">
                 <label class="label-premium">Nouveau mot de passe</label>
                 <input type="password" name="password" class="form-control">
             </div>
@@ -80,6 +87,11 @@
 
                 <input type="file" name="avatar" class="form-control"
                        onchange="document.getElementById('avatarPreview').src = window.URL.createObjectURL(this.files[0])">
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">Biographie</label>
+                <textarea name="bio" class="form-control" rows="3"></textarea>
             </div>
 
         </div>

@@ -7,7 +7,6 @@ use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\ContenuController;
 use App\Http\Controllers\Front\SearchController;
 use App\Http\Controllers\Front\ProfilController;
-use App\Http\Controllers\Front\PaiementController;
 use App\Http\Controllers\Front\CommentaireController;
 use App\Http\Controllers\Front\MediaController;
 use App\Http\Controllers\Front\MediaGalleryController;
@@ -24,7 +23,7 @@ use App\Http\Controllers\Admin\DashboardController;
 */
 Route::get('/', [HomeController::class, 'index'])->name('front.home');
 
-Route::get('/paiement/callback', [App\Http\Controllers\PaiementController::class, 'callback'])
+Route::get('/paiement/callback', [App\Http\Controllers\Front\PaiementController::class, 'callback'])
     ->name('paiement.callback');
 /*
 |--------------------------------------------------------------------------
@@ -91,9 +90,11 @@ Route::get('/recherche', [SearchController::class, 'index'])->name('front.search
 |--------------------------------------------------------------------------
 */
 
-Route::post('/commentaires/store', [CommentaireController::class, 'store'])
-    ->middleware('auth')
+Route::post('/commentaires', [\App\Http\Controllers\Front\CommentaireController::class, 'store'])
+    ->middleware(['auth', 'throttle:10,1']) // max 10 coms / minute
     ->name('front.commentaire.store');
+
+
     Route::delete('/{commentaire}', [CommentaireController::class, 'destroy'])->name('destroy');
 
 
@@ -110,6 +111,8 @@ Route::get('/mes-achats', [AchatController::class, 'index'])
 
 
 Route::middleware('auth')->group(function () {
+    Route::get('/profil', [\App\Http\Controllers\Front\ProfilController::class, 'index'])
+        ->name('front.profil.index');
 
     Route::get('/profil', [ProfilController::class, 'edit'])
         ->name('front.profil.edit');
@@ -133,6 +136,13 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
 
     Route::resource('users', \App\Http\Controllers\Admin\UserController::class);
     Route::resource('contenus', \App\Http\Controllers\Admin\ContenuController::class);
+    Route::get('/admin/contenus/{contenu}/valider',
+        [\App\Http\Controllers\Admin\ContenuController::class, 'valider'])
+        ->name('contenus.valider');
+
+    Route::get('/admin/contenus/{contenu}/rejeter',
+        [\App\Http\Controllers\Admin\ContenuController::class, 'rejeter'])
+        ->name('contenus.rejeter');
     Route::resource('langues', \App\Http\Controllers\Admin\LangueController::class);
     Route::resource('regions', \App\Http\Controllers\Admin\RegionController::class);
     Route::resource('typecontenus', \App\Http\Controllers\Admin\TypeContenuController::class);
@@ -284,8 +294,11 @@ Route::get('/contact', function () {
 })->name('front.contact');
 
 
-Route::get('/contact', [ContactController::class, 'index'])->name('front.contact');
-Route::post('/contact/send', [ContactController::class, 'send'])->name('front.contact.send');
+
+Route::post('/contact/send', [ContactController::class, 'send'])
+    ->middleware('throttle:5,2') // 5 messages / 2 minutes max
+    ->name('front.contact.send');
+
 
 
 /*

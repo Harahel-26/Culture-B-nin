@@ -31,15 +31,20 @@ class UserController extends Controller
         return view('admin.users.create', compact('roles'));
     }
 
+
+
     public function store(Request $request)
     {
         $data = $request->validate([
             'name'     => 'required|string|max:255',
-            'username' => 'nullable|string|max:255|unique:users',
+            'username' => 'nullable|string|max:255|unique:users,username',
             'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
+            'password' => 'required|string|min:8',
             'role'     => 'required|exists:roles,id',
             'avatar'   => 'nullable|image|max:2048',
+            'phone'    => 'nullable|string|max:50',
+            'adresse'  => 'nullable|string|max:255',
+            'bio'      => 'nullable|string|max:500',
         ]);
 
         $avatar = null;
@@ -50,11 +55,14 @@ class UserController extends Controller
 
         $user = User::create([
             'name'     => $data['name'],
-            'username' => $data['username'],
+            'username' => $data['username'] ?? null,
             'email'    => $data['email'],
             'password' => Hash::make($data['password']),
             'avatar'   => $avatar,
             'is_active' => true,
+            'phone'    => $data['phone'] ?? null,
+            'adresse'  => $data['adresse'] ?? null,
+            'bio'      => $data['bio'] ?? null,
         ]);
 
         $user->assignRole(Role::find($data['role'])->name);
@@ -63,11 +71,25 @@ class UserController extends Controller
                 ->with('success', 'Utilisateur créé avec succès.');
     }
 
+
+
+
+    public function show(User $user)
+    {
+        return view('admin.users.show', compact('user'));
+    }
+
+
+
+
     public function edit(User $user)
     {
         $roles = Role::all();
         return view('admin.users.edit', compact('user','roles'));
     }
+
+
+
 
     public function update(Request $request, User $user)
     {
@@ -78,12 +100,18 @@ class UserController extends Controller
             'password' => 'nullable|string|min:8|confirmed',
             'role'     => 'required|exists:roles,id',
             'avatar'   => 'nullable|image|max:2048',
+            'phone'    => 'nullable|string|max:50',
+            'adresse'  => 'nullable|string|max:255',
+            'bio'      => 'nullable|string|max:500',
         ]);
 
         $update = [
             'name'     => $data['name'],
-            'username' => $data['username'],
+            'username' => $data['username'] ?? null,
             'email'    => $data['email'],
+            'phone'    => $data['phone'] ?? null,
+            'adresse'  => $data['adresse'] ?? null,
+            'bio'      => $data['bio'] ?? null,
         ];
 
         if (!empty($data['password'])) {
@@ -105,6 +133,9 @@ class UserController extends Controller
                 ->with('success', 'Utilisateur mis à jour.');
     }
 
+
+
+
     public function destroy(User $user)
     {
         if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
@@ -116,6 +147,9 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')
                 ->with('success', 'Utilisateur supprimé.');
     }
+
+
+
 
     public function toggleActive(User $user)
     {

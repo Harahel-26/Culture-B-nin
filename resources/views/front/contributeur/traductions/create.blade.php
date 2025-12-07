@@ -1,37 +1,47 @@
 @extends('front.layouts.app')
 
-@section('title', 'Ajouter une traduction')
+@section('title', 'Proposer une traduction')
 
 @section('content')
 
-<h2 class="fw-bold mb-4">Traduction du contenu :</h2>
+<div class="container py-4">
 
-<div class="card shadow-sm p-4">
+    <h2 class="fw-bold mb-4">
+        <i class="bi bi-translate"></i> Proposer une traduction
+        <small class="text-muted">({{ $contenu->titre }})</small>
+    </h2>
 
-    <h4 class="mb-3">{{ $contenu->titre }}</h4>
+    <div class="card shadow-lg border-0 rounded-4">
+        <div class="card-body p-4">
 
-    <form action="{{ route('contributeur.traductions.store', $contenu) }}" method="POST">
-        @csrf
+            <form action="{{ route('contributeur.traductions.store', $contenu->id) }}"
+                  method="POST">
+                @csrf
 
-        <div class="mb-3">
-            <label class="form-label">Langue de traduction</label>
-            <select name="langue_id" class="form-select" required>
-                <option value="">Choisir une langue</option>
-                @foreach($langues as $l)
-                <option value="{{ $l->id }}">{{ $l->nom }}</option>
-                @endforeach
-            </select>
+                {{-- Sélection langue --}}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Langue de la traduction</label>
+                    <select class="form-select" name="langue_id" required>
+                        <option value="">Sélectionner...</option>
+                        @foreach($langues as $langue)
+                            <option value="{{ $langue->id }}">{{ $langue->nom }}</option>
+                        @endforeach
+                    </select>
+                </div>
+
+                {{-- Zone de texte --}}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Texte traduit</label>
+                    <textarea class="form-control" name="texte" rows="8" required></textarea>
+                </div>
+
+                <button class="btn btn-gold">
+                    <i class="bi bi-send"></i> Envoyer pour validation
+                </button>
+            </form>
+
         </div>
-
-        <div class="mb-4">
-            <label class="form-label">Texte traduit</label>
-            <textarea name="texte" class="form-control" rows="8" required></textarea>
-        </div>
-
-        <button class="btn btn-gold">
-            <i class="bi bi-send"></i> Soumettre pour validation
-        </button>
-    </form>
+    </div>
 
 </div>
 

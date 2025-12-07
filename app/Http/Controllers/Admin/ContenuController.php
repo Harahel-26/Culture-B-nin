@@ -86,17 +86,21 @@ class ContenuController extends Controller
     }
 
     public function edit(Contenu $contenu)
-    {
-        return view('admin.contenus.edit', [
-            'contenu'      => $contenu,
-            'langues'      => Langue::orderBy('nom')->get(),
-            'regions'      => Region::orderBy('nom')->get(),
-            'typecontenus' => TypeContenu::orderBy('nom')->get(),
-        ]);
-    }
+{
+    $this->authorize('update', $contenu);
+
+    return view('admin.contenus.edit', [
+        'contenu'      => $contenu,
+        'langues'      => Langue::orderBy('nom')->get(),
+        'regions'      => Region::orderBy('nom')->get(),
+        'typecontenus' => TypeContenu::orderBy('nom')->get(),
+    ]);
+}
+
 
     public function update(Request $request, Contenu $contenu)
     {
+        $this->authorize('update', $contenu);
         $request->validate([
             'titre'            => 'required|string|max:255',
             'langue_id'        => 'required|exists:langues,id',
@@ -134,6 +138,7 @@ class ContenuController extends Controller
 
     public function destroy(Contenu $contenu)
     {
+        $this->authorize('delete', $contenu);
         // supprimer image couverture
         if ($contenu->image_couverture && Storage::disk('public')->exists($contenu->image_couverture)) {
             Storage::disk('public')->delete($contenu->image_couverture);
@@ -164,4 +169,15 @@ class ContenuController extends Controller
 
         return back()->with('success', 'Contenu rejeté.');
     }
+
+    public function estAchetePar($user = null)
+{
+    if (!$user) return false;
+
+    return $this->paiements()
+        ->where('user_id', $user->id)
+        ->where('statut', 'paye')
+        ->exists();
+}
+
 }

@@ -72,6 +72,38 @@
         </form>
     </div>
 @endif
+@auth
+    @if(auth()->user()->hasRole('contributeur'))
+
+        @php
+            $aDejaPropose = $contenu->traductions()
+                ->where('traduit_par', auth()->id())
+                ->where('status', 'pending')
+                ->exists();
+        @endphp
+
+        <div class="my-4">
+
+            {{-- Déjà une traduction en attente --}}
+            @if($aDejaPropose)
+                <div class="alert alert-warning d-flex align-items-center shadow-sm">
+                    <i class="bi bi-hourglass-split me-2"></i>
+                    Vous avez déjà proposé une traduction pour ce contenu.
+                    Elle est en attente de validation.
+                </div>
+
+            {{-- Bouton proposer une traduction --}}
+            @else
+                <a href="{{ route('contributeur.traductions.create', $contenu->id) }}"
+                   class="btn btn-gold">
+                    <i class="bi bi-translate"></i> Proposer une traduction
+                </a>
+            @endif
+
+        </div>
+
+    @endif
+@endauth
 
 
 

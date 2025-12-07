@@ -1,56 +1,58 @@
 @extends('front.layouts.app')
 
-@section('title', 'Contact – Culture Bénin')
+@section('title', 'Contact')
 
 @section('content')
 
-<h1 class="fw-bold mb-3">Nous contacter</h1>
+<div class="container py-5">
 
-<div class="row g-4">
-    <div class="col-md-6">
-        <p class="text-muted">
-            Une question, une suggestion, une collaboration ou un projet autour de la culture béninoise ?
-            N’hésitez pas à nous écrire via ce formulaire.
-        </p>
+    <h1 class="fw-bold mb-4 text-center">
+        <i class="bi bi-envelope-open"></i> Contactez-nous
+    </h1>
 
-        <form method="POST" action="{{ route('front.contact.send') }}" class="card p-3 shadow-sm">
-            @csrf
+    <p class="text-center text-muted mb-5">
+        Pour toute question, suggestion ou collaboration, écrivez-nous.
+    </p>
 
-            <div class="mb-3">
-                <label class="form-label">Nom complet</label>
-                <input type="text" name="name" class="form-control" required
-                       value="{{ old('name', auth()->user()->name ?? '') }}">
+    <div class="row justify-content-center">
+        <div class="col-md-7">
+
+            @if(session('success'))
+                <div class="alert alert-success shadow-sm">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            <div class="card shadow-lg border-0 rounded-4">
+                <div class="card-body p-4">
+
+                    <form action="{{ route('front.contact.send') }}" method="POST">
+                        @csrf
+
+                        <div class="mb-3">
+                            <label class="form-label">Nom complet</label>
+                            <input type="text" name="name" class="form-control rounded-3" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Adresse email</label>
+                            <input type="email" name="email" class="form-control rounded-3" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Votre message</label>
+                            <textarea name="message" class="form-control rounded-3" rows="5" required></textarea>
+                        </div>
+
+                        <button class="btn btn-gold w-100 py-2">
+                            <i class="bi bi-send"></i> Envoyer le message
+                        </button>
+
+                    </form>
+
+                </div>
             </div>
 
-            <div class="mb-3">
-                <label class="form-label">Adresse email</label>
-                <input type="email" name="email" class="form-control" required
-                       value="{{ old('email', auth()->user()->email ?? '') }}">
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Sujet</label>
-                <input type="text" name="subject" class="form-control" required>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Message</label>
-                <textarea name="message" rows="5" class="form-control" required></textarea>
-            </div>
-
-            <button class="btn btn-gold">
-                <i class="bi bi-send"></i> Envoyer
-            </button>
-
-        </form>
-    </div>
-
-    <div class="col-md-6">
-        <div class="card border-0 shadow-sm p-3">
-            <h5 class="fw-bold mb-2">Informations</h5>
-            <p class="mb-1"><i class="bi bi-envelope"></i> contact@culture-benin.bj</p>
-            <p class="mb-1"><i class="bi bi-geo-alt"></i> Cotonou, Bénin</p>
-            <p class="mb-1"><i class="bi bi-clock"></i> Lun - Ven : 9h - 18h</p>
         </div>
     </div>
 </div>

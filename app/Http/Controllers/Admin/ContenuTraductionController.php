@@ -6,6 +6,7 @@ use App\Models\Contenu;
 use App\Models\ContenuTraduction;
 use App\Models\Langue;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class ContenuTraductionController extends Controller
 {
