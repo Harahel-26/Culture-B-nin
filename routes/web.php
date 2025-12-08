@@ -69,14 +69,14 @@ Route::get('/langues/{code}', [FrontLangueController::class, 'show'])->name('fro
 
 
 
-Route::middleware('auth')->group(function () {
 
-    Route::post('/favoris/toggle', [FavoriController::class, 'toggle'])
-        ->name('front.favoris.toggle');
 
-    Route::get('/mes-favoris', [FavoriController::class, 'index'])
-        ->name('front.favoris.index');
-});
+Route::post('/favoris/toggle', [
+    \App\Http\Controllers\Front\FavoriController::class,
+    'toggle'
+])->middleware('auth')->name('front.favoris.toggle');
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -209,17 +209,14 @@ Route::middleware(['auth', 'role:contributeur'])->group(function () {
 
 
 // Demande pour devenir contributeur
-Route::middleware(['auth'])->group(function () {
+Route::get('/devenir-contributeur', [\App\Http\Controllers\Front\ContributeurDemandeController::class, 'form'])
+    ->middleware('auth')
+    ->name('front.contributeur.demande');
 
-    Route::get('/profil/devenir-contributeur',
-        [\App\Http\Controllers\Front\DemandeContributeurController::class, 'form'])
-        ->name('front.devenir.form');
+Route::post('/devenir-contributeur', [\App\Http\Controllers\Front\ContributeurDemandeController::class, 'submit'])
+    ->middleware('auth')
+    ->name('front.contributeur.demande.submit');
 
-    Route::post('/profil/devenir-contributeur',
-        [\App\Http\Controllers\Front\DemandeContributeurController::class, 'store'])
-        ->name('front.devenir.store');
-
-});
 
 
 // ESPACE MODÉRATEUR
@@ -303,16 +300,16 @@ Route::middleware(['auth', 'role:admin|moderateur'])->group(function () {
 // ADMIN - TRADUCTIONS
 Route::middleware(['auth', 'role:admin|moderateur'])->prefix('admin')->name('admin.')->group(function () {
 
-    Route::get('/traductions', [\App\Http\Controllers\Admin\TraductionController::class, 'index'])
+    Route::get('/traductions', [\App\Http\Controllers\Admin\ContenuTraductionController::class, 'index'])
         ->name('traductions.index');
 
-    Route::get('/traductions/{trad}', [\App\Http\Controllers\Admin\TraductionController::class, 'show'])
+    Route::get('/traductions/{trad}', [\App\Http\Controllers\Admin\ContenuTraductionController::class, 'show'])
         ->name('traductions.show');
 
-    Route::post('/traductions/{trad}/valider', [\App\Http\Controllers\Admin\TraductionController::class, 'valider'])
+    Route::post('/traductions/{trad}/valider', [\App\Http\Controllers\Admin\ContenuTraductionController::class, 'valider'])
         ->name('traductions.valider');
 
-    Route::post('/traductions/{trad}/rejeter', [\App\Http\Controllers\Admin\TraductionController::class, 'rejeter'])
+    Route::post('/traductions/{trad}/rejeter', [\App\Http\Controllers\Admin\ContenuTraductionController::class, 'rejeter'])
         ->name('traductions.rejeter');
 });
 

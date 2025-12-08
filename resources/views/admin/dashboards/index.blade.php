@@ -377,11 +377,11 @@
         .dashboard-title {
             font-size: 2rem;
         }
-        
+
         .stat-number {
             font-size: 2.2rem;
         }
-        
+
         .chart-card {
             padding: 15px;
         }
@@ -584,64 +584,7 @@
         </div>
     </div>
 
-    <!-- Graphiques -->
-    <div class="row g-4 mb-4">
-        <div class="col-lg-6">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">
-                        <i class="bi bi-calendar-month"></i>
-                        Contenus publiés (12 derniers mois)
-                    </h3>
-                </div>
-                <div style="height: 300px;">
-                    <canvas id="chartContenusMois"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">
-                        <i class="bi bi-translate"></i>
-                        Langues les plus utilisées
-                    </h3>
-                </div>
-                <div style="height: 300px;">
-                    <canvas id="chartLangues"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="row g-4 mb-4">
-        <div class="col-lg-6">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">
-                        <i class="bi bi-tags"></i>
-                        Types de contenu
-                    </h3>
-                </div>
-                <div style="height: 300px;">
-                    <canvas id="chartTypes"></canvas>
-                </div>
-            </div>
-        </div>
-        <div class="col-lg-6">
-            <div class="chart-card">
-                <div class="chart-header">
-                    <h3 class="chart-title">
-                        <i class="bi bi-person-badge"></i>
-                        Utilisateurs par rôle
-                    </h3>
-                </div>
-                <div style="height: 300px;">
-                    <canvas id="chartRoles"></canvas>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <!-- Tableaux récents -->
     <div class="row g-4 mb-4">
@@ -733,7 +676,7 @@
                                         <td>
                                             <div style="display: flex; align-items: center; gap: 10px;">
                                                 @if($contenu->image_couverture)
-                                                    <img src="{{ asset('storage/'.$contenu->image_couverture) }}" 
+                                                    <img src="{{ asset('storage/'.$contenu->image_couverture) }}"
                                                          style="width: 40px; height: 40px; object-fit: cover; border-radius: 6px;">
                                                 @endif
                                                 <div>

@@ -17,13 +17,24 @@ class UserController extends Controller
     }
 
     public function index()
-    {
-        $users = User::with('roles')
-                    ->orderBy('created_at', 'desc')
-                    ->paginate(10);
+{
+    $users = User::with('roles')
+                ->orderBy('created_at', 'desc')
+                ->paginate(10);
 
-        return view('admin.users.index', compact('users'));
-    }
+    // Statistiques
+    $activeCount   = User::where('is_active', true)->count();
+    $inactiveCount = User::where('is_active', false)->count();
+    $adminCount    = User::role('admin')->count();
+
+    return view('admin.users.index', compact(
+        'users',
+        'activeCount',
+        'inactiveCount',
+        'adminCount'
+    ));
+}
+
 
     public function create()
     {
@@ -39,7 +50,7 @@ class UserController extends Controller
             'name'     => 'required|string|max:255',
             'username' => 'nullable|string|max:255|unique:users,username',
             'email'    => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8',
+            'password' => 'required|string|min:5',
             'role'     => 'required|exists:roles,id',
             'avatar'   => 'nullable|image|max:2048',
             'phone'    => 'nullable|string|max:50',
@@ -97,7 +108,7 @@ class UserController extends Controller
             'name'     => 'required|string|max:255',
             'username' => 'nullable|string|max:255|unique:users,username,' . $user->id,
             'email'    => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => 'nullable|string|min:5|confirmed',
             'role'     => 'required|exists:roles,id',
             'avatar'   => 'nullable|image|max:2048',
             'phone'    => 'nullable|string|max:50',

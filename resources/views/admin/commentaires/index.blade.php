@@ -5,17 +5,74 @@
 @section('content')
 
 <style>
-    /* Cartes de statistiques améliorées */
+    :root {
+        --admin-primary: #1e1b4b;
+        --admin-secondary: #8a2be2;
+        --admin-accent: #6366f1;
+        --admin-success: #10b981;
+        --admin-warning: #f59e0b;
+        --admin-danger: #ef4444;
+        --admin-info: #0ea5e9;
+        --admin-light: #f8f9fa;
+        --admin-dark: #0f172a;
+        --admin-gray: #64748b;
+    }
+
+    .header-card {
+        background: white;
+        border-radius: 20px;
+        padding: 30px;
+        box-shadow: 0 15px 35px rgba(30, 27, 75, 0.1);
+        border: 1px solid rgba(138, 43, 226, 0.1);
+        margin-bottom: 30px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .header-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, var(--admin-secondary), var(--admin-accent));
+    }
+
+    .page-title {
+        font-family: 'Playfair Display', serif;
+        font-weight: 700;
+        color: var(--admin-primary);
+        font-size: 2.2rem;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        margin: 0;
+    }
+
+    .page-subtitle {
+        color: var(--admin-gray);
+        font-size: 1rem;
+        margin-top: 8px;
+        margin-bottom: 0;
+        max-width: 600px;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+    }
+
     .stat-card {
-        background: linear-gradient(135deg, #1e1b4b, #3730a3);
-        color: #fff;
-        border-radius: 14px;
-        padding: 22px 15px;
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        transition: all 0.3s ease;
         text-align: center;
-        font-weight: 600;
-        box-shadow: 0 6px 20px rgba(30, 27, 75, 0.15);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
         position: relative;
         overflow: hidden;
     }
@@ -25,137 +82,250 @@
         position: absolute;
         top: 0;
         left: 0;
-        right: 0;
+        width: 100%;
         height: 4px;
-        background: linear-gradient(to right, #8a2be2, #d4a017);
     }
+
+    .stat-total::before { background: linear-gradient(90deg, var(--admin-secondary), var(--admin-accent)); }
+    .stat-pending::before { background: linear-gradient(90deg, var(--admin-warning), #fbbf24); }
+    .stat-validated::before { background: linear-gradient(90deg, var(--admin-success), #34d399); }
+    .stat-rejected::before { background: linear-gradient(90deg, var(--admin-danger), #f87171); }
 
     .stat-card:hover {
         transform: translateY(-5px);
-        box-shadow: 0 12px 25px rgba(30, 27, 75, 0.2);
+        box-shadow: 0 12px 25px rgba(0, 0, 0, 0.1);
     }
 
-    .stat-card span {
-        font-size: 2.2rem;
-        font-weight: 800;
-        color: #d4a017;
-        display: block;
-        margin: 8px 0;
-        text-shadow: 0 2px 4px rgba(212, 160, 23, 0.3);
-    }
-
-    .stat-card small {
-        font-size: 0.9rem;
-        opacity: 0.9;
-        font-weight: 500;
-    }
-
-    /* Badges de statut améliorés */
-    .status-badge {
-        padding: 8px 14px;
-        border-radius: 8px;
-        font-size: 0.8rem;
-        font-weight: 700;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        min-width: 100px;
-        text-align: center;
-        display: inline-block;
-    }
-
-    .pending {
-        background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-        color: #856404;
-        border: 1px solid #ffeaa7;
-    }
-
-    .validated {
-        background: linear-gradient(135deg, #d4edda, #c3e6cb);
-        color: #155724;
-        border: 1px solid #b1dfbb;
-    }
-
-    .rejected {
-        background: linear-gradient(135deg, #f8d7da, #f5c6cb);
-        color: #721c24;
-        border: 1px solid #f5c6cb;
-    }
-
-    /* Tableau amélioré */
-    .table-card {
-        border-radius: 16px;
-        overflow: hidden;
-        box-shadow: 0 8px 30px rgba(30, 27, 75, 0.08);
-        border: 1px solid rgba(30, 27, 75, 0.05);
-    }
-
-    .table thead {
-        background: linear-gradient(135deg, #1e1b4b, #3730a3);
+    .stat-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 15px;
+        font-size: 1.5rem;
         color: white;
     }
 
-    .table thead th {
-        border: none;
-        padding: 18px 16px;
+    .stat-total .stat-icon { background: linear-gradient(135deg, var(--admin-secondary), #7c3aed); }
+    .stat-pending .stat-icon { background: linear-gradient(135deg, var(--admin-warning), #d97706); }
+    .stat-validated .stat-icon { background: linear-gradient(135deg, var(--admin-success), #059669); }
+    .stat-rejected .stat-icon { background: linear-gradient(135deg, var(--admin-danger), #dc2626); }
+
+    .stat-number {
+        font-size: 2rem;
         font-weight: 700;
-        font-size: 0.95rem;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+        color: var(--admin-primary);
+        margin-bottom: 5px;
     }
 
-    .table tbody tr {
-        transition: all 0.2s ease;
-        border-bottom: 1px solid rgba(30, 27, 75, 0.05);
-    }
-
-    .table tbody tr:hover {
-        background-color: rgba(138, 43, 226, 0.03);
-        transform: translateX(4px);
-    }
-
-    .table tbody td {
-        padding: 16px;
-        vertical-align: middle;
-        border: none;
-    }
-
-    /* Commentaire avec effet */
-    .comment-text {
-        max-width: 300px;
-        position: relative;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-
-    .comment-text:hover {
-        color: #1e1b4b;
+    .stat-label {
+        color: var(--admin-gray);
+        font-size: 0.9rem;
         font-weight: 500;
+        display: block;
     }
 
-    .comment-text::after {
-        content: '...';
-        position: absolute;
-        right: 0;
-        background: linear-gradient(to right, transparent, white);
-        padding-left: 10px;
+    .filter-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
+        margin-bottom: 25px;
     }
 
-    /* Étoiles de notation */
-    .stars-container {
+    .filter-select {
+        border: 2px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 10px 15px;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        background: white;
+    }
+
+    .filter-select:focus {
+        border-color: var(--admin-secondary);
+        box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
+        outline: none;
+    }
+
+    .btn-filter {
+        background: linear-gradient(135deg, var(--admin-secondary), #7c3aed);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+    }
+
+    .btn-filter:hover {
+        background: linear-gradient(135deg, #7c3aed, #6d28d9);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(138, 43, 226, 0.2);
+    }
+
+    .table-container {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        box-shadow: 0 15px 35px rgba(30, 27, 75, 0.1);
+        border: 1px solid rgba(138, 43, 226, 0.1);
+        margin-bottom: 30px;
+    }
+
+    .table-header {
+        background: linear-gradient(135deg, var(--admin-primary), #2a2470);
+        color: white;
+        padding: 20px 25px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .table-header h3 {
+        margin: 0;
+        font-weight: 600;
+        font-size: 1.3rem;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .table-responsive {
+        overflow-x: auto;
+    }
+
+    .comment-table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+
+    .comment-table thead th {
+        background: var(--admin-light);
+        color: var(--admin-dark);
+        font-weight: 600;
+        padding: 18px 20px;
+        border-bottom: 2px solid #e2e8f0;
+        text-align: left;
+        white-space: nowrap;
+    }
+
+    .comment-table tbody tr {
+        transition: all 0.3s ease;
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .comment-table tbody tr:hover {
+        background: rgba(138, 43, 226, 0.03);
+    }
+
+    .comment-table tbody td {
+        padding: 18px 20px;
+        vertical-align: middle;
+        color: var(--admin-dark);
+        border-bottom: 1px solid #f1f5f9;
+    }
+
+    .comment-table tbody tr:last-child td {
+        border-bottom: none;
+    }
+
+    .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid white;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+
+    .user-name {
+        font-weight: 600;
+        color: var(--admin-primary);
+    }
+
+    .user-email {
+        color: var(--admin-gray);
+        font-size: 0.85rem;
+        display: block;
+    }
+
+    .content-title {
+        font-weight: 600;
+        color: var(--admin-dark);
+        max-width: 200px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .stars-rating {
         font-size: 1.1rem;
         letter-spacing: 2px;
     }
 
-    .bi-star-fill {
-        color: #FFC107;
-        text-shadow: 0 2px 4px rgba(255, 193, 7, 0.3);
+    .stars-rating .bi-star-fill {
+        color: #f59e0b;
     }
 
-    .bi-star {
-        color: #e0e0e0;
+    .stars-rating .bi-star {
+        color: #e5e7eb;
     }
 
-    /* Boutons d'action */
+    .comment-text {
+        max-width: 250px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        color: var(--admin-dark);
+        font-size: 0.95rem;
+    }
+
+    .badge-status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        display: inline-block;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .badge-pending {
+        background: linear-gradient(135deg, var(--admin-warning), #d97706);
+        color: white;
+    }
+
+    .badge-validated {
+        background: linear-gradient(135deg, var(--admin-success), #059669);
+        color: white;
+    }
+
+    .badge-rejected {
+        background: linear-gradient(135deg, var(--admin-danger), #dc2626);
+        color: white;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 8px;
+        flex-wrap: nowrap;
+    }
+
     .btn-action {
         width: 36px;
         height: 36px;
@@ -163,200 +333,181 @@
         display: inline-flex;
         align-items: center;
         justify-content: center;
-        transition: all 0.3s ease;
         border: none;
-        font-size: 1rem;
-    }
-
-    .btn-action:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
     }
 
     .btn-view {
-        background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+        background: linear-gradient(135deg, var(--admin-accent), #4f46e5);
         color: white;
     }
 
     .btn-validate {
-        background: linear-gradient(135deg, #10b981, #34d399);
+        background: linear-gradient(135deg, var(--admin-success), #059669);
         color: white;
     }
 
     .btn-reject {
-        background: linear-gradient(135deg, #f59e0b, #fbbf24);
+        background: linear-gradient(135deg, var(--admin-warning), #d97706);
         color: white;
     }
 
     .btn-delete {
-        background: linear-gradient(135deg, #ef4444, #f87171);
+        background: linear-gradient(135deg, var(--admin-danger), #dc2626);
         color: white;
     }
 
-    /* Filtres */
-    .filter-card {
-        background: white;
-        padding: 20px;
-        border-radius: 14px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        border: 1px solid rgba(30, 27, 75, 0.1);
-    }
-
-    .filter-select {
-        border: 2px solid #e0e0e0;
-        border-radius: 10px;
-        padding: 10px 15px;
-        font-weight: 500;
-        transition: all 0.3s ease;
-    }
-
-    .filter-select:focus {
-        border-color: #8a2be2;
-        box-shadow: 0 0 0 3px rgba(138, 43, 226, 0.1);
-        outline: none;
-    }
-
-    .btn-filter {
-        background: linear-gradient(135deg, #8a2be2, #1e1b4b);
-        color: white;
-        border: none;
-        padding: 10px 24px;
-        border-radius: 10px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-    }
-
-    .btn-filter:hover {
-        background: linear-gradient(135deg, #9b4dff, #2a2470);
+    .btn-action:hover {
         transform: translateY(-2px);
-        box-shadow: 0 6px 20px rgba(138, 43, 226, 0.2);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     }
 
-    /* En-tête */
-    .header-title {
-        color: #1e1b4b;
-        font-weight: 800;
-        font-size: 2.2rem;
-        margin-bottom: 10px;
-        display: flex;
-        align-items: center;
-        gap: 15px;
+    .btn-action:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
     }
 
-    .header-title i {
-        background: linear-gradient(135deg, #8a2be2, #d4a017);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        font-size: 2.4rem;
+    .no-data {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--admin-gray);
     }
 
-    .header-subtitle {
-        color: #6b7280;
-        font-size: 1.1rem;
-        margin-bottom: 30px;
-        max-width: 600px;
+    .no-data i {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        color: #cbd5e1;
     }
 
-    /* Pagination */
+    .alert {
+        border-radius: 12px;
+        border: none;
+        margin-bottom: 25px;
+        padding: 16px 20px;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, var(--admin-success), #059669);
+        color: white;
+    }
+
     .pagination-container {
-        background: rgba(30, 27, 75, 0.02);
+        background: white;
+        border-radius: 15px;
         padding: 20px;
-        border-top: 1px solid rgba(30, 27, 75, 0.05);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        border: 1px solid #e2e8f0;
     }
 
     .pagination .page-item.active .page-link {
-        background: linear-gradient(135deg, #1e1b4b, #3730a3);
-        border-color: #1e1b4b;
+        background: linear-gradient(135deg, var(--admin-secondary), #7c3aed);
+        border-color: var(--admin-secondary);
         color: white;
     }
 
     .pagination .page-link {
-        color: #1e1b4b;
-        border: 1px solid rgba(30, 27, 75, 0.1);
-        padding: 8px 16px;
+        color: var(--admin-secondary);
+        border: 1px solid #e2e8f0;
+        margin: 0 3px;
         border-radius: 8px;
-        margin: 0 4px;
-        font-weight: 500;
+        transition: all 0.3s ease;
     }
 
     .pagination .page-link:hover {
-        background-color: rgba(30, 27, 75, 0.05);
+        background: rgba(138, 43, 226, 0.1);
+        border-color: var(--admin-secondary);
     }
 
-    /* Avatar utilisateur */
-    .user-avatar {
-        width: 40px;
-        height: 40px;
-        background: linear-gradient(135deg, #8a2be2, #1e1b4b);
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-weight: 700;
-        font-size: 1rem;
-        margin-right: 10px;
-    }
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 1.8rem;
+        }
 
-    .user-info {
-        display: flex;
-        align-items: center;
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .action-buttons {
+            flex-direction: column;
+        }
+
+        .btn-action {
+            width: 32px;
+            height: 32px;
+        }
+
+        .comment-text {
+            max-width: 150px;
+        }
     }
 </style>
 
-<div class="mb-5">
-    <h1 class="header-title">
-        <i class="bi bi-chat-text-fill"></i>
-        Gestion des Commentaires
-    </h1>
-    <p class="header-subtitle">
-        Modérez et gérez les avis des visiteurs sur les contenus culturels du Bénin
-    </p>
+<!-- En-tête -->
+<div class="header-card">
+    <div class="mb-4">
+        <h1 class="page-title">
+            <i class="bi bi-chat-text"></i>
+            Gestion des Commentaires
+        </h1>
+        <p class="page-subtitle">
+            Modérez et gérez les avis des visiteurs sur les contenus culturels du Bénin
+        </p>
+    </div>
+
+    <!-- Statistiques -->
+    <div class="stats-grid">
+        <div class="stat-card stat-total">
+            <div class="stat-icon">
+                <i class="bi bi-chat-dots"></i>
+            </div>
+            <div class="stat-number">{{ $stats['total'] ?? 0 }}</div>
+            <div class="stat-label">Total des commentaires</div>
+        </div>
+
+        <div class="stat-card stat-pending">
+            <div class="stat-icon">
+                <i class="bi bi-clock"></i>
+            </div>
+            <div class="stat-number">{{ $stats['pending'] ?? 0 }}</div>
+            <div class="stat-label">En attente</div>
+        </div>
+
+        <div class="stat-card stat-validated">
+            <div class="stat-icon">
+                <i class="bi bi-check-circle"></i>
+            </div>
+            <div class="stat-number">{{ $stats['validated'] ?? 0 }}</div>
+            <div class="stat-label">Validés</div>
+        </div>
+
+        <div class="stat-card stat-rejected">
+            <div class="stat-icon">
+                <i class="bi bi-x-circle"></i>
+            </div>
+            <div class="stat-number">{{ $stats['rejected'] ?? 0 }}</div>
+            <div class="stat-label">Rejetés</div>
+        </div>
+    </div>
 </div>
 
-<!-- STATISTIQUES -->
-<div class="row g-4 mb-5">
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-card">
-            <small>TOTAL DES COMMENTAIRES</small>
-            <span>{{ $stats['total'] }}</span>
-            <small><i class="bi bi-chat-dots"></i> Tous les avis</small>
-        </div>
+@if(session('success'))
+    <div class="alert alert-success alert-dismissible fade show">
+        <i class="bi bi-check-circle-fill me-2"></i>
+        {{ session('success') }}
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"></button>
     </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-card">
-            <small>EN ATTENTE</small>
-            <span>{{ $stats['pending'] }}</span>
-            <small><i class="bi bi-clock"></i> À modérer</small>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-card">
-            <small>VALIDÉS</small>
-            <span>{{ $stats['validated'] }}</span>
-            <small><i class="bi bi-check-circle"></i> Approuvés</small>
-        </div>
-    </div>
-    <div class="col-xl-3 col-md-6">
-        <div class="stat-card">
-            <small>REJETÉS</small>
-            <span>{{ $stats['rejected'] }}</span>
-            <small><i class="bi bi-x-circle"></i> Non publiés</small>
-        </div>
-    </div>
-</div>
+@endif
 
-<!-- FILTRES -->
-<div class="filter-card mb-4">
+<!-- Filtres -->
+<div class="filter-card">
     <div class="row align-items-center">
         <div class="col-md-8">
-            <form method="GET" class="d-flex gap-3 align-items-center">
+            <form method="GET" class="d-flex flex-column flex-md-row gap-3 align-items-start align-items-md-center">
                 <div class="d-flex align-items-center gap-2">
-                    <i class="bi bi-funnel" style="color: #8a2be2; font-size: 1.2rem;"></i>
-                    <select name="statut" class="form-select filter-select" style="max-width: 220px;">
+                    <i class="bi bi-funnel" style="color: var(--admin-secondary); font-size: 1.2rem;"></i>
+                    <select name="statut" class="form-select filter-select" style="min-width: 220px;">
                         <option value="">Tous les statuts</option>
                         <option value="pending" @selected(request('statut')=='pending')>En attente</option>
                         <option value="validated" @selected(request('statut')=='validated')>Validés</option>
@@ -364,7 +515,7 @@
                     </select>
                 </div>
 
-                <button type="submit" class="btn btn-filter">
+                <button type="submit" class="btn-filter">
                     <i class="bi bi-sliders"></i>
                     Appliquer le filtre
                 </button>
@@ -380,61 +531,75 @@
 
         <div class="col-md-4 text-md-end mt-3 mt-md-0">
             <div class="text-muted">
-                <i class="bi bi-info-circle"></i>
+                <i class="bi bi-info-circle me-1"></i>
                 {{ $commentaires->total() }} résultat(s) trouvé(s)
             </div>
         </div>
     </div>
 </div>
 
-<!-- TABLEAU DES COMMENTAIRES -->
-<div class="table-card">
+<!-- Tableau des commentaires -->
+<div class="table-container">
+    <div class="table-header">
+        <h3>
+            <i class="bi bi-list-ul"></i>
+            Liste des commentaires
+        </h3>
+    </div>
+
+    @if($commentaires->count() > 0)
     <div class="table-responsive">
-        <table class="table table-hover align-middle mb-0">
+        <table class="comment-table">
             <thead>
                 <tr>
-                    <th style="width: 200px;">Auteur</th>
-                    <th style="width: 200px;">Contenu</th>
-                    <th style="width: 120px;">Note</th>
+                    <th>Auteur</th>
+                    <th>Contenu</th>
+                    <th>Note</th>
                     <th>Commentaire</th>
-                    <th style="width: 120px;">Statut</th>
-                    <th style="width: 120px;">Date</th>
-                    <th style="width: 180px;" class="text-center">Actions</th>
+                    <th>Statut</th>
+                    <th>Date</th>
+                    <th class="text-center">Actions</th>
                 </tr>
             </thead>
-
             <tbody>
-                @forelse($commentaires as $commentaire)
+                @foreach($commentaires as $commentaire)
                 <tr>
-
                     <!-- Auteur -->
                     <td>
                         <div class="user-info">
-                            <div class="user-avatar">
-                                {{ substr($commentaire->utilisateur->name, 0, 1) }}
-                            </div>
+                            @if($commentaire->utilisateur->avatar_url)
+                                <img src="{{ $commentaire->utilisateur->avatar_url }}"
+                                     class="user-avatar"
+                                     alt="{{ $commentaire->utilisateur->name }}">
+                            @else
+                                <div class="user-avatar"
+                                     style="background: linear-gradient(135deg, var(--admin-secondary), var(--admin-accent));
+                                            display: flex; align-items: center; justify-content: center; color: white;
+                                            font-weight: 600;">
+                                    {{ strtoupper(substr($commentaire->utilisateur->name, 0, 1)) }}
+                                </div>
+                            @endif
                             <div>
-                                <strong class="d-block">{{ $commentaire->utilisateur->name }}</strong>
-                                <small class="text-muted d-block">{{ $commentaire->utilisateur->email }}</small>
+                                <div class="user-name">{{ $commentaire->utilisateur->name }}</div>
+                                <div class="user-email">{{ $commentaire->utilisateur->email }}</div>
                             </div>
                         </div>
                     </td>
 
                     <!-- Contenu -->
                     <td>
-                        <div class="fw-bold text-truncate" style="max-width: 180px;"
-                             title="{{ $commentaire->contenu->titre }}">
+                        <div class="content-title" title="{{ $commentaire->contenu->titre }}">
                             {{ $commentaire->contenu->titre }}
                         </div>
                     </td>
 
                     <!-- Note -->
                     <td>
-                        <div class="stars-container">
-                            @for($i=1; $i<=5; $i++)
+                        <div class="stars-rating">
+                            @for($i = 1; $i <= 5; $i++)
                                 <i class="bi bi-star{{ $i <= $commentaire->note ? '-fill' : '' }}"></i>
                             @endfor
-                            <small class="d-block text-muted mt-1">{{ $commentaire->note }}/5</small>
+                            <div class="text-muted small mt-1">{{ $commentaire->note }}/5</div>
                         </div>
                     </td>
 
@@ -447,30 +612,36 @@
 
                     <!-- Statut -->
                     <td>
-                        <span class="status-badge {{ $commentaire->statut }}">
-                            @if($commentaire->statut == 'pending')
+                        @if($commentaire->statut == 'pending')
+                            <span class="badge-status badge-pending">
                                 <i class="bi bi-clock me-1"></i>
-                            @elseif($commentaire->statut == 'validated')
+                                En attente
+                            </span>
+                        @elseif($commentaire->statut == 'validated')
+                            <span class="badge-status badge-validated">
                                 <i class="bi bi-check-circle me-1"></i>
-                            @else
+                                Validé
+                            </span>
+                        @else
+                            <span class="badge-status badge-rejected">
                                 <i class="bi bi-x-circle me-1"></i>
-                            @endif
-                            {{ $commentaire->statut }}
-                        </span>
+                                Rejeté
+                            </span>
+                        @endif
                     </td>
 
                     <!-- Date -->
                     <td>
                         <div class="fw-medium">{{ $commentaire->created_at->format('d/m/Y') }}</div>
-                        <small class="text-muted">{{ $commentaire->created_at->format('H:i') }}</small>
+                        <div class="text-muted small">{{ $commentaire->created_at->format('H:i') }}</div>
                     </td>
 
                     <!-- Actions -->
                     <td>
-                        <div class="d-flex justify-content-center gap-2">
+                        <div class="action-buttons justify-content-center">
                             <!-- Voir -->
                             <a href="{{ route('admin.commentaires.show', $commentaire->id) }}"
-                               class="btn btn-action btn-view"
+                               class="btn-action btn-view"
                                title="Voir les détails">
                                 <i class="bi bi-eye"></i>
                             </a>
@@ -478,16 +649,18 @@
                             <!-- Valider -->
                             @if($commentaire->statut !== 'validated')
                             <form action="{{ route('admin.commentaires.valider', $commentaire->id) }}"
-                                  method="POST" class="d-inline">
+                                  method="POST"
+                                  class="d-inline">
                                 @csrf
-                                <button type="submit" class="btn btn-action btn-validate"
+                                <button type="submit"
+                                        class="btn-action btn-validate"
                                         title="Valider ce commentaire"
-                                        onclick="return confirm('Valider ce commentaire ?')">
+                                        onclick="return confirm('Êtes-vous sûr de vouloir valider ce commentaire ?')">
                                     <i class="bi bi-check2"></i>
                                 </button>
                             </form>
                             @else
-                            <button class="btn btn-action btn-validate" disabled title="Déjà validé">
+                            <button class="btn-action btn-validate" disabled title="Déjà validé">
                                 <i class="bi bi-check2"></i>
                             </button>
                             @endif
@@ -495,16 +668,18 @@
                             <!-- Rejeter -->
                             @if($commentaire->statut !== 'rejected')
                             <form action="{{ route('admin.commentaires.rejeter', $commentaire->id) }}"
-                                  method="POST" class="d-inline">
+                                  method="POST"
+                                  class="d-inline">
                                 @csrf
-                                <button type="submit" class="btn btn-action btn-reject"
+                                <button type="submit"
+                                        class="btn-action btn-reject"
                                         title="Rejeter ce commentaire"
-                                        onclick="return confirm('Rejeter ce commentaire ?')">
+                                        onclick="return confirm('Êtes-vous sûr de vouloir rejeter ce commentaire ?')">
                                     <i class="bi bi-x-lg"></i>
                                 </button>
                             </form>
                             @else
-                            <button class="btn btn-action btn-reject" disabled title="Déjà rejeté">
+                            <button class="btn-action btn-reject" disabled title="Déjà rejeté">
                                 <i class="bi bi-x-lg"></i>
                             </button>
                             @endif
@@ -513,49 +688,70 @@
                             <form action="{{ route('admin.commentaires.destroy', $commentaire->id) }}"
                                   method="POST"
                                   class="d-inline">
-                                @csrf @method('DELETE')
-                                <button type="submit" class="btn btn-action btn-delete"
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit"
+                                        class="btn-action btn-delete"
                                         title="Supprimer définitivement"
-                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement ce commentaire ?')">
+                                        onclick="return confirm('Êtes-vous sûr de vouloir supprimer définitivement ce commentaire ? Cette action est irréversible.')">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </form>
                         </div>
                     </td>
-
                 </tr>
-                @empty
-                <tr>
-                    <td colspan="7" class="text-center py-5">
-                        <div class="py-4">
-                            <i class="bi bi-chat-x" style="font-size: 3rem; color: #e0e0e0;"></i>
-                            <h5 class="mt-3 mb-2" style="color: #6b7280;">Aucun commentaire trouvé</h5>
-                            <p class="text-muted">Aucun commentaire ne correspond à votre filtre</p>
-                            <a href="{{ route('admin.commentaires.index') }}" class="btn btn-outline-primary">
-                                <i class="bi bi-arrow-clockwise"></i>
-                                Réinitialiser les filtres
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                @endforelse
+                @endforeach
             </tbody>
         </table>
     </div>
-
-    <!-- Pagination -->
-    @if($commentaires->hasPages())
-    <div class="pagination-container">
-        <div class="d-flex justify-content-between align-items-center">
-            <div class="text-muted">
-                Affichage de {{ $commentaires->firstItem() }} à {{ $commentaires->lastItem() }} sur {{ $commentaires->total() }} commentaires
-            </div>
-            <div>
-                {{ $commentaires->links() }}
-            </div>
-        </div>
+    @else
+    <div class="no-data">
+        <i class="bi bi-chat-x"></i>
+        <h4 class="mt-3 mb-2">Aucun commentaire trouvé</h4>
+        <p class="text-muted mb-4">Aucun commentaire ne correspond à votre filtre</p>
+        <a href="{{ route('admin.commentaires.index') }}" class="btn-filter">
+            <i class="bi bi-arrow-clockwise"></i>
+            Réinitialiser les filtres
+        </a>
     </div>
     @endif
 </div>
+
+<!-- Pagination -->
+@if($commentaires->hasPages())
+<div class="pagination-container">
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+        <div class="text-muted mb-3 mb-md-0">
+            <i class="bi bi-list-check me-1"></i>
+            Affichage de <strong>{{ $commentaires->firstItem() }}</strong> à <strong>{{ $commentaires->lastItem() }}</strong>
+            sur <strong>{{ $commentaires->total() }}</strong> commentaires
+        </div>
+        <div>
+            {{ $commentaires->links() }}
+        </div>
+    </div>
+</div>
+@endif
+
+<script>
+    // Animation pour les lignes du tableau
+    document.addEventListener('DOMContentLoaded', function() {
+        const rows = document.querySelectorAll('.comment-table tbody tr');
+        rows.forEach((row, index) => {
+            row.style.animationDelay = `${index * 0.05}s`;
+            row.classList.add('animate__animated', 'animate__fadeInUp');
+        });
+
+        // Afficher le texte complet du commentaire au clic
+        document.querySelectorAll('.comment-text').forEach(comment => {
+            comment.addEventListener('click', function() {
+                const fullText = this.getAttribute('title');
+                if (fullText) {
+                    alert('Commentaire complet :\n\n' + fullText);
+                }
+            });
+        });
+    });
+</script>
 
 @endsection

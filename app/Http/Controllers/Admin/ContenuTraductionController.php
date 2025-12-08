@@ -21,24 +21,33 @@ class ContenuTraductionController extends Controller
     |--------------------------------------------------------------------------
     */
     public function index()
-    {
-        $user = auth()->user();
+{
+    $user = auth()->user();
 
-        // Admin / modérateur = voient tout
-        if($user->hasRole(['admin','moderateur'])) {
-            $traductions = ContenuTraduction::with(['contenu','langue','traducteur'])
-                                            ->orderBy('created_at','desc')
-                                            ->paginate(15);
-        }
-        // Traducteur = voit ses traductions uniquement
-        else {
-            $traductions = ContenuTraduction::where('traduit_par', $user->id)
-                                            ->with(['contenu','langue'])
-                                            ->paginate(15);
-        }
-
-        return view('admin.traductions.index', compact('traductions'));
+    // Admin / modérateur
+    if($user->hasRole(['admin','moderateur'])) {
+        $traductions = ContenuTraduction::with(['contenu','langue','traducteur'])
+                                        ->orderBy('created_at','desc')
+                                        ->paginate(15);
     }
+    // Traducteur
+    else {
+        $traductions = ContenuTraduction::where('traduit_par', $user->id)
+                                        ->with(['contenu','langue'])
+                                        ->paginate(15);
+    }
+
+
+    $stats = [
+        'total'     => ContenuTraduction::count(),
+        'pending'   => ContenuTraduction::where('status', 'pending')->count(),
+        'validated' => ContenuTraduction::where('status', 'validated')->count(),
+        'rejected'  => ContenuTraduction::where('status', 'rejected')->count(),
+    ];
+
+    return view('admin.traductions.index', compact('traductions', 'stats'));
+}
+
 
     /*
     |--------------------------------------------------------------------------
