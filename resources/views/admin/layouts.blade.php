@@ -111,6 +111,15 @@
                     </li>
 
                     <li class="nav-item">
+    <a href="{{ route('admin.traductions.index') }}"
+       class="nav-link {{ request()->routeIs('admin.traductions.*') ? 'active' : '' }}">
+        <i class="nav-icon bi bi-translate"></i>
+        <p>Traductions</p>
+    </a>
+</li>
+
+
+                    <li class="nav-item">
                         <a href="{{ route('admin.commentaires.index') }}" class="nav-link">
                             <i class="nav-icon bi bi-chat-text"></i>
                             <p>Commentaires</p>
@@ -152,11 +161,26 @@
                     </li>
 
                     <li class="nav-item">
+    <a href="{{ route('admin.demandes.index') }}"
+       class="nav-link {{ request()->routeIs('admin.demandes.*') ? 'active' : '' }}">
+        <i class="nav-icon bi bi-person-plus"></i>
+        <p>Demandes contributeurs</p>
+    </a>
+</li>
+
+                    <li class="nav-item">
                         <a href="#" class="nav-link">
                             <i class="nav-icon bi bi-shield-lock"></i>
                             <p>Rôles</p>
                         </a>
                     </li>
+                    <li class="nav-item">
+    <a href="{{ route('admin.paiements.index') }}" class="nav-link {{ request()->routeIs('admin.paiements.*') ? 'active' : '' }}">
+        <i class="nav-icon bi bi-credit-card"></i>
+        <p>Paiements</p>
+    </a>
+</li>
+
 
                     <!-- PARAMÈTRES -->
                     <li class="nav-header mt-3">PARAMÈTRES</li>

@@ -13,27 +13,28 @@ class PaiementController extends Controller
         $this->middleware(['auth', 'role:admin']);
     }
 
+    // 🔹 Liste des paiements
     public function index(Request $request)
     {
         $query = Paiement::with(['user', 'contenu'])
-                        ->orderBy('created_at', 'desc');
+            ->orderBy('created_at', 'desc');
 
         // Filtre statut
         if ($request->filled('statut')) {
             $query->where('statut', $request->statut);
         }
 
-        // Filtre passerelle
-        if ($request->filled('gateway')) {
-            $query->where('gateway', $request->gateway);
+        // Filtre méthode
+        if ($request->filled('methode')) {
+            $query->where('methode', $request->methode);
         }
 
         $paiements = $query->paginate(15);
 
-        // Statistiques globales
+        // Stats rapides
         $stats = [
             'total'     => Paiement::count(),
-            'paye'      => Paiement::where('statut', 'paye')->count(),
+            'paye'      => Paiement::where('statut', 'paye')->sum('montant'),
             'en_attente'=> Paiement::where('statut', 'en_attente')->count(),
             'echec'     => Paiement::where('statut', 'echec')->count(),
         ];
@@ -41,8 +42,11 @@ class PaiementController extends Controller
         return view('admin.paiements.index', compact('paiements', 'stats'));
     }
 
+    // 🔹 Détail d'un paiement
     public function show(Paiement $paiement)
     {
+        $paiement->load(['user', 'contenu']);
+
         return view('admin.paiements.show', compact('paiement'));
     }
 }

@@ -5,10 +5,14 @@ namespace App\Http\Controllers\Front;
 use App\Http\Controllers\Controller;
 use App\Models\Contenu;
 use App\Models\Langue;
+use App\Models\TypeContenu;
+use Illuminate\Http\Request;
+
 
 class HomeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
+
     {
         $recents = Contenu::where('status','validated')
                           ->where('is_active', true)
@@ -28,12 +32,26 @@ class HomeController extends Controller
                            ->where('is_premium', false)
                            ->take(6)
                            ->get();
+        $query = \App\Models\Contenu::where('status', 'validated')
+        ->where('is_active', true);
+
+    $typecontenus = TypeContenu::orderBy('nom')->get();
+
+
+    if ($request->filled('category')) {
+        $query->where('typecontenu_id', $request->category);
+    }
+
+    $contenusFiltrés = $query->latest()->take(9)->get();
+
 
         return view('front.home.index', [
             'recents' => Contenu::valideS()->latest()->take(8)->get(),
             'premium' => Contenu::valideS()->premium()->latest()->take(8)->get(),
             'langues' => Langue::withCount('contenus')->get(),
             'gratuits' => Contenu::valideS()->gratuit()->latest()->take(8)->get(),
+            'typecontenus' => $typecontenus,
+
         ]);
     }
 }

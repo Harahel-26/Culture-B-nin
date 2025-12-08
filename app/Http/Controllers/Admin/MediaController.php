@@ -114,6 +114,12 @@ class MediaController extends Controller
         ->route('admin.medias.index')
         ->with('success', 'Média mis à jour avec succès.');
 }
+public function show(Media $media)
+{
+    $media->load(['contenu', 'typeMedia', 'uploader', 'validateur']);
+
+    return view('admin.medias.show', compact('media'));
+}
 
 
     public function rejeter(Media $media)

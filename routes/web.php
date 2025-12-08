@@ -7,6 +7,7 @@ use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\ContenuController;
 use App\Http\Controllers\Front\SearchController;
 use App\Http\Controllers\Front\ProfilController;
+    use App\Http\Controllers\Admin\PaiementController;
 use App\Http\Controllers\Front\CommentaireController;
 use App\Http\Controllers\Front\MediaController;
 use App\Http\Controllers\Front\MediaGalleryController;
@@ -147,6 +148,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('regions', \App\Http\Controllers\Admin\RegionController::class);
     Route::resource('typecontenus', \App\Http\Controllers\Admin\TypeContenuController::class);
     Route::resource('medias', \App\Http\Controllers\Admin\MediaController::class);
+    Route::get('/admin/medias/{media}/valider',
+        [\App\Http\Controllers\Admin\MediaController::class, 'valider'])
+        ->name('medias.valider');
+
+    Route::get('/admin/medias/{media}/rejeter',
+        [\App\Http\Controllers\Admin\MediaController::class, 'rejeter'])
+        ->name('medias.rejeter');
+
     Route::resource('typemedias', \App\Http\Controllers\Admin\TypeMediaController::class);
 
     // Commentaires admin
@@ -156,6 +165,17 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::post('/commentaires/{id}/rejeter', [\App\Http\Controllers\Admin\CommentaireController::class, 'rejeter'])->name('commentaires.rejeter');
     Route::delete('/commentaires/{id}', [\App\Http\Controllers\Admin\CommentaireController::class, 'destroy'])->name('commentaires.destroy');
 });
+
+
+
+
+Route::prefix('admin')->middleware(['auth','role:admin'])->group(function () {
+    Route::get('paiements', [PaiementController::class, 'index'])->name('admin.paiements.index');
+    Route::get('paiements/{paiement}', [PaiementController::class, 'show'])->name('admin.paiements.show');
+});
+
+
+
 
 //-----------------------------------------
 // DASHBOARD CONTRIBUTEUR
@@ -279,6 +299,23 @@ Route::middleware(['auth', 'role:admin|moderateur'])->group(function () {
         ->name('admin.demandes.rejeter');
 
 });
+
+// ADMIN - TRADUCTIONS
+Route::middleware(['auth', 'role:admin|moderateur'])->prefix('admin')->name('admin.')->group(function () {
+
+    Route::get('/traductions', [\App\Http\Controllers\Admin\TraductionController::class, 'index'])
+        ->name('traductions.index');
+
+    Route::get('/traductions/{trad}', [\App\Http\Controllers\Admin\TraductionController::class, 'show'])
+        ->name('traductions.show');
+
+    Route::post('/traductions/{trad}/valider', [\App\Http\Controllers\Admin\TraductionController::class, 'valider'])
+        ->name('traductions.valider');
+
+    Route::post('/traductions/{trad}/rejeter', [\App\Http\Controllers\Admin\TraductionController::class, 'rejeter'])
+        ->name('traductions.rejeter');
+});
+
 /*
 |--------------------------------------------------------------------------
 | PAGES STATIQUES (Front)

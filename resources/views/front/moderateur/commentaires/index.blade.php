@@ -26,13 +26,28 @@
             <td>{{ \Illuminate\Support\Str::limit($c->commentaire, 50) }}</td>
 
             <td class="d-flex gap-2">
-                <form action="{{ route('moderateur.commentaires.valider', $c) }}" method="POST">@csrf
-                    <button class="btn btn-success btn-sm">✔</button>
-                </form>
+                <!-- Valider -->
+                        @if($commentaire->statut !== 'validated')
+                        <form action="{{ route('admin.commentaires.valider', $commentaire->id) }}"
+                              method="POST" class="d-inline">
+                            @csrf
+                            <button class="btn btn-sm btn-success">
+                                <i class="bi bi-check2"></i>
+                            </button>
+                        </form>
+                        @endif
 
-                <form action="{{ route('moderateur.commentaires.rejeter', $c) }}" method="POST">@csrf
-                    <button class="btn btn-danger btn-sm">✖</button>
-                </form>
+                        <!-- Rejeter -->
+                        @if($commentaire->statut !== 'rejected')
+                        <form action="{{ route('admin.commentaires.rejeter', $commentaire->id) }}"
+                              method="POST" class="d-inline">
+                            @csrf
+                            <button class="btn btn-sm btn-warning text-dark">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </form>
+                        @endif
+
             </td>
         </tr>
         @endforeach

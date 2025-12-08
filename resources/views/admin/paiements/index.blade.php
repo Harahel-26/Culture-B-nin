@@ -1,157 +1,358 @@
-@extends('layout_projet')
+@extends('admin.layouts')
 
 @section('title', 'Paiements')
 
 @section('content')
 
 <style>
-    .stat-card {
-        background: #1e1b4b;
-        color: #fff;
-        border-radius: 12px;
-        padding: 18px;
-        text-align: center;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        padding-bottom: 20px;
+        border-bottom: 2px solid rgba(30, 27, 75, 0.1);
     }
-    .stat-card span {
-        font-size: 1.7rem;
+    .page-title {
+        color: #1e1b4b;
+        font-weight: 800;
+        font-size: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .page-title i {
+        background: linear-gradient(135deg, #8a2be2, #d4a017);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+    }
+    .stat-card {
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 6px 20px rgba(30, 27, 75, 0.08);
+        border: 1px solid rgba(30, 27, 75, 0.05);
+        transition: all 0.3s ease;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 12px 25px rgba(30, 27, 75, 0.12);
+    }
+    .stat-card-primary {
+        border-top: 4px solid #8a2be2;
+    }
+    .stat-card-success {
+        border-top: 4px solid #10b981;
+    }
+    .stat-card-warning {
+        border-top: 4px solid #f59e0b;
+    }
+    .stat-number {
+        font-size: 2.2rem;
+        font-weight: 800;
+        color: #1e1b4b;
+        margin: 10px 0;
+    }
+    .stat-label {
+        font-weight: 600;
+        color: #6b7280;
+        font-size: 0.95rem;
+    }
+    .filters-card {
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        margin-bottom: 25px;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        border: 1px solid rgba(30, 27, 75, 0.05);
+    }
+    .filter-select {
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 10px 15px;
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    .filter-select:focus {
+        border-color: #8a2be2;
+        box-shadow: 0 0 0 4px rgba(138, 43, 226, 0.1);
+        outline: none;
+    }
+    .btn-filter {
+        background: linear-gradient(135deg, #8a2be2, #1e1b4b);
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .btn-filter:hover {
+        background: linear-gradient(135deg, #9b4dff, #2a2470);
+        transform: translateY(-2px);
+    }
+    .table-card {
+        background: white;
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 8px 30px rgba(30, 27, 75, 0.08);
+        border: 1px solid rgba(30, 27, 75, 0.05);
+    }
+    .table-header {
+        background: linear-gradient(135deg, #1e1b4b, #3730a3);
+        padding: 20px 25px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .table-title {
+        color: white;
+        font-size: 1.2rem;
         font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    .table-title i {
         color: #d4a017;
     }
-
-    .badge-statut {
-        padding: 6px 9px;
-        border-radius: 6px;
-        font-size: .8rem;
+    .table {
+        margin: 0;
+    }
+    .table thead th {
+        border: none;
+        padding: 18px 20px;
+        font-weight: 700;
+        color: #1e1b4b;
+        background: rgba(30, 27, 75, 0.03);
+        border-bottom: 2px solid rgba(30, 27, 75, 0.1);
+    }
+    .table tbody tr {
+        transition: all 0.2s ease;
+        border-bottom: 1px solid rgba(30, 27, 75, 0.05);
+    }
+    .table tbody tr:hover {
+        background: rgba(138, 43, 226, 0.03);
+    }
+    .table tbody td {
+        padding: 18px 20px;
+        vertical-align: middle;
+        border: none;
+    }
+    .badge-status {
+        padding: 8px 14px;
+        border-radius: 8px;
         font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
     }
-
-    .paye { background:#28a745; color:#fff;}
-    .en_attente { background:#ffc107; }
-    .echec { background:#dc3545; color:#fff; }
-    .annule { background:#6c757d; color:#fff; }
-
-    .gateway-badge {
-        background: #d4a017;
-        padding: 5px 8px;
-        border-radius: 6px;
-        font-size: .75rem;
-        color: #fff;
+    .status-paye {
+        background: linear-gradient(135deg, #10b981, #34d399);
+        color: white;
     }
-
+    .status-en_attente {
+        background: linear-gradient(135deg, #f59e0b, #fbbf24);
+        color: #1e1b4b;
+    }
+    .status-echec {
+        background: linear-gradient(135deg, #ef4444, #f87171);
+        color: white;
+    }
+    .status-annule {
+        background: linear-gradient(135deg, #6b7280, #9ca3af);
+        color: white;
+    }
+    .badge-method {
+        background: rgba(30, 27, 75, 0.1);
+        color: #1e1b4b;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+    }
+    .btn-view {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, #0ea5e9, #3b82f6);
+        color: white;
+        border: none;
+        transition: all 0.3s ease;
+    }
+    .btn-view:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(14, 165, 233, 0.2);
+    }
+    .pagination-container {
+        background: rgba(30, 27, 75, 0.02);
+        padding: 20px;
+        border-top: 1px solid rgba(30, 27, 75, 0.05);
+    }
 </style>
 
+<div class="page-header">
+    <h1 class="page-title">
+        <i class="bi bi-credit-card"></i>
+        Paiements
+    </h1>
+</div>
 
-<h3 class="fw-bold mb-4" style="color:#1e1b4b;">
-    <i class="bi bi-wallet2"></i> Paiements
-</h3>
-
-<!-- STATISTIQUES -->
-<div class="row g-3 mb-4">
-    <div class="col-md-3">
-        <div class="stat-card">Total<br><span>{{ $stats['total'] }}</span></div>
+<!-- Statistiques -->
+<div class="stats-grid">
+    <div class="stat-card stat-card-primary">
+        <div class="stat-label">Total paiements</div>
+        <div class="stat-number">{{ $stats['total'] }}</div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card">Payés<br><span>{{ $stats['paye'] }}</span></div>
+    
+    <div class="stat-card stat-card-success">
+        <div class="stat-label">Total payé</div>
+        <div class="stat-number">{{ number_format($stats['paye'],0,',',' ') }}<small style="font-size: 1rem;"> FCFA</small></div>
     </div>
-    <div class="col-md-3">
-        <div class="stat-card">En attente<br><span>{{ $stats['en_attente'] }}</span></div>
-    </div>
-    <div class="col-md-3">
-        <div class="stat-card">Échecs<br><span>{{ $stats['echec'] }}</span></div>
+    
+    <div class="stat-card stat-card-warning">
+        <div class="stat-label">En attente</div>
+        <div class="stat-number">{{ $stats['en_attente'] }}</div>
     </div>
 </div>
 
-<!-- FILTRES -->
-<form method="GET" class="d-flex gap-2 mb-3">
+<!-- Filtres -->
+<div class="filters-card">
+    <form method="GET" class="row g-3 align-items-center">
+        <div class="col-md-4">
+            <select name="statut" class="form-select filter-select w-100">
+                <option value="">Tous les statuts</option>
+                <option value="paye" @selected(request('statut') == 'paye')>Payé</option>
+                <option value="en_attente" @selected(request('statut') == 'en_attente')>En attente</option>
+                <option value="echec" @selected(request('statut') == 'echec')>Échec</option>
+            </select>
+        </div>
+        
+        <div class="col-md-4">
+            <select name="methode" class="form-select filter-select w-100">
+                <option value="">Toutes les méthodes</option>
+                <option value="mobile_money" @selected(request('methode') == 'mobile_money')>Mobile Money</option>
+                <option value="carte" @selected(request('methode') == 'carte')>Carte bancaire</option>
+            </select>
+        </div>
+        
+        <div class="col-md-4">
+            <button type="submit" class="btn-filter w-100">
+                <i class="bi bi-funnel"></i>
+                Appliquer les filtres
+            </button>
+        </div>
+    </form>
+</div>
 
-    <select name="statut" class="form-select" style="max-width:180px;">
-        <option value="">Tous statuts</option>
-        <option value="paye" @selected(request('statut')=='paye')>Payé</option>
-        <option value="en_attente" @selected(request('statut')=='en_attente')>En attente</option>
-        <option value="echec" @selected(request('statut')=='echec')>Echec</option>
-        <option value="annule" @selected(request('statut')=='annule')>Annulé</option>
-    </select>
-
-    <select name="gateway" class="form-select" style="max-width:180px;">
-        <option value="">Toutes plateformes</option>
-        <option value="fedapay" @selected(request('gateway')=='fedapay')>FedaPay</option>
-        <option value="kkiapay" @selected(request('gateway')=='kkiapay')>Kkiapay</option>
-    </select>
-
-    <button class="btn btn-primary" style="background:#1e1b4b; border:none;">
-        <i class="bi bi-funnel"></i> Filtrer
-    </button>
-
-</form>
-
-<!-- TABLEAU -->
-<div class="card shadow-sm">
+<!-- Tableau -->
+<div class="table-card">
+    <div class="table-header">
+        <h3 class="table-title">
+            <i class="bi bi-list-columns"></i>
+            Liste des paiements
+        </h3>
+    </div>
+    
     <div class="table-responsive">
-
-        <table class="table table-hover align-middle">
-            <thead class="table-light">
+        <table class="table table-hover">
+            <thead>
                 <tr>
                     <th>Référence</th>
                     <th>Utilisateur</th>
                     <th>Contenu</th>
                     <th>Montant</th>
-                    <th>Gateway</th>
+                    <th>Méthode</th>
                     <th>Statut</th>
                     <th>Date</th>
                     <th></th>
                 </tr>
             </thead>
-
             <tbody>
                 @foreach($paiements as $p)
                 <tr>
-
-                    <td>{{ $p->reference }}</td>
-
                     <td>
-                        <strong>{{ $p->user->name }}</strong><br>
+                        <div class="fw-bold">{{ $p->reference }}</div>
+                    </td>
+                    
+                    <td>
+                        <div class="fw-medium">{{ $p->user->name }}</div>
                         <small class="text-muted">{{ $p->user->email }}</small>
                     </td>
-
+                    
                     <td>
-                        <strong>{{ $p->contenu->titre }}</strong>
+                        <div class="fw-medium">{{ Str::limit($p->contenu->titre, 30) }}</div>
                     </td>
-
-                    <td>{{ number_format($p->montant, 2, ',', ' ') }} {{ $p->devise }}</td>
-
+                    
                     <td>
-                        <span class="gateway-badge">
-                            {{ strtoupper($p->gateway) }}
+                        <div class="fw-bold" style="color: #10b981;">
+                            {{ number_format($p->montant,0,',',' ') }} FCFA
+                        </div>
+                    </td>
+                    
+                    <td>
+                        <span class="badge-method">
+                            <i class="bi bi-{{ $p->methode == 'mobile_money' ? 'phone' : 'credit-card' }}"></i>
+                            {{ ucfirst($p->methode) }}
                         </span>
                     </td>
-
+                    
                     <td>
-                        <span class="badge-statut {{ $p->statut }}">
-                            {{ ucfirst(str_replace('_',' ', $p->statut)) }}
+                        <span class="badge-status status-{{ $p->statut }}">
+                            @if($p->statut == 'paye')
+                                <i class="bi bi-check-circle"></i>
+                            @elseif($p->statut == 'en_attente')
+                                <i class="bi bi-clock"></i>
+                            @elseif($p->statut == 'echec')
+                                <i class="bi bi-x-circle"></i>
+                            @else
+                                <i class="bi bi-slash-circle"></i>
+                            @endif
+                            {{ ucfirst($p->statut) }}
                         </span>
                     </td>
-
-                    <td>{{ $p->created_at->format('d/m/Y') }}</td>
-
+                    
+                    <td>
+                        <div>{{ $p->created_at->format('d/m/Y') }}</div>
+                        <small class="text-muted">{{ $p->created_at->format('H:i') }}</small>
+                    </td>
+                    
                     <td>
                         <a href="{{ route('admin.paiements.show', $p) }}"
-                           class="btn btn-sm btn-info text-white">
+                           class="btn-view"
+                           title="Voir détails">
                             <i class="bi bi-eye"></i>
                         </a>
                     </td>
-
                 </tr>
                 @endforeach
             </tbody>
-
         </table>
-
     </div>
-
-    <div class="card-footer">
-        {{ $paiements->links() }}
-    </div>
+    
+    @if($paiements->hasPages())
+        <div class="pagination-container">
+            {{ $paiements->links() }}
+        </div>
+    @endif
 </div>
 
 @endsection
