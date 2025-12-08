@@ -46,7 +46,7 @@ class Contenu extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Boot : génération slug unique
+    | Auto-slug lors de la création
     |--------------------------------------------------------------------------
     */
     protected static function boot()
@@ -65,7 +65,6 @@ class Contenu extends Model
     | Relations
     |--------------------------------------------------------------------------
     */
-
     public function langue()
     {
         return $this->belongsTo(Langue::class);
@@ -105,18 +104,17 @@ class Contenu extends Model
     {
         return $this->hasMany(Paiement::class);
     }
-    public function traductions()
-{
-    return $this->hasMany(ContenuTraduction::class);
-}
 
+    public function traductions()
+    {
+        return $this->hasMany(ContenuTraduction::class);
+    }
 
     /*
     |--------------------------------------------------------------------------
     | Scopes
     |--------------------------------------------------------------------------
     */
-
     public function scopeValides($q)
     {
         return $q->where('status', 'validated');
@@ -152,7 +150,7 @@ class Contenu extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Accessors (Champs Virtuels)
+    | Accessors
     |--------------------------------------------------------------------------
     */
 
@@ -166,15 +164,25 @@ class Contenu extends Model
 
     public function getEstAccessibleAttribute()
     {
+        // Gratuit = accessible
         if (!$this->is_premium) {
             return true;
         }
 
+        // Pas connecté = pas accessible
         $user = auth()->user();
         if (!$user) return false;
 
-        return $user->aAcheteContenu($this->id)
-            || $user->hasRole(['admin', 'moderateur']);
+        // Admin & modérateur -> accès total
+        if ($user->hasRole(['admin', 'moderateur'])) {
+            return true;
+        }
+
+        // Vérifier si utilisateur a acheté ce contenu
+        return $this->paiements()
+            ->where('user_id', $user->id)
+            ->where('statut', 'paye')
+            ->exists();
     }
 
     public function getExtraitAttribute()
@@ -202,9 +210,19 @@ class Contenu extends Model
 
     /*
     |--------------------------------------------------------------------------
-    | Méthodes Métiers
+    | Méthodes métiers
     |--------------------------------------------------------------------------
     */
+
+    public function estAchetePar($user)
+    {
+        if (!$user) return false;
+
+        return $this->paiements()
+            ->where('user_id', $user->id)
+            ->where('statut', 'paye')
+            ->exists();
+    }
 
     public function incrementerVues()
     {

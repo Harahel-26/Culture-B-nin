@@ -59,13 +59,13 @@
         border-radius: 5px;
         font-size: .75rem;
     }
-    
+
     .favori-btn {
         top: 10px;
         right: 10px;
         z-index: 3;
     }
-    
+
     /* Style pour le diaporama */
     .diaporama-section {
         background: white;
@@ -74,24 +74,24 @@
         margin: 2rem auto;
         box-shadow: 0 10px 30px rgba(0,0,0,0.1);
     }
-    
+
     .swiper-slide {
         height: auto;
     }
-    
+
     .diaporama-slide {
         border-radius: 15px;
         overflow: hidden;
         height: 300px;
         position: relative;
     }
-    
+
     .diaporama-slide img {
         width: 100%;
         height: 100%;
         object-fit: cover;
     }
-    
+
     .slide-content {
         position: absolute;
         bottom: 0;
@@ -101,58 +101,16 @@
         color: white;
         padding: 1.5rem;
     }
-    
+
     .swiper-pagination-bullet {
         background: #d4a017 !important;
     }
-    
+
     .swiper-pagination-bullet-active {
         background: #a16207 !important;
     }
 </style>
 
-{{-- DIAPORAMA "DÉCOUVRIR LA RICHESSE CULTURELLE" --}}
-<div class="diaporama-section">
-    <h2 class="home-section-title text-center mb-4">
-        <i class="bi bi-images"></i> Découvrir la richesse culturelle
-    </h2>
-    
-    <div class="swiper diaporamaSwiper">
-        <div class="swiper-wrapper">
-            @php
-                $slides = [
-                    ['title' => 'Palais Royaux d\'Abomey', 'desc' => 'Patrimoine UNESCO, histoire des royaumes'],
-                    ['title' => 'Art Vodun', 'desc' => 'Traditions spirituelles ancestrales'],
-                    ['title' => 'Marchés Traditionnels', 'desc' => 'Couleurs et artisanat local'],
-                    ['title' => 'Danses Traditionnelles', 'desc' => 'Rythmes du patrimoine vivant'],
-                    ['title' => 'Architecture en Terre', 'desc' => 'Tata Somba et habitats'],
-                    ['title' => 'Port de Ouidah', 'desc' => 'Route des esclaves et histoire']
-                ];
-            @endphp
-            
-            @foreach($slides as $slide)
-            <div class="swiper-slide">
-                <div class="diaporama-slide">
-                    <img src="https://images.unsplash.com/photo-{{ 
-                        ['1518998057236-f5f71966f5b0', 
-                         '1520263451449-8c22cc0b6f7d',
-                         '1548013142-3f491d5c1dc4',
-                         '1511671782779-c97d3d27a1d4',
-                         '1506905925346-21bda4d32df4',
-                         '1520263451449-8c22cc0b6f7d'][$loop->index] 
-                    }}?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" 
-                         alt="{{ $slide['title'] }}">
-                    <div class="slide-content">
-                        <h5 class="fw-bold mb-1">{{ $slide['title'] }}</h5>
-                        <p class="mb-0 small">{{ $slide['desc'] }}</p>
-                    </div>
-                </div>
-            </div>
-            @endforeach
-        </div>
-        <div class="swiper-pagination mt-3"></div>
-    </div>
-</div>
 
 {{-- SECTION 1 : CONTENUS RÉCENTS --}}
 <section class="mb-5">
@@ -177,11 +135,11 @@
                         </button>
                     </form>
                     @endif
-                    
+
                     <img src="{{ $c->image_couverture ? asset('storage/'.$c->image_couverture) : asset('images/default-cover.jpg') }}"
                          class="contenu-cover"
                          alt="{{ $c->titre }}">
-                    
+
                     <div class="p-3">
                         <h5 class="fw-bold">{{ $c->titre }}</h5>
                         <small class="text-muted">
@@ -200,6 +158,26 @@
         @endforeach
     </div>
 </section>
+
+{{-- SECTION : GALERIE DES MÉDIAS --}}
+<section class="mb-5">
+    <h2 class="home-section-title">
+        <i class="bi bi-camera-reels"></i> Galerie des médias
+    </h2>
+
+    <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3">
+        <p class="mb-0 text-muted" style="max-width:550px;">
+            Explorez les vidéos, images et sons liés aux contenus culturels :
+            cérémonies, danses, art vodun, paysages et scènes de vie quotidienne.
+        </p>
+
+        <a href="{{ route('front.medias.index') }}" class="btn btn-gold btn-lg">
+            <i class="bi bi-collection-play me-2"></i>
+            Accéder à la galerie
+        </a>
+    </div>
+</section>
+
 
 {{-- CARROUSEL PREMIUM --}}
 <section class="mb-5">
@@ -226,11 +204,11 @@
                             </button>
                         </form>
                         @endif
-                        
+
                         <img src="{{ asset('storage/'.$c->image_couverture) }}"
                              class="contenu-cover"
                              alt="{{ $c->titre }}">
-                        
+
                         <div class="p-3">
                             <h5 class="fw-bold">{{ $c->titre }}</h5>
                             <small class="text-muted">
@@ -269,11 +247,11 @@
                         </button>
                     </form>
                     @endif
-                    
+
                     <img src="{{ asset('storage/'.$c->image_couverture) }}"
                          class="contenu-cover"
                          alt="{{ $c->titre }}">
-                    
+
                     <div class="p-3">
                         <h5 class="fw-bold">{{ $c->titre }}</h5>
                         <small class="text-muted">
@@ -310,7 +288,7 @@
             },
         },
     });
-    
+
     // Initialiser le carrousel premium (existant)
     var swiper = new Swiper(".mySwiper", {
         slidesPerView: 1.2,
@@ -327,7 +305,7 @@
             clickable: true,
         },
     });
-    
+
     // Animation au défilement
     ScrollReveal().reveal('.home-section-title', {
         delay: 100,

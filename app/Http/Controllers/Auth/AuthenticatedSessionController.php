@@ -60,6 +60,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect()->route('front.accueil');
+        return redirect()->route('front.home');
     }
 }
