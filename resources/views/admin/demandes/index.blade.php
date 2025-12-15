@@ -214,8 +214,8 @@
         margin-top: 3px;
     }
 
-    /* Motivation */
-    .motivation-text {
+    /* Motif */
+    .motif-text {
         max-width: 400px;
         line-height: 1.6;
         color: #4b5563;
@@ -227,13 +227,13 @@
         margin: 0;
     }
 
-    .motivation-empty {
+    .motif-empty {
         color: #9ca3af;
         font-style: italic;
         font-size: 0.95rem;
     }
 
-    /* Badges de statut */
+    /* Badges de status */
     .status-badge {
         padding: 10px 18px;
         border-radius: 10px;
@@ -412,22 +412,22 @@
             display: block;
             overflow-x: auto;
         }
-        
+
         .actions-container {
             flex-direction: column;
         }
-        
+
         .btn-action {
             width: 100%;
             justify-content: center;
         }
-        
+
         .user-info {
             flex-direction: column;
             align-items: flex-start;
             gap: 10px;
         }
-        
+
         .user-avatar {
             width: 40px;
             height: 40px;
@@ -452,32 +452,32 @@
     <!-- Filtres -->
     <div class="filters-container">
         <div class="d-flex flex-wrap gap-3">
-            <a href="{{ route('admin.demandes.index') }}" 
+            <a href="{{ route('admin.demandes.index') }}"
                class="filter-btn {{ request('status') == null ? 'active' : '' }}">
                 <i class="bi bi-grid"></i>
                 Toutes les demandes
                 <span class="filter-count">{{ $totalDemandes ?? $demandes->total() }}</span>
             </a>
-            
-            <a href="{{ route('admin.demandes.index', ['status' => 'pending']) }}" 
+
+            <a href="{{ route('admin.demandes.index', ['status' => 'pending']) }}"
                class="filter-btn {{ request('status') == 'pending' ? 'active' : '' }}">
                 <i class="bi bi-clock"></i>
                 En attente
-                <span class="filter-count">{{ $pendingCount ?? $demandes->where('statut', 'pending')->count() }}</span>
+                <span class="filter-count">{{ $pendingCount ?? $demandes->where('status', 'pending')->count() }}</span>
             </a>
-            
-            <a href="{{ route('admin.demandes.index', ['status' => 'accepted']) }}" 
+
+            <a href="{{ route('admin.demandes.index', ['status' => 'accepted']) }}"
                class="filter-btn {{ request('status') == 'accepted' ? 'active' : '' }}">
                 <i class="bi bi-check-circle"></i>
                 Acceptées
-                <span class="filter-count">{{ $acceptedCount ?? $demandes->where('statut', 'accepted')->count() }}</span>
+                <span class="filter-count">{{ $acceptedCount ?? $demandes->where('status', 'accepted')->count() }}</span>
             </a>
-            
-            <a href="{{ route('admin.demandes.index', ['status' => 'rejected']) }}" 
+
+            <a href="{{ route('admin.demandes.index', ['status' => 'rejected']) }}"
                class="filter-btn {{ request('status') == 'rejected' ? 'active' : '' }}">
                 <i class="bi bi-x-circle"></i>
                 Rejetées
-                <span class="filter-count">{{ $rejectedCount ?? $demandes->where('statut', 'rejected')->count() }}</span>
+                <span class="filter-count">{{ $rejectedCount ?? $demandes->where('status', 'rejected')->count() }}</span>
             </a>
         </div>
     </div>
@@ -501,8 +501,8 @@
                     <thead>
                         <tr>
                             <th style="width: 250px;">Utilisateur</th>
-                            <th style="min-width: 300px;">Motivation</th>
-                            <th style="width: 140px;">Statut</th>
+                            <th style="min-width: 300px;">Motif</th>
+                            <th style="width: 140px;">Status</th>
                             <th style="width: 200px;">Actions</th>
                         </tr>
                     </thead>
@@ -529,28 +529,28 @@
                                 </div>
                             </td>
 
-                            <!-- Motivation -->
+                            <!-- Motif -->
                             <td>
-                                @if($d->motivation)
-                                    <p class="motivation-text">
-                                        {{ $d->motivation }}
+                                @if($d->motif)
+                                    <p class="motif-text">
+                                        {{ $d->motif }}
                                     </p>
                                 @else
-                                    <p class="motivation-empty">
+                                    <p class="motif-empty">
                                         <i class="bi bi-dash-circle"></i>
-                                        Aucune motivation fournie
+                                        Aucun motif fournie
                                     </p>
                                 @endif
                             </td>
 
-                            <!-- Statut -->
+                            <!-- Status-->
                             <td>
-                                @if($d->statut == 'pending')
+                                @if($d->status == 'pending')
                                     <span class="status-badge status-pending">
                                         <i class="bi bi-clock"></i>
                                         En attente
                                     </span>
-                                @elseif($d->statut == 'accepted')
+                                @elseif($d->status == 'accepted')
                                     <span class="status-badge status-accepted">
                                         <i class="bi bi-check-circle"></i>
                                         Acceptée
@@ -565,9 +565,9 @@
 
                             <!-- Actions -->
                             <td>
-                                @if($d->statut == 'pending')
+                                @if($d->status == 'pending')
                                     <div class="actions-container">
-                                        <form method="POST" action="{{ route('admin.demandes.accepter', $d) }}" 
+                                        <form method="POST" action="{{ route('admin.demandes.accepter', $d) }}"
                                               onsubmit="return confirm('Êtes-vous sûr de vouloir accepter cette demande ? L\'utilisateur deviendra contributeur.')"
                                               class="d-inline">
                                             @csrf
@@ -648,7 +648,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Ajouter des événements de confirmation
     const acceptForms = document.querySelectorAll('form[action*="accepter"]');
     const rejectForms = document.querySelectorAll('form[action*="rejeter"]');
-    
+
     acceptForms.forEach(form => {
         form.addEventListener('submit', function(e) {
             if (!confirm('Êtes-vous sûr de vouloir accepter cette demande ? L\'utilisateur deviendra contributeur et pourra soumettre des contenus.')) {
@@ -656,7 +656,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+
     rejectForms.forEach(form => {
         form.addEventListener('submit', function(e) {
             if (!confirm('Êtes-vous sûr de vouloir rejeter cette demande ? L\'utilisateur sera notifié et ne pourra pas soumettre de contenus.')) {
@@ -664,14 +664,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     });
-    
+
     // Animation au survol des lignes
     const rows = document.querySelectorAll('.demands-table tbody tr');
     rows.forEach(row => {
         row.addEventListener('mouseenter', function() {
             this.style.transform = 'translateX(4px)';
         });
-        
+
         row.addEventListener('mouseleave', function() {
             this.style.transform = 'translateX(0)';
         });

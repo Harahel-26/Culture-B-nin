@@ -41,7 +41,7 @@
             color: var(--dark);
             min-height: 100vh;
         }
-        
+
         /* 2. DIAPORAMA D'IMAGES EN ARRIÈRE-PLAN (Background Slideshow) */
         .background-slideshow {
             position: fixed;
@@ -87,17 +87,17 @@
             background: linear-gradient(135deg, rgba(247, 250, 252, 0.95) 0%, rgba(247, 250, 252, 0.85) 100%);
             z-index: -1;
         }
-        
+
         /* 3. CONTENU PRINCIPAL EN LISIBILITÉ MAXIMALE */
         main {
             /* Retrait du fond semi-transparent de la <main> pour ne pas créer un double effet de flou */
-            background: transparent !important; 
+            background: transparent !important;
             border: none !important;
             box-shadow: none !important;
             padding: 0 !important;
             margin: 0 auto !important;
         }
-        
+
         /* La DIV du contenu prendra le background si nécessaire, mais le <main> lui-même reste transparent. */
         .main-content-wrapper {
             background: rgba(247, 250, 252, 0.95); /* Arrière-plan des blocs de contenu */
@@ -125,8 +125,8 @@
         }
 
         .brand-slogan {
-            font-size: 0.7rem; 
-            color: var(--accent); 
+            font-size: 0.7rem;
+            color: var(--accent);
             letter-spacing: 0.5px;
             text-transform: uppercase;
         }
@@ -146,7 +146,7 @@
             background-color: rgba(165, 42, 42, 0.05);
             font-weight: 600;
         }
-        
+
         /* 5. BOUTONS */
         .btn-accent {
             background: linear-gradient(135deg, var(--accent), #e53e3e);
@@ -233,7 +233,7 @@
             background: rgba(255, 255, 255, 0.15);
             color: white;
         }
-        
+
         .search-input::placeholder {
             color: rgba(255, 255, 255, 0.7);
         }
@@ -248,7 +248,7 @@
             border-top-right-radius: 20px;
             position: relative;
         }
-        
+
         .site-footer h3, .site-footer h6 {
             color: var(--secondary) !important;
             font-weight: 700;
@@ -259,7 +259,7 @@
             text-decoration: none;
             transition: all 0.3s ease;
         }
-        
+
         .footer-links a:hover {
             color: var(--secondary);
             transform: translateX(3px);
@@ -286,19 +286,19 @@
     <div class="background-slideshow">
         <div class="slide-container">
             {{-- VÉRIFIEZ ET REMPLACEZ VOS CHEMINS D'IMAGES CI-DESSOUS --}}
-            <div class="background-slide active" 
+            <div class="background-slide active"
                  style="background-image: url('{{ asset('images/slides/benin1.jpg') }}');"></div>
-            <div class="background-slide" 
+            <div class="background-slide"
                  style="background-image: url('{{ asset('images/slides/benin2.jpg') }}');"></div>
-            <div class="background-slide" 
+            <div class="background-slide"
                  style="background-image: url('{{ asset('images/slides/benin3.jpg') }}');"></div>
-            <div class="background-slide" 
+            <div class="background-slide"
                  style="background-image: url('{{ asset('images/slides/benin4.jpg') }}');"></div>
-            <div class="background-slide" 
+            <div class="background-slide"
                  style="background-image: url('{{ asset('images/slides/benin5.jpg') }}');"></div>
         </div>
     </div>
-    
+
     {{-- Overlay pour assurer la lisibilité du contenu principal --}}
     <div class="overlay"></div>
 
@@ -409,7 +409,7 @@
                                 </li>
                                 <li>
                                     <a class="dropdown-item d-flex align-items-center"
-                                        href="{{ route('front.mes.achats') ?? '#' }}">
+                                        href="{{ route('front.achats.index') ?? '#' }}">
                                         <i class="bi bi-bag-check me-2" style="color: var(--accent);"></i> Mes achats
                                     </a>
                                 </li>
@@ -457,7 +457,7 @@
     {{-- CONTENU PRINCIPAL --}}
     <main class="min-vh-100">
         {{-- Wrapper pour le contenu, utilise la classe .main-content-wrapper pour l'effet de transparence/flou --}}
-        <div class="container py-4 main-content-wrapper fade-in"> 
+        <div class="container py-4 main-content-wrapper fade-in">
 
             @if(session('success'))
                 <div class="alert alert-success alert-dismissible fade show d-flex align-items-center" role="alert">
@@ -541,8 +541,8 @@
 
             <div class="pt-4 mt-5 border-top border-white border-opacity-10 text-center">
                 <p class="mb-0" style="opacity: 0.8;">
-                    &copy; {{ date('Y') }} Culture Bénin — Tous droits réservés | 
-                    <a href="#" class="text-white-50" style="text-decoration:underline;">Mentions légales</a> | 
+                    &copy; {{ date('Y') }} Culture Bénin — Tous droits réservés |
+                    <a href="#" class="text-white-50" style="text-decoration:underline;">Mentions légales</a> |
                     <a href="#" class="text-white-50" style="text-decoration:underline;">Politique de confidentialité</a>
                 </p>
             </div>
@@ -558,25 +558,25 @@
         function initBackgroundSlideshow() {
             const slides = document.querySelectorAll('.background-slide');
             let currentSlide = 0;
-            
+
             if (slides.length === 0) return;
-            
+
             function nextSlide() {
                 // S'assure qu'une seule slide est active
                 slides.forEach(slide => slide.classList.remove('active'));
-                
+
                 // Active la slide suivante
                 currentSlide = (currentSlide + 1) % slides.length;
                 slides[currentSlide].classList.add('active');
             }
-            
+
             // Initialisation immédiate
             slides[currentSlide].classList.add('active');
-            
+
             // Changer de slide toutes les 8 secondes
             setInterval(nextSlide, 8000);
         }
-        
+
         // Fonctions pour la recherche
         function openSearch() {
             document.getElementById('searchOverlay').style.display = 'block';
@@ -605,7 +605,7 @@
                 interval: 100
             });
         }
-        
+
         // Initialiser les fonctions au chargement
         document.addEventListener('DOMContentLoaded', function() {
             initBackgroundSlideshow();

@@ -54,8 +54,23 @@ class User extends Authenticatable
 
     public function traductions()
     {
+
         return $this->hasMany(ContenuTraduction::class, 'traduit_par');
     }
+
+    public function demandesRoles()
+{
+    return $this->hasMany(\App\Models\DemandeRole::class);
+}
+
+public function hasPendingContributeurRequest()
+{
+    return $this->demandesRoles()
+        ->where('role_demande', 'contributeur')
+        ->where('status', 'pending')
+        ->exists();
+}
+
 
     /** Accessor avatar */
     public function getAvatarUrlAttribute()

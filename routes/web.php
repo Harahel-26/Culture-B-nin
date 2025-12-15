@@ -102,7 +102,7 @@ Route::post('/commentaires', [\App\Http\Controllers\Front\CommentaireController:
 
 Route::get('/mes-achats', [AchatController::class, 'index'])
     ->middleware('auth')
-    ->name('front.mes.achats');
+    ->name('front.achats.index');
 
 /*
 |--------------------------------------------------------------------------
@@ -287,7 +287,7 @@ Route::middleware(['auth', 'role:admin|moderateur'])->group(function () {
         [\App\Http\Controllers\Admin\DemandeContributeurAdminController::class, 'index'])
         ->name('admin.demandes.index');
 
-    Route::post('/admin/demandes/{demande}/accepter',
+    Route::post('/admin/demandes/{demande}/valider',
         [\App\Http\Controllers\Admin\DemandeContributeurAdminController::class, 'accepter'])
         ->name('admin.demandes.accepter');
 

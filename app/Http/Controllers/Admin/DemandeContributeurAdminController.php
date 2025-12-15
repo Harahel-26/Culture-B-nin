@@ -3,38 +3,39 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\DemandeContributeur;
-use App\Models\User;
+use App\Models\DemandeRole;
+use Illuminate\Http\Request;
 
 class DemandeContributeurAdminController extends Controller
 {
     public function index()
     {
-        $demandes = DemandeContributeur::with('user')
+        // Récupérer toutes les demandes avec l'utilisateur associé
+        $demandes = DemandeRole::with('user')
             ->orderBy('created_at', 'desc')
-            ->paginate(10);
+            ->paginate(15);
 
         return view('admin.demandes.index', compact('demandes'));
     }
 
-    public function accepter(DemandeContributeur $demande)
+    public function accepter(DemandeRole $demande)
     {
         $demande->update([
-            'statut' => 'accepted',
-            'traite_par' => auth()->id()
+            'status' => 'accepted',
+            'validated_by' => auth()->id(),
         ]);
 
-        // Mise à jour du rôle
-        $demande->user->syncRoles(['contributeur']);
+        // Donner le rôle contributeur
+        $demande->user->assignRole('contributeur');
 
-        return back()->with('success', 'Demande acceptée. L\'utilisateur est maintenant contributeur.');
+        return back()->with('success', 'Demande approuvée. Le rôle contributeur a été attribué.');
     }
 
-    public function rejeter(DemandeContributeur $demande)
+    public function rejeter(DemandeRole $demande)
     {
         $demande->update([
-            'statut' => 'rejected',
-            'traite_par' => auth()->id()
+            'status' => 'rejected',
+            'validated_by' => auth()->id(),
         ]);
 
         return back()->with('success', 'Demande rejetée.');
