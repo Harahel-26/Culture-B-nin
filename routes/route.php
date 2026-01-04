@@ -180,24 +180,24 @@ Route::prefix('admin')->middleware(['auth','role:admin'])->group(function () {
 //-----------------------------------------
 // DASHBOARD CONTRIBUTEUR
 //-----------------------------------------
+
 Route::middleware(['auth', 'role:contributeur'])->group(function () {
+
     Route::get('/contributeur/dashboard',
         [\App\Http\Controllers\Front\Contributeur\DashboardController::class, 'index']
     )->name('contributeur.dashboard');
 
-    // Routes pour les contenus contributeur
-    Route::resource('/contributeur/contenus', \App\Http\Controllers\Front\Contributeur\ContenuController::class)
-        ->names([
-            'index' => 'contributeur.contenus.index',
-            'create' => 'contributeur.contenus.create',
-            'store' => 'contributeur.contenus.store',
-            'show' => 'contributeur.contenus.show',
-            'edit' => 'contributeur.contenus.edit',
-            'update' => 'contributeur.contenus.update',
-            'destroy' => 'contributeur.contenus.destroy'
-        ]);
+    Route::get('/contributeur/contenus',
+        [\App\Http\Controllers\Front\Contributeur\ContenuController::class, 'index']
+    )->name('contributeur.contenus.index');
 
-    // Routes pour les traductions
+    Route::get('/contributeur/contenus/create',
+        [\App\Http\Controllers\Front\Contributeur\ContenuController::class, 'create']
+    )->name('contributeur.contenus.create');
+
+    Route::post('/contributeur/contenus',
+        [\App\Http\Controllers\Front\Contributeur\ContenuController::class, 'store']
+    )->name('contributeur.contenus.store');
     Route::get('/contributeur/contenus/{contenu}/traductions/create',
         [\App\Http\Controllers\Front\Contributeur\TraductionController::class, 'create'])
         ->name('contributeur.traductions.create');
@@ -281,7 +281,7 @@ Route::middleware(['auth', 'role:moderateur'])->prefix('moderateur')->group(func
 
 });
 
-Route::middleware(['auth', 'role:admin'])->group(function () {
+Route::middleware(['auth', 'role:admin|moderateur'])->group(function () {
 
     Route::get('/admin/demandes',
         [\App\Http\Controllers\Admin\DemandeContributeurAdminController::class, 'index'])
@@ -312,7 +312,6 @@ Route::middleware(['auth', 'role:admin|moderateur'])->prefix('admin')->name('adm
     Route::post('/traductions/{trad}/rejeter', [\App\Http\Controllers\Admin\ContenuTraductionController::class, 'rejeter'])
         ->name('traductions.rejeter');
 });
-
 
 /*
 |--------------------------------------------------------------------------

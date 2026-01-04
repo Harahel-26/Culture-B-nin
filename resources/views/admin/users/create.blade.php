@@ -320,7 +320,7 @@
                 <input type="text"
                        name="name"
                        class="form-control"
-                       placeholder="Ex: Jean Dupont"
+                       placeholder="Ex: Jean Mahougnon"
                        required
                        value="{{ old('name') }}">
                 <span class="form-hint">Le nom complet de l'utilisateur</span>

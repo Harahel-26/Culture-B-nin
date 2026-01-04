@@ -12,11 +12,16 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return view('moderateur.dashboard', [
-            'contenus_pending'     => Contenu::where('status','pending')->count(),
-            'medias_pending'       => Media::where('status','pending')->count(),
-            'comment_pending'      => Commentaire::where('statut','pending')->count(),
-            'traductions_pending'  => ContenuTraduction::where('status','pending')->count(),
-        ]);
+        $contenus_pending = Contenu::where('status', 'pending')->count();
+        $medias_pending = Media::where('status', 'pending')->count();
+        $comment_pending = Commentaire::where('statut', 'pending')->count(); // Changé de $commentaires_pending à $comment_pending
+        $traductions_pending = ContenuTraduction::where('status', 'pending')->count();
+
+        return view('moderateur.dashboard', compact(
+            'contenus_pending',
+            'medias_pending',
+            'comment_pending', // Changé ici aussi
+            'traductions_pending'
+        ));
     }
 }

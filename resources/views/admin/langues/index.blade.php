@@ -181,19 +181,14 @@
         <i class="bi bi-translate"></i>
         Langues du Bénin
     </h1>
-    
+
     <a href="{{ route('admin.langues.create') }}" class="btn-new">
         <i class="bi bi-plus-circle"></i>
         Nouvelle Langue
     </a>
 </div>
 
-@if(session('success'))
-    <div class="alert-success mb-4">
-        <i class="bi bi-check-circle-fill"></i>
-        {{ session('success') }}
-    </div>
-@endif
+
 
 <div class="table-card">
     <div class="table-header">
@@ -223,7 +218,7 @@
                                      class="langue-avatar"
                                      alt="{{ $langue->nom }}">
                             </td>
-                            
+
                             <td>
                                 <div class="langue-name">{{ $langue->nom }}</div>
                                 @if($langue->description)
@@ -232,11 +227,11 @@
                                     </div>
                                 @endif
                             </td>
-                            
+
                             <td>
                                 <span class="langue-code">{{ $langue->code }}</span>
                             </td>
-                            
+
                             <td>
                                 @if($langue->is_active)
                                     <span class="badge-status badge-active">
@@ -250,27 +245,27 @@
                                     </span>
                                 @endif
                             </td>
-                            
+
                             <td class="text-end">
                                 <a href="{{ route('admin.langues.show', $langue) }}"
                                    class="btn-action btn-view"
                                    title="Voir détails">
                                     <i class="bi bi-eye"></i>
                                 </a>
-                                
+
                                 <a href="{{ route('admin.langues.edit', $langue) }}"
                                    class="btn-action btn-edit"
                                    title="Modifier">
                                     <i class="bi bi-pencil"></i>
                                 </a>
-                                
+
                                 <form action="{{ route('admin.langues.destroy', $langue) }}"
                                       method="POST"
                                       class="d-inline"
                                       onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer cette langue ?')">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" 
+                                    <button type="submit"
                                             class="btn-action btn-delete"
                                             title="Supprimer">
                                         <i class="bi bi-trash"></i>
@@ -282,7 +277,7 @@
                 </tbody>
             </table>
         </div>
-        
+
         @if($langues->hasPages())
             <div class="pagination-container">
                 {{ $langues->links() }}

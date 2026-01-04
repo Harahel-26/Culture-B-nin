@@ -215,19 +215,13 @@
         <i class="bi bi-collection-play"></i>
         Médias
     </h1>
-    
+
     <a href="{{ route('admin.medias.create') }}" class="btn-add">
         <i class="bi bi-plus-circle"></i>
         Ajouter un média
     </a>
 </div>
 
-@if(session('success'))
-    <div class="alert-success">
-        <i class="bi bi-check-circle-fill"></i>
-        {{ session('success') }}
-    </div>
-@endif
 
 <div class="table-card">
     <div class="table-header">
@@ -254,12 +248,12 @@
                     <!-- Aperçu -->
                     <td>
                         @if($media->typeMedia->nom === 'image')
-                            <img src="{{ asset('storage/'.$media->fichier) }}" 
+                            <img src="{{ asset('storage/'.$media->fichier) }}"
                                  class="media-thumb"
                                  alt="{{ $media->titre }}">
                         @elseif($media->typeMedia->nom === 'video')
-                            <div class="video-thumb" 
-                                 data-bs-toggle="modal" 
+                            <div class="video-thumb"
+                                 data-bs-toggle="modal"
                                  data-bs-target="#modalVideo{{ $media->id }}">
                                 <i class="bi bi-play-circle" style="font-size: 2rem; color: white;"></i>
                             </div>
@@ -320,7 +314,7 @@
                            title="Voir détails">
                             <i class="bi bi-eye"></i>
                         </a>
-                        
+
                         @if($media->status !== 'validated')
                             <a href="{{ route('admin.medias.valider', $media) }}"
                                class="btn-action btn-approve"
@@ -329,7 +323,7 @@
                                 <i class="bi bi-check2-circle"></i>
                             </a>
                         @endif
-                        
+
                         @if($media->status !== 'rejected')
                             <a href="{{ route('admin.medias.rejeter', $media) }}"
                                class="btn-action btn-reject"
@@ -338,14 +332,14 @@
                                 <i class="bi bi-x-circle"></i>
                             </a>
                         @endif
-                        
+
                         <form action="{{ route('admin.medias.destroy', $media) }}"
                               method="POST"
                               class="d-inline"
                               onsubmit="return confirm('Supprimer définitivement ce média ?')">
                             @csrf
                             @method('DELETE')
-                            <button type="submit" 
+                            <button type="submit"
                                     class="btn-action btn-delete"
                                     title="Supprimer">
                                 <i class="bi bi-trash"></i>

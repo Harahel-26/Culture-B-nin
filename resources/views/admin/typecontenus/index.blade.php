@@ -156,19 +156,13 @@
         <i class="bi bi-folder2"></i>
         Types de Contenu
     </h1>
-    
+
     <a href="{{ route('admin.typecontenus.create') }}" class="btn-add">
         <i class="bi bi-plus-circle"></i>
         Ajouter un type
     </a>
 </div>
 
-@if(session('success'))
-    <div class="alert-success">
-        <i class="bi bi-check-circle-fill"></i>
-        {{ session('success') }}
-    </div>
-@endif
 
 <div class="table-card">
     <div class="table-header">
@@ -197,33 +191,33 @@
                                 {{ $type->nom }}
                             </div>
                         </td>
-                        
+
                         <td>
                             <span class="type-count">
                                 {{ $type->contenus->count() }} contenu(s)
                             </span>
                         </td>
-                        
+
                         <td class="text-end">
                             <a href="{{ route('admin.typecontenus.show', $type) }}"
                                class="btn-action btn-view"
                                title="Voir détails">
                                 <i class="bi bi-eye"></i>
                             </a>
-                            
+
                             <a href="{{ route('admin.typecontenus.edit', $type) }}"
                                class="btn-action btn-edit"
                                title="Modifier">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            
+
                             <form action="{{ route('admin.typecontenus.destroy', $type) }}"
                                   method="POST"
                                   class="d-inline"
                                   onsubmit="return confirm('Supprimer ce type de contenu ?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" 
+                                <button type="submit"
                                         class="btn-action btn-delete"
                                         title="Supprimer">
                                     <i class="bi bi-trash"></i>
@@ -235,7 +229,7 @@
                 </tbody>
             </table>
         </div>
-        
+
         @if($types->hasPages())
             <div class="pagination-container">
                 {{ $types->links() }}

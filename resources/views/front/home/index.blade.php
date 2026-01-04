@@ -25,37 +25,63 @@
 @section('content')
 
 <style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Inter:wght@400;600&display=swap');
     .home-section-title {
+        font-family: 'Playfair Display', serif; /* Donne un côté "Livre/Patrimoine" */
         font-weight: 700;
         color: #1e1b4b;
-        font-size: 1.6rem;
-        margin-bottom: 20px;
+        font-size: 1.85rem;
+        margin-bottom: 25px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .home-section-title::after {
+        content: "";
+        flex-grow: 1;
+        height: 1px;
+        background: linear-gradient(to right, #d4a017, transparent);
+        margin-left: 20px;
+    }
+
+    .body {
+        font-family: 'Inter', sans-serif;
+        background-color: #f8f9fa;
     }
 
     .contenu-card {
         border: none;
-        border-radius: 12px;
+        border-radius: 16px;
         overflow: hidden;
         background: #fff;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        transition: all .3s;
+        box-shadow: 0 10px 25px rgba(30, 27, 75, 0.05);
+        transition: all .4s cubic-bezier(0.165, 0.84, 0.44, 1);
         height: 100%;
     }
     .contenu-card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 6px 22px rgba(0,0,0,0.15);
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(30, 27, 75, 0.12);
     }
 
     .contenu-cover {
         width: 100%;
-        height: 170px;
+        height: 200px;
+        transition: transform 0.5s ease;
         object-fit: cover;
     }
 
+    .contenu-card:hover .contenu-cover {
+        transform: scale(1.05);
+    }
+
     .badge-premium {
-        background: #d4a017;
+        background: linear-gradient(135deg, #d4a017 0%, #a16207 100%);
+        font-weight: 600;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+        padding: 5px 12px;
         color: #fff;
-        padding: 4px 8px;
         border-radius: 5px;
         font-size: .75rem;
     }
@@ -108,6 +134,19 @@
 
     .swiper-pagination-bullet-active {
         background: #a16207 !important;
+    }
+
+    .btn-gold {
+        background-color: #d4a017;
+        color: white;
+        border: none;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+    .btn-gold:hover {
+        background-color: #a16207;
+        color: white;
+        box-shadow: 0 8px 15px rgba(212, 160, 23, 0.3);
     }
 </style>
 

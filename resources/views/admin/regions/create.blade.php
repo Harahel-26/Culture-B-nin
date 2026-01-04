@@ -124,8 +124,8 @@
                     <i class="bi bi-fonts"></i>
                     Nom *
                 </label>
-                <input type="text" 
-                       name="nom" 
+                <input type="text"
+                       name="nom"
                        class="form-control-enhanced"
                        value="{{ old('nom') }}"
                        placeholder="Ex: Atlantique, Borgou, Donga..."
@@ -153,7 +153,7 @@
                     <i class="bi bi-card-text"></i>
                     Description
                 </label>
-                <textarea name="description" 
+                <textarea name="description"
                           rows="3"
                           class="form-control-enhanced"
                           placeholder="Description de la région, sa culture, ses spécificités...">{{ old('description') }}</textarea>
@@ -174,28 +174,35 @@
             </div>
 
             <!-- Statut -->
-            <div class="col-md-6">
-                <div class="switch-container h-100">
-                    <label class="form-label mb-3">
-                        <i class="bi bi-toggle-on"></i>
-                        Statut
-                    </label>
-                    <div class="form-check form-switch">
-                        <input class="form-check-input" 
-                               type="checkbox" 
-                               name="is_active" 
-                               id="activeSwitch"
-                               checked>
-                        <label class="form-check-label fw-medium" for="activeSwitch">
-                            Région active
-                        </label>
-                    </div>
-                    <p class="text-muted mt-3 mb-0 small">
-                        <i class="bi bi-info-circle"></i>
-                        Les régions inactives ne seront pas disponibles pour les contenus
-                    </p>
-                </div>
-            </div>
+<div class="col-md-6">
+    <div class="switch-container h-100">
+        <label class="form-label mb-3">
+            <i class="bi bi-toggle-on"></i>
+            Statut
+        </label>
+
+        <!-- IMPORTANT : champ caché -->
+        <input type="hidden" name="is_active" value="0">
+
+        <div class="form-check form-switch">
+            <input class="form-check-input"
+                   type="checkbox"
+                   name="is_active"
+                   id="activeSwitch"
+                   value="1"
+                   checked>
+            <label class="form-check-label fw-medium" for="activeSwitch">
+                Région active
+            </label>
+        </div>
+
+        <p class="text-muted mt-3 mb-0 small">
+            <i class="bi bi-info-circle"></i>
+            Les régions inactives ne seront pas disponibles pour les contenus
+        </p>
+    </div>
+</div>
+
 
             <!-- Actions -->
             <div class="col-12 mt-4 pt-3 border-top">
@@ -203,7 +210,7 @@
                     <i class="bi bi-save"></i>
                     Enregistrer la région
                 </button>
-                
+
                 <a href="{{ route('admin.regions.index') }}" class="btn-cancel ms-3">
                     Annuler
                 </a>

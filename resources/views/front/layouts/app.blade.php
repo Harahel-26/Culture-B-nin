@@ -265,8 +265,113 @@
             transform: translateX(3px);
         }
 
-        /* 10. RESPONSIVE */
-        @media (max-width: 768px) {
+        /* 10. STYLES POUR LES MENUS DÉROULANTS AMÉLIORÉS */
+        .dropdown-menu {
+            border: none !important;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15) !important;
+            padding: 12px !important;
+            animation: fadeInUp 0.3s ease !important;
+            min-width: 260px;
+        }
+
+        .dropdown-item {
+            border-radius: 8px !important;
+            padding: 10px 15px !important;
+            margin: 3px 0 !important;
+            transition: all 0.3s ease !important;
+        }
+
+        .dropdown-item:hover {
+            background-color: rgba(30, 43, 77, 0.08) !important;
+            transform: translateX(3px) !important;
+        }
+
+        /* Style pour l'avatar utilisateur */
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 1rem;
+        }
+
+        /* Style pour le bouton de recherche */
+        .nav-search-btn {
+            background: none;
+            border: none;
+            color: var(--dark);
+            font-size: 1.2rem;
+            padding: 8px 12px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .nav-search-btn:hover {
+            background-color: rgba(30, 43, 77, 0.05);
+            color: var(--primary);
+        }
+
+        /* Style pour les badges de rôle */
+        .role-badge {
+            font-size: 0.65rem;
+            padding: 2px 8px;
+            border-radius: 50px;
+            font-weight: 600;
+        }
+
+        .badge-contributeur {
+            background: rgba(232, 198, 118, 0.2);
+            color: var(--secondary);
+            border: 1px solid rgba(232, 198, 118, 0.3);
+        }
+
+        .badge-moderateur {
+            background: rgba(67, 97, 238, 0.15);
+            color: #4361ee;
+            border: 1px solid rgba(67, 97, 238, 0.3);
+        }
+
+        .badge-admin {
+            background: rgba(247, 37, 133, 0.15);
+            color: #d425f7;
+            border: 1px solid rgba(247, 37, 133, 0.3);
+        }
+
+        /* Style pour les espaces spécifiques */
+        .espace-contributeur {
+            background: linear-gradient(135deg, var(--secondary), #E8A735) !important;
+            color: white !important;
+        }
+
+        .espace-moderateur {
+            background: linear-gradient(135deg, #4361ee, #3a0ca3) !important;
+            color: white !important;
+        }
+
+        .espace-admin {
+            background: linear-gradient(135deg, #f025f7, #b5179e) !important;
+            color: white !important;
+        }
+
+        /* Animation pour le dropdown */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* 11. RESPONSIVE */
+        @media (max-width: 991px) {
             .search-input {
                 padding: 1.2rem 1.5rem;
                 font-size: 1.2rem;
@@ -274,7 +379,38 @@
             .search-overlay .btn-accent {
                 display: none; /* Cache le bouton de recherche sur mobile pour plus de clarté */
             }
+
+            .main-content-wrapper {
+        margin: 10px;
+        padding: 15px;
+    }
         }
+
+        /* Styles pour les icônes sociales dans le footer */
+.social-icons {
+    display: flex;
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.social-icon {
+    width: 40px;
+    height: 40px;
+    background: rgba(255, 255, 255, 0.1);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+.social-icon:hover {
+    background: var(--secondary);
+    color: var(--primary);
+    transform: translateY(-3px);
+}
     </style>
 
     @stack('styles')
@@ -398,35 +534,112 @@
                                 <div class="user-avatar">
                                     {{ strtoupper(substr(Auth::user()->name, 0, 1)) }}
                                 </div>
-                                <span style="color: var(--dark); font-weight: 500;">{{ Auth::user()->name }}</span>
+                                <div class="d-flex flex-column">
+                                    <span style="color: var(--dark); font-weight: 500; font-size: 0.95rem;">{{ Auth::user()->name }}</span>
+                                    @if(auth()->user()->hasRole('contributeur'))
+                                        <small class="role-badge badge-contributeur">Contributeur</small>
+                                    @elseif(auth()->user()->hasRole('moderateur'))
+                                        <small class="role-badge badge-moderateur">Modérateur</small>
+                                    @elseif(auth()->user()->hasRole('admin'))
+                                        <small class="role-badge badge-admin">Administrateur</small>
+                                    @endif
+                                </div>
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end shadow-lg" style="border-radius: 12px;">
+                            <ul class="dropdown-menu dropdown-menu-end shadow-lg">
+                                {{-- Profil utilisateur --}}
                                 <li>
                                     <a class="dropdown-item d-flex align-items-center"
                                         href="{{ route('front.profil.edit', auth()->user()) }}">
-                                         <i class="bi bi-person me-2" style="color: var(--primary);"></i> Mon profil
+                                         <i class="bi bi-person me-2" style="color: var(--primary);"></i>
+                                         <span>Mon profil</span>
                                     </a>
                                 </li>
+
+                                {{-- Achats --}}
                                 <li>
                                     <a class="dropdown-item d-flex align-items-center"
                                         href="{{ route('front.achats.index') ?? '#' }}">
-                                        <i class="bi bi-bag-check me-2" style="color: var(--accent);"></i> Mes achats
+                                        <i class="bi bi-bag-check me-2" style="color: var(--accent);"></i>
+                                        <span>Mes achats</span>
                                     </a>
                                 </li>
-                                @if(auth()->user()->hasRole('lecteur'))
+
+                                {{-- ESPACE CONTRIBUTEUR --}}
+                                @if(auth()->user()->hasRole('contributeur'))
+                                   <li class="dropdown-divider my-2"></li>
                                    <li>
-                                        <a class="dropdown-item d-flex align-items-center" href="{{ route('front.contributeur.demande') }}">
-                                            <i class="bi bi-upload me-2" style="color: var(--secondary);"></i> Devenir contributeur
+                                        <a class="dropdown-item d-flex align-items-center espace-contributeur"
+                                           href="{{ route('contributeur.dashboard') }}"
+                                           style="border-radius: 8px; margin: 4px;">
+                                            <i class="bi bi-pencil-square me-2"></i>
+                                            <div class="d-flex flex-column">
+                                                <span class="fw-bold">Mon espace contributeur</span>
+                                                <small class="opacity-90">Gérer mes contenus</small>
+                                            </div>
+                                            <span class="ms-auto badge bg-white text-dark">→</span>
                                         </a>
                                    </li>
                                 @endif
 
-                                <li><hr class="dropdown-divider"></li>
+                                {{-- ESPACE MODÉRATEUR --}}
+                                @if(auth()->user()->hasRole('moderateur'))
+                                   <li class="dropdown-divider my-2"></li>
+                                   <li>
+                                        <a class="dropdown-item d-flex align-items-center espace-moderateur"
+                                           href="{{ route('moderateur.dashboard') }}"
+                                           style="border-radius: 8px; margin: 4px;">
+                                            <i class="bi bi-shield-check me-2"></i>
+                                            <div class="d-flex flex-column">
+                                                <span class="fw-bold">Espace modérateur</span>
+                                                <small class="opacity-90">Modérer les contenus</small>
+                                            </div>
+                                            <span class="ms-auto badge bg-white text-dark">→</span>
+                                        </a>
+                                   </li>
+                                @endif
+
+                                {{-- ESPACE ADMINISTRATEUR --}}
+                                @if(auth()->user()->hasRole('admin'))
+                                   <li class="dropdown-divider my-2"></li>
+                                   <li>
+                                        <a class="dropdown-item d-flex align-items-center espace-admin"
+                                           href="{{ route('admin.dashboards.index') }}"
+                                           style="border-radius: 8px; margin: 4px;">
+                                            <i class="bi bi-gear-fill me-2"></i>
+                                            <div class="d-flex flex-column">
+                                                <span class="fw-bold">Administration</span>
+                                                <small class="opacity-90">Gestion complète</small>
+                                            </div>
+                                            <span class="ms-auto badge bg-white text-dark">→</span>
+                                        </a>
+                                   </li>
+                                @endif
+
+                                {{-- DEVENIR CONTRIBUTEUR (pour les lecteurs) --}}
+                                @if(auth()->user()->hasRole('lecteur'))
+                                   <li class="dropdown-divider my-2"></li>
+                                   <li>
+                                        <a class="dropdown-item d-flex align-items-center"
+                                           href="{{ route('front.contributeur.demande') }}">
+                                            <i class="bi bi-upload me-2" style="color: var(--secondary);"></i>
+                                            <div class="d-flex flex-column">
+                                                <span>Devenir contributeur</span>
+                                                <small class="text-muted">Partagez vos connaissances</small>
+                                            </div>
+                                        </a>
+                                   </li>
+                                @endif
+
+                                {{-- Séparateur avant déconnexion --}}
+                                <li><hr class="dropdown-divider my-2"></li>
+
+                                {{-- Déconnexion --}}
                                 <li>
                                     <form action="{{ route('logout') }}" method="POST" class="d-inline w-100">
                                         @csrf
                                         <button class="dropdown-item d-flex align-items-center text-danger">
-                                            <i class="bi bi-box-arrow-right me-2"></i> Déconnexion
+                                            <i class="bi bi-box-arrow-right me-2"></i>
+                                            <span>Déconnexion</span>
                                         </button>
                                     </form>
                                 </li>
@@ -554,63 +767,62 @@
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <script>
-        // Fonction pour le diaporama d'arrière-plan
-        function initBackgroundSlideshow() {
-            const slides = document.querySelectorAll('.background-slide');
-            let currentSlide = 0;
+    // 1. Gestion du Diaporama d'Arrière-plan
+    function initBackgroundSlideshow() {
+        const slides = document.querySelectorAll('.background-slide');
+        let currentSlide = 0;
 
-            if (slides.length === 0) return;
+        if (slides.length <= 1) return;
 
-            function nextSlide() {
-                // S'assure qu'une seule slide est active
-                slides.forEach(slide => slide.classList.remove('active'));
-
-                // Active la slide suivante
-                currentSlide = (currentSlide + 1) % slides.length;
-                slides[currentSlide].classList.add('active');
-            }
-
-            // Initialisation immédiate
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
             slides[currentSlide].classList.add('active');
+        }, 6000); // Change d'image toutes les 6 secondes
+    }
 
-            // Changer de slide toutes les 8 secondes
-            setInterval(nextSlide, 8000);
+    // 2. Gestion de la Recherche (Overlay)
+    const searchOverlay = document.getElementById('searchOverlay');
+
+    function openSearch() {
+        searchOverlay.style.display = 'block';
+        document.body.style.overflow = 'hidden'; // Empêche le scroll derrière
+        setTimeout(() => {
+            searchOverlay.querySelector('.search-input').focus();
+        }, 100);
+    }
+
+    function closeSearch() {
+        searchOverlay.style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    // Raccourci clavier (Ctrl + K pour rechercher)
+    document.addEventListener('keydown', function(e) {
+        if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+            e.preventDefault();
+            openSearch();
         }
-
-        // Fonctions pour la recherche
-        function openSearch() {
-            document.getElementById('searchOverlay').style.display = 'block';
-            const input = document.querySelector('.search-input');
-            if (input) input.focus();
+        if (e.key === 'Escape') {
+            closeSearch();
         }
+    });
 
-        function closeSearch() {
-            document.getElementById('searchOverlay').style.display = 'none';
-        }
+    // Initialisation
+    document.addEventListener('DOMContentLoaded', () => {
+        initBackgroundSlideshow();
 
-        document.addEventListener('keydown', function(e) {
-            if (e.key === "Escape") closeSearch();
-            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
-                e.preventDefault();
-                openSearch();
-            }
-        });
-
-        // Animation au scroll
+        // Animation ScrollReveal (optionnel car tu as le script en haut)
         if (typeof ScrollReveal !== 'undefined') {
-            ScrollReveal().reveal('.contenu-card, .btn-accent, h2, h3', {
+            ScrollReveal().reveal('.fade-in', {
                 delay: 200,
-                distance: '30px',
+                distance: '20px',
                 origin: 'bottom',
-                interval: 100
+                duration: 800
             });
         }
-
-        // Initialiser les fonctions au chargement
-        document.addEventListener('DOMContentLoaded', function() {
-            initBackgroundSlideshow();
-        });
-    </script>
+    });
+</script>
 
     @stack('scripts')
 </body>

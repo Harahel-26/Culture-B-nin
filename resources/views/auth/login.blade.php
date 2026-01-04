@@ -32,13 +32,13 @@
     <button class="btn btn-gold w-100 mb-3">Se connecter</button>
 
     <div class="text-center">
-        <a href="{{ route('password.request') }}" class="link-light">Mot de passe oublié ?</a>
+        <a href="{{ route('password.request') }}" class="auth-link">Mot de passe oublié ?</a>
     </div>
 
     <hr class="my-3 text-white">
 
     <div class="text-center">
-        <a href="{{ route('register') }}" class="link-light">
+        <a href="{{ route('register') }}" class="auth-link">
             Pas encore de compte ? <strong>Créer un compte</strong>
         </a>
     </div>

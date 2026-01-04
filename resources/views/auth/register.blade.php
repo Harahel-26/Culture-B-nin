@@ -39,7 +39,7 @@
     <hr class="my-3">
 
     <div class="text-center">
-        <a href="{{ route('login') }}" class="link-light">
+        <a href="{{ route('login') }}" class="auth-link">
             Déjà un compte ? <strong>Connexion</strong>
         </a>
     </div>

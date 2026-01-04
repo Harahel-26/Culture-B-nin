@@ -618,6 +618,11 @@
                 <i class="nav-icon bi bi-folder2"></i>
                 <span class="nav-text">Types de contenu</span>
             </a>
+            <a href="{{ route('admin.regions.index') }}"
+               class="nav-link {{ request()->routeIs('admin.regions.*') ? 'active' : '' }}">
+                <i class="nav-icon bi bi-map"></i>
+                <span class="nav-text">Régions</span>
+            </a>
 
             <!-- MULTIMÉDIA -->
             <div class="nav-section-title">Multimédia</div>

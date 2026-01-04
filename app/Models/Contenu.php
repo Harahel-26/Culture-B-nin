@@ -60,6 +60,41 @@ class Contenu extends Model
         });
     }
 
+    public function getPreviousAttribute()
+    {
+        return static::where('user_id', $this->user_id)
+            ->where('created_at', '<', $this->created_at)
+            ->orderBy('created_at', 'desc')
+            ->first();
+    }
+
+    /**
+     * Récupère le contenu suivant de l'utilisateur
+     */
+    public function getNextAttribute()
+    {
+        return static::where('user_id', $this->user_id)
+            ->where('created_at', '>', $this->created_at)
+            ->orderBy('created_at', 'asc')
+            ->first();
+    }
+
+    /**
+     * Accessor pour previous (alias)
+     */
+    public function previous()
+    {
+        return $this->getPreviousAttribute();
+    }
+
+    /**
+     * Accessor pour next (alias)
+     */
+    public function next()
+    {
+        return $this->getNextAttribute();
+    }
+
     /*
     |--------------------------------------------------------------------------
     | Relations

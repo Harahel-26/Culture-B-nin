@@ -28,9 +28,7 @@ class SearchController extends Controller
         $contenusQuery = Contenu::query()
             ->where('status', 'validated')
             ->where('is_active', true)
-            ->with(['utilisateur' => function($q) {
-                $q->where('is_active', true);
-            }, 'langue', 'region', 'typecontenu']);
+            ->with(['utilisateur', 'langue', 'region', 'typecontenu']);
 
         if (!empty($query)) {
             $contenusQuery->where(function($q) use ($query) {
@@ -55,7 +53,7 @@ class SearchController extends Controller
         $medias = collect();
         if (!empty($query) || $type) {
             $mediasQuery = Media::query()
-                ->where('is_active', true)
+                ->where('status', 'validated') // Utilisez 'status' au lieu de 'is_active'
                 ->with(['contenu', 'typeMedia']);
 
             if (!empty($query)) {
@@ -72,9 +70,9 @@ class SearchController extends Controller
         }
 
         // Données pour les filtres
-        $typesContenu = TypeContenu::where('is_active', true)->get();
-        $langues = Langue::where('is_active', true)->get();
-        $regions = Region::where('is_active', true)->get();
+        $typesContenu = TypeContenu::all(); // Retirez le where('is_active', true)
+        $langues = Langue::all(); // Retirez le where('is_active', true)
+        $regions = Region::all(); // Retirez le where('is_active', true)
         $typesMedia = TypeMedia::all();
 
         $totalResults = $contenus->total() + $medias->total();
@@ -131,7 +129,8 @@ class SearchController extends Controller
         }
         if (!empty($filters['type_media'])) {
             $contenusQuery->whereHas('medias', function($q) use ($filters) {
-                $q->where('type_media_id', $filters['type_media']);
+                $q->where('type_media_id', $filters['type_media'])
+                  ->where('status', 'validated');
             });
         }
         if (!empty($filters['date_start'])) {
@@ -143,9 +142,9 @@ class SearchController extends Controller
 
         $results = $contenusQuery->orderBy('created_at', 'desc')->paginate(20);
 
-        $types = TypeContenu::where('is_active', true)->get();
-        $langues = Langue::where('is_active', true)->get();
-        $regions = Region::where('is_active', true)->get();
+        $types = TypeContenu::all();
+        $langues = Langue::all();
+        $regions = Region::all();
         $typeMedias = TypeMedia::all();
 
         return view('front.search.advanced', compact('results', 'query', 'filters', 'types', 'langues', 'regions', 'typeMedias'));
@@ -183,8 +182,7 @@ class SearchController extends Controller
         $results = array_merge($results, $titres->toArray());
 
         // Suggestions de langues
-        $langues = Langue::where('is_active', true)
-            ->where(function($q) use ($query) {
+        $langues = Langue::where(function($q) use ($query) {
                 $q->where('nom', 'LIKE', "{$query}%")
                   ->orWhere('code', 'LIKE', "{$query}%");
             })
@@ -202,8 +200,7 @@ class SearchController extends Controller
         $results = array_merge($results, $langues->toArray());
 
         // Suggestions de régions
-        $regions = Region::where('is_active', true)
-            ->where('nom', 'LIKE', "{$query}%")
+        $regions = Region::where('nom', 'LIKE', "{$query}%")
             ->select('nom', 'slug')
             ->take(3)
             ->get()

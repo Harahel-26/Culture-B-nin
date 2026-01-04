@@ -188,19 +188,14 @@
         <i class="bi bi-geo-alt"></i>
         Régions du Bénin
     </h1>
-    
+
     <a href="{{ route('admin.regions.create') }}" class="btn-new">
         <i class="bi bi-plus-circle"></i>
         Nouvelle Région
     </a>
 </div>
 
-@if(session('success'))
-    <div class="alert-success">
-        <i class="bi bi-check-circle-fill"></i>
-        {{ session('success') }}
-    </div>
-@endif
+
 
 <div class="table-card">
     <div class="table-header">
@@ -233,14 +228,14 @@
                                 </div>
                             @endif
                         </td>
-                        
+
                         <td>
                             <span class="badge-type">
                                 <i class="bi bi-tag"></i>
                                 {{ $region->type ?? 'Non défini' }}
                             </span>
                         </td>
-                        
+
                         <td>
                             @if($region->languePrincipale)
                                 <span class="badge-langue">
@@ -251,7 +246,7 @@
                                 <span class="text-muted">Aucune</span>
                             @endif
                         </td>
-                        
+
                         <td>
                             @if($region->is_active)
                                 <span class="badge-status badge-active">
@@ -265,27 +260,27 @@
                                 </span>
                             @endif
                         </td>
-                        
+
                         <td class="text-end">
                             <a href="{{ route('admin.regions.show', $region) }}"
                                class="btn-action btn-view"
                                title="Voir détails">
                                 <i class="bi bi-eye"></i>
                             </a>
-                            
+
                             <a href="{{ route('admin.regions.edit', $region) }}"
                                class="btn-action btn-edit"
                                title="Modifier">
                                 <i class="bi bi-pencil"></i>
                             </a>
-                            
+
                             <form action="{{ route('admin.regions.destroy', $region) }}"
                                   method="POST"
                                   class="d-inline"
                                   onsubmit="return confirm('Supprimer cette région ?')">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" 
+                                <button type="submit"
                                         class="btn-action btn-delete"
                                         title="Supprimer">
                                     <i class="bi bi-trash"></i>
@@ -297,7 +292,7 @@
                 </tbody>
             </table>
         </div>
-        
+
         @if($regions->hasPages())
             <div class="pagination-container">
                 {{ $regions->links() }}

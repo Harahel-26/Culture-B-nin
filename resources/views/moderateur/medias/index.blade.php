@@ -1,4 +1,4 @@
-@extends('admin.layouts.app')
+@extends('moderateur.layouts.app')
 
 @section('title', 'Médias en attente')
 
