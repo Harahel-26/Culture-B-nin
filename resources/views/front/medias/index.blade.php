@@ -457,24 +457,6 @@
         <div class="media-grid" id="mediaGrid">
             @foreach($medias as $media)
             <div class="media-card" data-type="{{ $media->typeMedia->nom }}">
-                <!-- Image overlay -->
-                <div class="media-overlay">
-                    <div class="text-white">
-                        <h6 class="fw-bold">{{ $media->titre }}</h6>
-                        <small>
-                            <i class="bi bi-calendar me-1"></i>
-                            {{ $media->created_at->format('d/m/Y') }}
-                        </small>
-                        <div class="mt-2">
-                            <button class="btn btn-sm btn-light"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#modalMedia{{ $media->id }}">
-                                <i class="bi bi-zoom-in me-1"></i>
-                                Agrandir
-                            </button>
-                        </div>
-                    </div>
-                </div>
 
                 <!-- Type badge -->
                 <div class="media-type">

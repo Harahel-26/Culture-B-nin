@@ -117,6 +117,15 @@
         margin-top: 10px;
     }
 </style>
+@if ($errors->any())
+    <div class="alert alert-danger">
+        <ul class="mb-0">
+            @foreach ($errors->all() as $error)
+                <li>{{ $error }}</li>
+            @endforeach
+        </ul>
+    </div>
+@endif
 
 <div class="mb-4">
     <h1 class="page-title">
@@ -215,7 +224,7 @@
                     <i class="bi bi-save"></i>
                     Enregistrer le média
                 </button>
-                
+
                 <a href="{{ route('admin.medias.index') }}" class="btn-cancel ms-3">
                     Annuler
                 </a>
@@ -227,28 +236,29 @@
 
 <script>
     document.getElementById('fileInput').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        const uploadZone = document.querySelector('.upload-zone');
-        
-        if (file) {
-            const fileType = file.type.split('/')[0];
-            const iconMap = {
-                'image': 'bi-image',
-                'video': 'bi-camera-video',
-                'audio': 'bi-music-note-beamed'
-            };
-            
-            const icon = iconMap[fileType] || 'bi-file-earmark';
-            uploadZone.innerHTML = `
-                <div class="upload-icon">
-                    <i class="bi ${icon}"></i>
-                </div>
-                <div class="fw-bold text-primary mb-2">${file.name}</div>
-                <div class="file-info">${(file.size / (1024*1024)).toFixed(2)} MB • ${fileType}</div>
-                <input type="file" name="fichier" id="fileInput" class="d-none" required>
-            `;
-        }
-    });
+    const file = e.target.files[0];
+    const uploadZone = document.querySelector('.upload-zone');
+
+    if (file) {
+        const fileType = file.type.split('/')[0];
+        const iconMap = {
+            image: 'bi-image',
+            video: 'bi-camera-video',
+            audio: 'bi-music-note-beamed'
+        };
+
+        const icon = iconMap[fileType] || 'bi-file-earmark';
+
+        uploadZone.querySelector('.upload-icon').innerHTML =
+            `<i class="bi ${icon}"></i>`;
+
+        uploadZone.querySelector('.fw-medium').textContent = file.name;
+
+        uploadZone.querySelector('.file-info').textContent =
+            `${(file.size / (1024 * 1024)).toFixed(2)} MB • ${fileType}`;
+    }
+});
+
 </script>
 
 @endsection

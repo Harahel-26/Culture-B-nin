@@ -23,31 +23,35 @@ class AuthenticatedSessionController extends Controller
      * Handle an incoming authentication request.
      */
     public function store(LoginRequest $request): RedirectResponse
-{
-    $request->authenticate();
-    $request->session()->regenerate();
+    {
+        $request->authenticate();
+        $request->session()->regenerate();
 
-    $user = Auth::user();
+        $user = Auth::user();
 
-    // ADMIN
-    if ($user->hasRole('admin')) {
-        return redirect()->route('admin.dashboards.index');
+        // METTRE À JOUR LA DERNIÈRE CONNEXION
+        $user->update([
+            'last_login_at' => now(),
+            'last_login_ip' => $request->ip(),
+            'last_login_user_agent' => $request->header('User-Agent'),
+        ]);
+
+        // Redirections selon le rôle
+        if ($user->hasRole('admin')) {
+            return redirect()->route('admin.dashboards.index');
+        }
+
+        if ($user->hasRole('moderateur')) {
+            return redirect()->route('moderateur.dashboard');
+        }
+
+        if ($user->hasRole('contributeur')) {
+            return redirect()->route('contributeur.dashboard');
+        }
+
+        // LECTEUR
+        return redirect()->route('front.home');
     }
-
-    // MODÉRATEUR
-    if ($user->hasRole('moderateur')) {
-        return redirect()->route('moderateur.dashboard');
-    }
-
-    // CONTRIBUTEUR
-    if ($user->hasRole('contributeur')) {
-        return redirect()->route('contributeur.dashboard');
-    }
-
-    // LECTEUR
-    return redirect()->route('front.home');
-}
-
 
     /**
      * Destroy an authenticated session.
@@ -55,9 +59,7 @@ class AuthenticatedSessionController extends Controller
     public function destroy(Request $request): RedirectResponse
     {
         Auth::guard('web')->logout();
-
         $request->session()->invalidate();
-
         $request->session()->regenerateToken();
 
         return redirect()->route('front.home');

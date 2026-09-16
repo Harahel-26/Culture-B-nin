@@ -7,7 +7,7 @@ use App\Http\Controllers\Front\HomeController;
 use App\Http\Controllers\Front\ContenuController;
 use App\Http\Controllers\Front\SearchController;
 use App\Http\Controllers\Front\ProfilController;
-    use App\Http\Controllers\Admin\PaiementController;
+use App\Http\Controllers\Admin\PaiementController;
 use App\Http\Controllers\Front\CommentaireController;
 use App\Http\Controllers\Front\MediaController;
 use App\Http\Controllers\Front\MediaGalleryController;
@@ -112,10 +112,10 @@ Route::get('/mes-achats', [AchatController::class, 'index'])
 
 
 Route::middleware('auth')->group(function () {
-    Route::get('/profil', [\App\Http\Controllers\Front\ProfilController::class, 'index'])
+    Route::get('/profil', [ProfilController::class, 'index'])
         ->name('front.profil.index');
 
-    Route::get('/profil', [ProfilController::class, 'edit'])
+    Route::get('/profil/edit', [ProfilController::class, 'edit'])
         ->name('front.profil.edit');
 
     Route::post('/profil/update', [ProfilController::class, 'update'])
@@ -147,7 +147,18 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin')->name('admin.')->grou
     Route::resource('langues', \App\Http\Controllers\Admin\LangueController::class);
     Route::resource('regions', \App\Http\Controllers\Admin\RegionController::class);
     Route::resource('typecontenus', \App\Http\Controllers\Admin\TypeContenuController::class);
-    Route::resource('medias', \App\Http\Controllers\Admin\MediaController::class);
+    // Routes pour les médias (déclarées manuellement)
+    Route::get('/medias', [\App\Http\Controllers\Admin\MediaController::class, 'index'])->name('medias.index');
+    Route::get('/medias/create', [\App\Http\Controllers\Admin\MediaController::class, 'create'])->name('medias.create');
+    Route::post('/medias', [\App\Http\Controllers\Admin\MediaController::class, 'store'])->name('medias.store'); // ← IMPORTANT
+    Route::get('/medias/{media}', [\App\Http\Controllers\Admin\MediaController::class, 'show'])->name('medias.show');
+    Route::get('/medias/{media}/edit', [\App\Http\Controllers\Admin\MediaController::class, 'edit'])->name('medias.edit');
+    Route::put('/medias/{media}', [\App\Http\Controllers\Admin\MediaController::class, 'update'])->name('medias.update');
+    Route::delete('/medias/{media}', [\App\Http\Controllers\Admin\MediaController::class, 'destroy'])->name('medias.destroy');
+
+    // Routes de validation
+    Route::get('/medias/{media}/valider', [\App\Http\Controllers\Admin\MediaController::class, 'valider'])->name('medias.valider');
+    Route::get('/medias/{media}/rejeter', [\App\Http\Controllers\Admin\MediaController::class, 'rejeter'])->name('medias.rejeter');
     Route::get('/admin/medias/{media}/valider',
         [\App\Http\Controllers\Admin\MediaController::class, 'valider'])
         ->name('medias.valider');

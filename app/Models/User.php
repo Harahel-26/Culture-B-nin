@@ -22,7 +22,11 @@ class User extends Authenticatable
         'bio',
         'adresse',
         'is_active',
-        'is_admin'
+        'is_admin',
+        // Ajouter ces 3 champs
+        'last_login_at',
+        'last_login_ip',
+        'last_login_user_agent',
     ];
 
     protected $hidden = [
@@ -34,6 +38,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password'          => 'hashed',
         'is_active'         => 'boolean',
+        'last_login_at'     => 'datetime', // Ajouter cette ligne
     ];
 
     /** Relations */
@@ -54,23 +59,28 @@ class User extends Authenticatable
 
     public function traductions()
     {
-
         return $this->hasMany(ContenuTraduction::class, 'traduit_par');
     }
 
     public function demandesRoles()
-{
-    return $this->hasMany(\App\Models\DemandeRole::class);
-}
+    {
+        return $this->hasMany(\App\Models\DemandeRole::class);
+    }
 
-public function hasPendingContributeurRequest()
-{
-    return $this->demandesRoles()
-        ->where('role_demande', 'contributeur')
-        ->where('status', 'pending')
-        ->exists();
-}
+    public function hasPendingContributeurRequest()
+    {
+        return $this->demandesRoles()
+            ->where('role_demande', 'contributeur')
+            ->where('status', 'pending')
+            ->exists();
+    }
 
+    public function contenusAchetes()
+    {
+        return $this->belongsToMany(Contenu::class, 'paiements')
+                    ->wherePivot('statut', 'paye')
+                    ->withTimestamps();
+    }
 
     /** Accessor avatar */
     public function getAvatarUrlAttribute()
@@ -96,11 +106,10 @@ public function hasPendingContributeurRequest()
     {
         return $this->is_active;
     }
-    public function contenusAchetes()
-{
-    return $this->belongsToMany(Contenu::class, 'paiements')
-                ->wherePivot('statut', 'paye')
-                ->withTimestamps();
-}
 
+    // Nouvelle méthode pour vérifier si jamais connecté
+    public function getEstJamaisConnecteAttribute()
+    {
+        return is_null($this->last_login_at);
+    }
 }

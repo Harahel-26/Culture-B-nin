@@ -10,6 +10,11 @@ class ContributeurDemandeController extends Controller
 {
     public function form()
     {
+    $demande = DemandeRole::where('user_id', auth()->id())
+        ->where('role_demande', 'contributeur')
+        ->latest()
+        ->first();
+
         return view('front.contributeur.demande');
     }
 
@@ -27,7 +32,9 @@ class ContributeurDemandeController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->route('front.profil.edit', auth()->user())
+        return redirect()->route('front.profil.index', auth()->user())
             ->with('success', 'Votre demande a été envoyée et sera examinée.');
     }
+
+
 }
